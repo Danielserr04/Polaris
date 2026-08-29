@@ -1,0 +1,74 @@
+spring:
+  application:
+    name: polaris
+
+  # Carga el .env de la raiz como fichero de propiedades, si existe.
+  # Asi `mvnw spring-boot:run` coge las credenciales sin exportar nada a mano
+  # y sin que ninguna clave viva en el repo. Ver convenciones.md.
+  config:
+    import: optional:file:.env[.properties]
+
+  profiles:
+    default: dev
+
+  datasource:
+    url: ${POLARIS_DB_URL}
+    username: ${POLARIS_DB_USER}
+    password: ${POLARIS_DB_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      # update hasta cerrar B2. Pasa a validate cuando entre Flyway.
+      # Ver docs/decisiones/007-esquema-ddl-auto-luego-flyway.md
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        # Que las tablas que crea ddl-auto nazcan en utf8mb4.
+        hbm2ddl:
+          charset_name: utf8mb4
+    open-in-view: false
+
+  jackson:
+    default-property-inclusion: non_null
+
+server:
+  port: ${POLARIS_PORT:8080}
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+  api-docs:
+    path: /v3/api-docs
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+logging:
+  level:
+    com.polaris: DEBUG
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  jpa:
+    show-sql: false
+
+springdoc:
+  swagger-ui:
+    enabled: false
+
+logging:
+  level:
+    com.polaris: INFO

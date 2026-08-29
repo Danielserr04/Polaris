@@ -1,0 +1,28 @@
+services:
+  mysql:
+    image: mysql:8.4
+    container_name: polaris-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-polaris}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # utf8mb4 a nivel de servidor: asi cualquier tabla que cree Hibernate
+    # con ddl-auto nace ya con el charset correcto, sin tocar cada @Table.
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    ports:
+      - "${MYSQL_PORT:-3306}:3306"
+    volumes:
+      - polaris-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  polaris-mysql-data:

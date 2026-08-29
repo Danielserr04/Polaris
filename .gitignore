@@ -1,0 +1,30 @@
+# Obsidian
+docs/.obsidian/
+.obsidian/
+
+# Skills de terceros (se reinstalan clonando)
+.claude/skills/
+
+# Entorno
+.env
+.env.local
+
+# Java / Maven
+target/
+*.class
+*.jar
+!.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Node (frontend, más adelante)
+node_modules/
+dist/
+build/
+
+# SO
+Thumbs.db
+.DS_Store
