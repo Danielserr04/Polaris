@@ -25,9 +25,13 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
-        # Que las tablas que crea ddl-auto nazcan en utf8mb4.
-        hbm2ddl:
-          charset_name: utf8mb4
+        # Las tablas nacen en utf8mb4 por el charset del servidor, que fija
+        # docker-compose.yml con --character-set-server=utf8mb4.
+        #
+        # OJO: aqui habia un hbm2ddl.charset_name: utf8mb4 que no hacia eso.
+        # Hibernate usa esa propiedad como charset de JAVA para hashear nombres
+        # de constraints, y utf8mb4 no es un charset de Java: reventaba el
+        # arranque en cuanto una entidad declaraba un unique.
     open-in-view: false
 
   jackson:
