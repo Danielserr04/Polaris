@@ -1,10 +1,12 @@
 package com.polaris.odisea.domain.service;
 
+import com.polaris.odisea.application.out.EntradaRepositoryPort;
 import com.polaris.odisea.application.out.TituloRepositoryPort;
 import com.polaris.odisea.domain.model.TipoContenido;
 import com.polaris.odisea.domain.model.Titulo;
 import com.polaris.odisea.domain.model.TituloFilter;
 import com.polaris.odisea.domain.model.TituloNotFoundException;
+import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +31,9 @@ class TituloServiceTest {
 
     @Mock
     private TituloRepositoryPort repository;
+
+    @Mock
+    private EntradaRepositoryPort entradaRepository;
 
     @InjectMocks
     private TituloService service;
@@ -114,6 +119,18 @@ class TituloServiceTest {
 
         assertThatThrownBy(() -> service.delete(42L))
                 .isInstanceOf(TituloNotFoundException.class);
+
+        verify(repository, org.mockito.Mockito.never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("delete rechaza con ValidationException si el titulo tiene entradas asociadas")
+    void deleteRechazaSiTieneEntradas() {
+        when(repository.findById(1L)).thenReturn(Optional.of(Titulo.builder().id(1L).build()));
+        when(entradaRepository.existsByTituloId(1L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(1L))
+                .isInstanceOf(ValidationException.class);
 
         verify(repository, org.mockito.Mockito.never()).deleteById(any());
     }
