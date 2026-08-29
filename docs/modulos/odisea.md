@@ -63,5 +63,5 @@ Al importar se comprueba `(fuente_externa, id_externo)` para no duplicar fichas.
 
 | Entidad | Estado |
 |---|---|
-| `Titulo` | Pendiente — B2 |
+| `Titulo` | **Hecho** — CRUD completo, filtros por `tipo` y `texto` con Specifications, verificado contra MySQL |
 | `Entrada` | Pendiente — B2 |
