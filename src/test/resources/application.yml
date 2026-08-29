@@ -1,0 +1,35 @@
+# Configuracion solo de tests. Sustituye a la de src/main/resources.
+#
+# Existe para que la suite no dependa de credenciales reales: sin esto, un
+# GOOGLE_CLIENT_ID vacio tumba el contexto entero con
+# "Client id of registration 'google' must not be empty".
+spring:
+  application:
+    name: polaris
+
+  # El .env de la raiz no se carga en tests: los valores de abajo son fijos
+  # y falsos a proposito.
+  config:
+    import: ""
+
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: test-client-id
+            client-secret: test-client-secret
+            scope:
+              - openid
+              - email
+              - profile
+
+  jackson:
+    default-property-inclusion: non_null
+
+polaris:
+  jwt:
+    # 64 caracteres. No es ningun secreto real y no vale fuera de los tests.
+    secreto: secreto-de-tests-que-no-vale-para-nada-fuera-de-aqui-0123456789
+    expiracion-segundos: 3600
+    emisor: polaris
