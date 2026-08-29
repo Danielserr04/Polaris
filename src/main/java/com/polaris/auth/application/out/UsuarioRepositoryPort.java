@@ -15,4 +15,8 @@ public interface UsuarioRepositoryPort {
     Optional<Usuario> findById(Long id);
 
     Optional<Usuario> findByGoogleId(String googleId);
+
+    Optional<Usuario> findByUsername(String username);
+
+    Optional<Usuario> findByEmail(String email);
 }

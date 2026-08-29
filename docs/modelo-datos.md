@@ -11,11 +11,17 @@ Hasta cerrar B2 el esquema lo genera Hibernate con `ddl-auto: update`, así que 
 | Campo | Tipo | Nota |
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
-| email | varchar | único |
+| username | varchar | único, en minúsculas |
+| email | varchar | único, en minúsculas |
 | nombre | varchar | |
-| google_id | varchar | único |
+| password_hash | varchar | nullable, BCrypt. Nulo si solo entra con Google |
+| email_verificado | boolean | |
+| google_id | varchar | nullable, único. Nulo si solo tiene login nativo |
 | avatar_url | varchar | |
 | creado_en | timestamp | |
+
+Un usuario puede tener login nativo, login con Google, o ambos si se vinculan
+por email (ver [[auth]]). Nunca ninguno de los dos.
 
 ---
 

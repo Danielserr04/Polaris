@@ -34,13 +34,26 @@ public class UsuarioEntity {
     private Long id;
 
     @Column(nullable = false, unique = true)
+    private String username;
+
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String nombre;
 
-    /** Identidad estable de Google (el claim "sub"). El email puede cambiar; esto no. */
-    @Column(name = "google_id", nullable = false, unique = true)
+    /** Nulo en los usuarios que solo entran con Google. */
+    @Column(name = "password_hash")
+    private String passwordHash;
+
+    @Column(name = "email_verificado", nullable = false)
+    private boolean emailVerificado;
+
+    /**
+     * Identidad estable de Google (el claim "sub"). El email puede cambiar; esto no.
+     * Nulo en los usuarios que solo tienen login nativo.
+     */
+    @Column(name = "google_id", unique = true)
     private String googleId;
 
     @Column(name = "avatar_url")

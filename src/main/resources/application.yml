@@ -61,6 +61,8 @@ polaris:
     # Vida del token en segundos. 12 horas.
     expiracion-segundos: ${POLARIS_JWT_EXPIRACION:43200}
     emisor: polaris
+  # Para construir el enlace de verificacion de email. Sin barra final.
+  url-base: ${POLARIS_URL_BASE:http://localhost:8080}
 
 springdoc:
   swagger-ui:

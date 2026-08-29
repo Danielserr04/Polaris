@@ -56,4 +56,28 @@ class JwtServiceTest {
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessageContaining("32");
     }
+
+    @Test
+    @DisplayName("un token de verificacion recien emitido se valida como tal")
+    void tokenDeVerificacionValidoDevuelveUsuarioId() {
+        String token = jwtService.generarVerificacion(7L);
+
+        assertThat(jwtService.validarTokenVerificacion(token)).contains(7L);
+    }
+
+    @Test
+    @DisplayName("un token de verificacion no sirve como token de sesion")
+    void tokenDeVerificacionNoAutenticaSesion() {
+        String token = jwtService.generarVerificacion(7L);
+
+        assertThat(jwtService.validarYExtraerUsuarioId(token)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("un token de sesion no sirve para verificar un email")
+    void tokenDeSesionNoValeParaVerificar() {
+        String token = jwtService.generar(7L);
+
+        assertThat(jwtService.validarTokenVerificacion(token)).isEmpty();
+    }
 }

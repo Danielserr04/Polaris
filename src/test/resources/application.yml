@@ -12,6 +12,11 @@ spring:
   config:
     import: ""
 
+  # dev activo: LogEnviarVerificacionAdapter es @Profile("dev") y sin esto un
+  # test con contexto completo no encontraria bean para EnviarVerificacionPort.
+  profiles:
+    active: dev
+
   security:
     oauth2:
       client:
@@ -33,3 +38,4 @@ polaris:
     secreto: secreto-de-tests-que-no-vale-para-nada-fuera-de-aqui-0123456789
     expiracion-segundos: 3600
     emisor: polaris
+  url-base: http://localhost:8080

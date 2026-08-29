@@ -32,4 +32,14 @@ public class UsuarioJpaAdapter implements UsuarioRepositoryPort {
     public Optional<Usuario> findByGoogleId(String googleId) {
         return repository.findByGoogleId(googleId).map(mapper::toDomain);
     }
+
+    @Override
+    public Optional<Usuario> findByUsername(String username) {
+        return repository.findByUsername(username).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Usuario> findByEmail(String email) {
+        return repository.findByEmail(email).map(mapper::toDomain);
+    }
 }

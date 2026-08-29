@@ -7,6 +7,7 @@ import java.time.Instant;
  */
 public record UsuarioFormDto(
         Long id,
+        String username,
         String email,
         String nombre,
         String avatarUrl,

@@ -59,6 +59,8 @@ Excepciones de dominio propias, traducidas a HTTP en un `@RestControllerAdvice` 
 | `<Entidad>NotFoundException` | 404 |
 | `ValidationException` | 400 |
 | `DuplicateResourceException` | 409 |
+| `UnauthorizedException` | 401 |
+| `ForbiddenException` | 403 |
 | Cualquier otra | 500 + log |
 
 **El Controller no construye respuestas de error a mano.** Lanza y deja que el advice traduzca.
