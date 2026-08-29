@@ -15,6 +15,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 
 | Nota | Módulo | Estado |
 |---|---|---|
+| [[auth]] | Identidad: OAuth2 Google y JWT | **Hecho** |
 | [[nucleo]] | Perfil y peso corporal | Pendiente |
 | [[odisea]] | Ocio: pelis, series, juegos, libros | **Primero** |
 | [[kuiper]] | Gastos | Nuevo |
