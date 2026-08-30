@@ -33,10 +33,11 @@ ni ninguna decisión visual tomada.** Empezamos por ahí.
    importa más la legibilidad a tamaño pequeño que el carácter.
 3. **Componentes base**: fila de lista, badge de estado, botón (primario y
    secundario), campo de búsqueda, tarjeta de detalle, valoración en estrellas.
-4. **Dos pantallas de muestra** que los usen todos:
+4. **Tres pantallas de muestra** que los usen todos:
    - **El dashboard**, que hace de recibidor: da entrada a los cinco módulos y
      enseña un *widget* de cada uno con lo importante de un vistazo.
    - **El listado de Odisea**, que es la pantalla de trabajo típica.
+   - **El perfil de cuenta**, que es la pantalla de formulario y estados.
 
 Escritorio primero, ancho 1440. El móvil viene después.
 
@@ -69,6 +70,67 @@ dashboard es lo que decide la retícula del shell. Pero:
   lista, una barra de progreso, un número grande, una gráfica pequeña) por encima
   de que los datos concretos sean verosímiles.
 - El widget de Odisea sí con datos reales, los de más abajo.
+
+### La pantalla de perfil
+
+Tercera pantalla, y esta va **con API real detrás**: todo lo de aquí funciona ya,
+no es especulativo.
+
+Es la pantalla de tu cuenta. Cuatro bloques:
+
+**1. Tus datos.** Avatar, nombre y nombre de usuario. El nombre y el avatar se
+editan; **el nombre de usuario no** — es la mitad de las credenciales y no se
+puede cambiar. Que se vea que es un dato fijo, no un campo deshabilitado sin más.
+
+**2. El email.** Se puede cambiar, pero **cambiarlo lo deja sin verificar** y
+manda un enlace al nuevo. Mientras no esté verificado hay que enseñar un aviso y
+un botón de *reenviar el correo*. Ese estado de "email sin verificar" es
+importante que se note sin ser alarmante: no está roto nada, falta un paso.
+
+**3. La contraseña.** Aquí hay dos casos distintos y la pantalla tiene que saber
+cuál:
+- Si ya tienes contraseña → "Cambiar contraseña", y **pide la actual**.
+- Si entraste solo con Google y no tienes → "Poner una contraseña", y **no pide
+  actual**, porque no hay.
+
+**4. Google.** Si la cuenta está vinculada, se puede desvincular — pero **solo si
+tienes contraseña**. Si no la tienes, el botón tiene que explicar por qué no se
+puede: te quedarías sin ninguna forma de entrar. Es un callejón sin salida real,
+no un capricho, y la pantalla tiene que evitar que el usuario llegue a él.
+
+Si la cuenta **no** está vinculada, ahí va un "Conectar con Google".
+
+Lo que devuelve la API para esta pantalla, tal cual:
+
+```json
+{
+  "id": 11,
+  "username": "dani",
+  "email": "danielserrano1702@gmail.com",
+  "nombre": "Daniel",
+  "avatarUrl": "https://...",
+  "creadoEn": "2026-08-30T16:41:44Z",
+  "emailVerificado": true,
+  "tieneGoogle": true,
+  "tienePassword": true
+}
+```
+
+Los tres booleanos del final son **exactamente** lo que decide qué se enseña.
+Diseña los cuatro estados que salen de combinarlos:
+
+| Estado | `tieneGoogle` | `tienePassword` | `emailVerificado` |
+|---|---|---|---|
+| Cuenta completa | sí | sí | sí |
+| Solo Google | sí | **no** | sí |
+| Solo nativa | **no** | sí | sí |
+| Email recién cambiado | cualquiera | cualquiera | **no** |
+
+**No hay borrar cuenta**, a propósito: todavía no está implementado. No lo pintes.
+
+Errores que la pantalla tiene que saber enseñar, porque la API los devuelve de
+verdad: contraseña actual incorrecta, email ya registrado por otra cuenta, y
+"ese ya es tu email".
 
 ### El carácter que busco
 
