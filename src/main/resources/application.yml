@@ -74,6 +74,10 @@ polaris:
     emisor: polaris
   # Para construir el enlace de verificacion de email. Sin barra final.
   url-base: ${POLARIS_URL_BASE:http://localhost:8080}
+  correo:
+    # Solo lo usa SmtpEnviarVerificacionAdapter, que es @Profile("prod").
+    # En dev el enlace va al log y esto ni se lee.
+    remitente: ${POLARIS_CORREO_REMITENTE:no-reply@polaris.local}
 
 springdoc:
   swagger-ui:
@@ -103,6 +107,21 @@ spring:
       on-profile: prod
   jpa:
     show-sql: false
+
+  # SMTP real. Solo en prod: en dev no hay bean de correo que configurar.
+  # Con Gmail hace falta una "contrasena de aplicacion", no la del Google;
+  # el acceso con la contrasena normal esta desactivado desde 2022.
+  mail:
+    host: ${POLARIS_SMTP_HOST}
+    port: ${POLARIS_SMTP_PUERTO:587}
+    username: ${POLARIS_SMTP_USUARIO}
+    password: ${POLARIS_SMTP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 springdoc:
   swagger-ui:

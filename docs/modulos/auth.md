@@ -19,7 +19,7 @@ UsuarioService.registrar()   [BCrypt hashea; emailVerificado = false]
         ↓
 JwtService.generarVerificacion(usuarioId)   [JWT de 24h, claim proposito=verificacion]
         ↓
-EnviarVerificacionPort.enviar()   [en dev: log · en prod: SMTP, aún sin escribir]
+EnviarVerificacionPort.enviar()   [en dev: log · en prod: SMTP]
 
 GET /api/auth/verificacion?token=...
         ↓
@@ -135,6 +135,7 @@ auth/
     └── security/     SecurityConfig · JwtService · JwtAuthenticationFilter
                       OAuth2LoginSuccessHandler · BCryptPasswordHasherAdapter
                       LogEnviarVerificacionAdapter (@Profile dev)
+                      SmtpEnviarVerificacionAdapter (@Profile prod)
 ```
 
 `GetOrCreate` no está en la lista de verbos de [[convenciones]]. Es la
@@ -162,6 +163,10 @@ En `.env`, ver `.env.example`:
   `JwtService`
 - `POLARIS_URL_BASE` — para construir el enlace de verificación, por defecto
   `http://localhost:8080`
+- `POLARIS_SMTP_HOST`, `POLARIS_SMTP_PUERTO`, `POLARIS_SMTP_USUARIO`,
+  `POLARIS_SMTP_PASSWORD` y `POLARIS_CORREO_REMITENTE` — **solo en `prod`**.
+  En `dev` no se leen: el enlace va al log. Con Gmail la password es una
+  *contraseña de aplicación*, no la de la cuenta
 
 URI de redirección autorizada en Google:
 `http://localhost:8080/login/oauth2/code/google`
@@ -170,12 +175,29 @@ Scopes `openid`, `email` y `profile`: no son sensibles, así que la app no pasa
 por el proceso de verificación de Google. **Pásala a "In production"** en la
 consola: en estado "Testing" los refresh tokens caducan a los 7 días.
 
+## El envío del correo
+
+`EnviarVerificacionPort` tiene dos adaptadores y el dominio no sabe cuál corre:
+
+- **`LogEnviarVerificacionAdapter`** (`@Profile("dev")`) — escribe el enlace en
+  el log. Sin SMTP ni cuenta de correo.
+- **`SmtpEnviarVerificacionAdapter`** (`@Profile("prod")`) — lo manda por SMTP
+  con `JavaMailSender`.
+
+**Si el envío falla, el adaptador lo registra y no propaga la excepción.** El
+usuario ya está creado a esas alturas: reventar ahí le dejaría la cuenta a
+medias y un 500 sin explicación. El correo del destinatario **no** se escribe en
+el log del error.
+
+La contrapartida está en el apartado siguiente: hoy no hay forma de reenviar el
+enlace, así que un fallo de SMTP deja esa cuenta sin verificar hasta que se
+toque la BD a mano.
+
 ## Pendiente
 
-- **`SmtpEnviarVerificacionAdapter`**, el adaptador de prod de
-  `EnviarVerificacionPort`. Necesita aprobar `spring-boot-starter-mail`
-  (dependencia nueva) y una cuenta SMTP real. Hoy, en `dev`, el enlace se ve
-  en el log.
+- **Reenviar la verificación.** No existe el endpoint. Hace falta en cuanto el
+  correo salga de verdad: si el envío falla, o el token de 24 h caduca antes de
+  que abras el correo, la cuenta se queda sin verificar y sin salida.
 - Cuando exista React (tras B3), `OAuth2LoginSuccessHandler` deja de devolver
   JSON y pasa a redirigir al frontend con el token.
 - Refresh token propio. Hoy la sesión caduca a las 12 h y toca volver a
