@@ -1,6 +1,6 @@
 # Roadmap
 
-Sin fechas. Se avanza por entregables. **Fase actual: B0.**
+Sin fechas. Se avanza por entregables. **Fase actual: B3.** B0, B1 y B2 cerrados.
 
 ## Backend
 
@@ -18,15 +18,15 @@ Entidad `Usuario`, OAuth2 con Google, emisión de JWT propio, filtro de segurida
 `Titulo` y `Entrada` completos siguiendo [[plantilla-modulo]]. Filtros por tipo y estado con Specifications.
 **Entregable:** CRUD completo probado con Postman.
 
-> Esta fase es la que más importa. Aquí se valida que la plantilla de 15 ficheros funciona y es soportable, **antes** de replicarla en las otras 10 entidades. Si el molde chirría, se corrige aquí y no después.
+> Esta fase es la que más importa. Aquí se valida que la plantilla de 16 ficheros funciona y es soportable, **antes** de replicarla en las otras 10 entidades. Si el molde chirría, se corrige aquí y no después.
 
-**Al cerrar B2, antes de seguir:** volcar el esquema a `V1__esquema_inicial.sql`, añadir Flyway y pasar a `ddl-auto: validate`.
+**Hecho el 2026-08-30:** esquema volcado a `V1__esquema_inicial.sql`, Flyway dentro y `ddl-auto` en `validate`.
 
 ```bash
-mysqldump --no-data -u root -p polaris > src/main/resources/db/migration/V1__esquema_inicial.sql
+docker exec polaris-mysql mysqldump --no-data --compact --skip-comments -u root -p polaris
 ```
 
-No se aplaza. De B5 en adelante hay datos reales y ya es tarde.
+Al volcado solo se le cambiaron los nombres de indices y claves ajenas, que Hibernate genera como hashes. Hibernate no valida nombres de constraint, solo tablas, columnas y tipos.
 
 ### B3 — Odisea, APIs externas
 Clientes de TMDB, juegos y libros como adaptadores de salida. Endpoint de búsqueda y de importación. Claves en variables de entorno.

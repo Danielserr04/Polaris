@@ -2,7 +2,7 @@
 
 MySQL 8, charset `utf8mb4`. Toda tabla de datos personales lleva `usuario_id`.
 
-Hasta cerrar B2 el esquema lo genera Hibernate con `ddl-auto: update`, así que **esta nota es la única fuente fiable del esquema** durante esa fase. Mantenerla al día importa. Ver [[007-esquema-ddl-auto-luego-flyway]].
+Desde el cierre de B2 la fuente de verdad del esquema es `src/main/resources/db/migration/`. Esta nota lo documenta y lo explica, pero si las dos discrepan, manda la migración. Ver [[007-esquema-ddl-auto-luego-flyway]].
 
 ## auth
 

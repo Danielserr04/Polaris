@@ -17,7 +17,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 |---|---|---|
 | [[auth]] | Identidad: OAuth2 Google y JWT | **Hecho** |
 | [[nucleo]] | Perfil y peso corporal | Pendiente |
-| [[odisea]] | Ocio: pelis, series, juegos, libros | **Primero** |
+| [[odisea]] | Ocio: pelis, series, juegos, libros | **Hecho** (B2) |
 | [[kuiper]] | Gastos | Nuevo |
 | [[fusion]] | Nutrición | Nuevo |
 | [[atlas]] | Gym | Nuevo |

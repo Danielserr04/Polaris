@@ -17,11 +17,22 @@ spring:
     password: ${POLARIS_DB_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  # B2 cerrado: el esquema lo construye Flyway desde db/migration.
+  # Ver docs/decisiones/007-esquema-ddl-auto-luego-flyway.md
+  flyway:
+    enabled: true
+    # La base de dev ya existia, creada por ddl-auto durante B0-B2, y no tiene
+    # tabla de historico. baseline-on-migrate la marca como si V1 ya estuviera
+    # aplicada en vez de reventar por encontrar tablas sin registrar.
+    # En una base vacia no cambia nada: V1 se aplica igual.
+    baseline-on-migrate: true
+    baseline-version: 1
+
   jpa:
     hibernate:
-      # update hasta cerrar B2. Pasa a validate cuando entre Flyway.
-      # Ver docs/decisiones/007-esquema-ddl-auto-luego-flyway.md
-      ddl-auto: update
+      # El esquema es de Flyway. Hibernate solo comprueba que las entidades
+      # cuadran con lo que hay y aborta el arranque si no.
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
