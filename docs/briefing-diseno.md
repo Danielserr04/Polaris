@@ -166,8 +166,8 @@ tiene que servir también ahí.
 ### Qué no quiero
 
 - Texto de relleno ni datos inventados en Odisea. Usa los de arriba. La
-  excepcion son los widgets de los modulos que aun no existen, y ahi quiero que
-  este marcado.
+  excepción son los widgets de los módulos que aún no existen, y ahí quiero que
+  esté marcado.
 - Pantallas de marketing o de producto: esto no se vende a nadie.
 - Densidad de dashboard corporativo con tarjetas grandes y huecas.
 - Que la lista y la ficha parezcan de dos apps distintas.
