@@ -45,6 +45,18 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- B2 cerrado: el esquema deja de gestionarlo ddl-auto y pasa a ser
+             migraciones versionadas. Ver docs/decisiones/007. La version la
+             fija spring-boot-starter-parent, no se pone a mano. -->
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.flywaydb</groupId>
+            <artifactId>flyway-mysql</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -64,9 +76,27 @@
             <version>${springdoc.version}</version>
         </dependency>
 
+        <!-- B1. Nimbus JOSE+JWT entra transitivamente por oauth2-client:
+             con eso se firma el JWT propio sin anadir ninguna libreria mas. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-oauth2-client</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

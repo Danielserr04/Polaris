@@ -1,6 +1,6 @@
 # 007 — Esquema: `ddl-auto` primero, Flyway al cerrar B2
 
-Estado: aceptada · 2026-08-28
+Estado: aceptada · 2026-08-28 · **aplicada el 2026-08-30** al cerrar B2
 
 ## Contexto
 

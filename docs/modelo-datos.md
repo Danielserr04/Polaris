@@ -2,7 +2,7 @@
 
 MySQL 8, charset `utf8mb4`. Toda tabla de datos personales lleva `usuario_id`.
 
-Hasta cerrar B2 el esquema lo genera Hibernate con `ddl-auto: update`, así que **esta nota es la única fuente fiable del esquema** durante esa fase. Mantenerla al día importa. Ver [[007-esquema-ddl-auto-luego-flyway]].
+Desde el cierre de B2 la fuente de verdad del esquema es `src/main/resources/db/migration/`. Esta nota lo documenta y lo explica, pero si las dos discrepan, manda la migración. Ver [[007-esquema-ddl-auto-luego-flyway]].
 
 ## auth
 
@@ -11,11 +11,17 @@ Hasta cerrar B2 el esquema lo genera Hibernate con `ddl-auto: update`, así que 
 | Campo | Tipo | Nota |
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
-| email | varchar | único |
+| username | varchar | único, en minúsculas |
+| email | varchar | único, en minúsculas |
 | nombre | varchar | |
-| google_id | varchar | único |
+| password_hash | varchar | nullable, BCrypt. Nulo si solo entra con Google |
+| email_verificado | boolean | |
+| google_id | varchar | nullable, único. Nulo si solo tiene login nativo |
 | avatar_url | varchar | |
 | creado_en | timestamp | |
+
+Un usuario puede tener login nativo, login con Google, o ambos si se vinculan
+por email (ver [[auth]]). Nunca ninguno de los dos.
 
 ---
 

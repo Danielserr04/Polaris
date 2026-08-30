@@ -28,7 +28,7 @@ Lee `docs/00-indice.md` cuando necesites contexto de un módulo concreto.
 ## Stack
 
 - Java 21, Spring Boot 3.x
-- MySQL 8. Esquema con `ddl-auto: update` hasta cerrar B2; Flyway a partir de ahí (ver `docs/decisiones/007-esquema-ddl-auto-luego-flyway.md`)
+- MySQL 8. Esquema con Flyway y `ddl-auto: validate` desde el cierre de B2 (ver `docs/decisiones/007-esquema-ddl-auto-luego-flyway.md`). Un `V<n>` aplicado no se edita nunca
 - MapStruct para todo el mapeo
 - JPA Specifications para filtros dinámicos
 - React en el frontend (aún sin empezar)
@@ -60,4 +60,4 @@ La vault de Obsidian es la carpeta `docs/`. Se abre esa carpeta, no la raíz del
 
 ## Estado
 
-Fase **B0** (esqueleto). Ver `docs/roadmap.md`.
+Fase **B3** (Odisea, APIs externas). B0, B1 y B2 cerrados. Ver `docs/roadmap.md`.

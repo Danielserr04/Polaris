@@ -43,10 +43,13 @@ odisea/
         ├── TituloController
         ├── TituloEntity
         ├── TituloJpaAdapter
-        └── TituloRepository
+        ├── TituloRepository
+        └── TituloSpecifications
 ```
 
-Son 15 ficheros por entidad. Es mucho, y es a propósito: cada uno tiene una sola razón para cambiar.
+Son 16 ficheros por entidad. Es mucho, y es a propósito: cada uno tiene una sola razón para cambiar.
+
+`TituloSpecifications` traduce `TituloFilter` a JPA Specifications; lo usa `TituloJpaAdapter.findAll()`. Vive junto al resto de `infrastructure/persistence/`.
 
 ## Qué hace cada pieza
 
@@ -185,7 +188,7 @@ public class TituloController {
 
 ## Checklist al crear una entidad
 
-- [ ] Los 15 ficheros creados
+- [ ] Los 16 ficheros creados
 - [ ] `domain/` sin un solo import de Spring ni JPA (salvo `@Service` y `@RequiredArgsConstructor`)
 - [ ] Migración Flyway con la tabla
 - [ ] `usuario_id` presente si son datos personales

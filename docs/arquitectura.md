@@ -83,7 +83,7 @@ MySQL 8. Una sola base de datos para todos los módulos; las tablas se prefijan 
 
 El esquema se gestiona en dos tiempos (ver [[007-esquema-ddl-auto-luego-flyway]]):
 
-- **Hasta cerrar B2:** `ddl-auto: update`. Hibernate crea las tablas leyendo las entidades. El modelo aún se mueve y no hay datos que proteger.
-- **A partir de B3:** Flyway con migraciones versionadas y `ddl-auto: validate`.
+- **Hasta cerrar B2:** `ddl-auto: update`. Hibernate creaba las tablas leyendo las entidades. Fase terminada.
+- **A partir de B3 (actual):** Flyway con migraciones versionadas en `src/main/resources/db/migration/` y `ddl-auto: validate`. La `V1__esquema_inicial.sql` sale del volcado de lo que construyó `ddl-auto` durante B0-B2.
 
 `DECIMAL` para importes y pesos, nunca `FLOAT` ni `DOUBLE`. Tablas en `utf8mb4`.
