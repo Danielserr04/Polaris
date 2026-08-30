@@ -9,6 +9,13 @@ Decisiones tomadas el 2026-08-30: carácter **mixto** (lista densa, ficha
 visual), **tema oscuro primero**, **escritorio primero**, y esta primera tanda
 es **solo dirección visual**, sin flujos.
 
+**Corrección del mismo día.** La primera maqueta salió como un panel de control
+frío: todo monoespaciado, un solo peso de letra, grises azulados y sin
+movimiento. No era lo que se buscaba. La dirección pasa a ser **acogedora, con
+alma y viva** — contraste fuerte de tipografías, base oscura **cálida** en vez
+de gris azulado, y microinteracciones. Va en [[briefing-figma]], que es la
+versión que se está usando.
+
 ---
 
 ## A partir de aquí, lo que se pega
