@@ -11,6 +11,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[modelo-datos]] — todas las tablas
 - [[roadmap]] — fases y estado actual
 - [[briefing-diseno]] — el texto que se le pasa a una herramienta de diseño (D0)
+- [[briefing-figma]] — la versión corta, bajo 2000 caracteres
 
 ## Módulos
 
