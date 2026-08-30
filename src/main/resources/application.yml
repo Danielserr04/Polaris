@@ -90,6 +90,20 @@ polaris:
     imagen-base: https://image.tmdb.org/t/p/w500
     idioma: es-ES
 
+  # Catalogo externo de juegos (B3). La credencial se saca registrando una
+  # aplicacion en Twitch, no en IGDB, y el token que devuelve caduca: lo
+  # renueva IgdbCatalogoAdapter solo.
+  igdb:
+    url-api: https://api.igdb.com/v4
+    url-token: https://id.twitch.tv/oauth2/token
+    # Vacios a proposito, igual que el token de TMDB: sin ellos la aplicacion
+    # arranca y buscar juegos responde 400 diciendo que faltan.
+    client-id: ${POLARIS_IGDB_CLIENT_ID:}
+    client-secret: ${POLARIS_IGDB_CLIENT_SECRET:}
+    # La portada llega como un image_id suelto y la URL se compone con el
+    # tamano: t_cover_big es el util para una caratula.
+    imagen-base: https://images.igdb.com/igdb/image/upload/t_cover_big/
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

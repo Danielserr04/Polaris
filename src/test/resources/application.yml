@@ -48,3 +48,12 @@ polaris:
     token: ""
     imagen-base: https://image.tmdb.org/t/p/w500
     idioma: es-ES
+
+  # Igual que tmdb: los tests de dominio mockean el puerto. Estos valores solo
+  # existen para que el adaptador se pueda construir.
+  igdb:
+    url-api: https://api.igdb.com/v4
+    url-token: https://id.twitch.tv/oauth2/token
+    client-id: ""
+    client-secret: ""
+    imagen-base: https://images.igdb.com/igdb/image/upload/t_cover_big/

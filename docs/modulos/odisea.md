@@ -49,10 +49,10 @@ entrada tuya que todavía no existe.
 | Tipo | Fuente | Estado |
 |---|---|---|
 | Películas y series | TMDB | **Hecho** — `TmdbCatalogoAdapter` |
-| Juegos | IGDB o RAWG | **Sin decidir** |
+| Juegos | IGDB | **Hecho** — `IgdbCatalogoAdapter` |
 | Libros | Google Books u OpenLibrary | **Sin decidir** |
 
-IGDB tiene mejores datos; RAWG es mucho más fácil de autenticar.
+**IGDB sobre RAWG**, decidido el 2026-08-30. RAWG se autentica con una clave y ya, pero su catálogo está agregado de varias fuentes y se nota: duplicados, géneros inconsistentes y fichas a medias en cuanto sales de lo conocido. IGDB está curado. Se acepta el coste de autenticación a cambio de los datos.
 
 Cada fuente es un adaptador de salida detrás de `CatalogoExternoPort`. El
 servicio recibe **la lista entera de adaptadores** y elige por tipo con
@@ -82,11 +82,31 @@ Películas y series son endpoints distintos y sus campos no se llaman igual
 (`title`/`name`, `release_date`/`first_air_date`, `runtime`/`episode_run_time`).
 Esa traducción vive dentro del adaptador y no sale de ahí.
 
+### IGDB
+
+Tiene dos rarezas que TMDB no tiene, y las dos se resuelven dentro del adaptador.
+
+**La credencial no es una clave fija.** La aplicación se registra en **Twitch**,
+no en IGDB (`dev.twitch.tv/console/apps`), y con su *Client ID* y *Client Secret*
+el backend pide un token que **caduca**. `IgdbCatalogoAdapter` lo cachea y lo
+renueva solo, con cinco minutos de margen para no cortar una petición en curso.
+Es un *client credentials*: no hay refresh token, se vuelve a pedir entero.
+
+**No es REST al uso.** Se consulta con `POST` y un lenguaje propio en el cuerpo:
+`search "zelda"; fields name,cover.image_id; limit 20;`. Las comillas del texto
+buscado se escapan, o un título con comillas rompe la consulta.
+
+Además la respuesta no viene masticada: `first_release_date` es un epoch en
+segundos y la portada es un `image_id` suelto con el que hay que componer la URL.
+
+**`duracionMin` se queda a `null` en los juegos.** El campo son minutos en una
+película y páginas en un libro; en un juego no significa nada.
+
 ## Pendiente
 
 - **Temporadas y episodios.** No encajan en el modelo actual. De momento `progreso` guarda el número de episodio y basta. Cuando haga falta de verdad, tabla aparte.
-- Decidir IGDB vs RAWG y Google Books vs OpenLibrary. Es lo único que falta
-  para cerrar B3: el puerto y el servicio ya están, solo faltan los adaptadores.
+- Decidir Google Books vs OpenLibrary y escribir ese adaptador. Es lo único que
+  falta para cerrar B3.
 
 ## Estado
 
@@ -94,7 +114,7 @@ Esa traducción vive dentro del adaptador y no sale de ahí.
 |---|---|
 | `Titulo` | **Hecho** — CRUD completo, filtros por `tipo` y `texto` con Specifications, verificado contra MySQL |
 | `Entrada` | **Hecho** — CRUD completo, filtros por `tipo` y `estado`, aislada por `usuario_id`, verificada contra MySQL |
-| Catálogo externo | **TMDB hecho** — búsqueda e importación. Juegos y libros, sin fuente decidida |
+| Catálogo externo | **TMDB e IGDB hechos** — búsqueda e importación de pelis, series y juegos. Libros, sin fuente decidida |
 
 ## Decisiones de implementación (B2)
 
