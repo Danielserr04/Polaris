@@ -109,6 +109,14 @@ porque el parámetro `state` de OAuth2 la necesita. La API en sí es stateless.
 **401 en vez de redirect al login de Google.** Un cliente que llama sin
 token quiere un código de error, no el HTML de Google.
 
+**Y lo mismo cuando el login de Google falla.** Sin `OAuth2LoginFailureHandler`,
+Spring Security redirige a `/login?error`, una página que en una API no existe:
+te quedas mirando un 404 sin saber qué ha pasado. El handler responde un 401 con
+el formato de error de siempre, y **manda al log el código que devuelve Google**
+(`redirect_uri_mismatch`, `access_denied`, `invalid_client`), que es lo único que
+sirve para arreglarlo. Ese código no se devuelve al cliente: describe la
+configuración del servidor.
+
 **Las rutas de acción se salen del patrón `/api/<modulo>/<entidad>`.**
 `/api/auth/registro`, `/api/auth/login`, `/api/auth/verificacion` son verbos,
 no sustantivos. No hay forma honesta de forzarlos al molde CRUD.
@@ -133,7 +141,8 @@ auth/
     ├── persistence/  UsuarioEntity · UsuarioRepository · UsuarioJpaAdapter
     │                 AuthController · dto/in · dto/out · mapper/
     └── security/     SecurityConfig · JwtService · JwtAuthenticationFilter
-                      OAuth2LoginSuccessHandler · BCryptPasswordHasherAdapter
+                      OAuth2LoginSuccessHandler · OAuth2LoginFailureHandler
+                      BCryptPasswordHasherAdapter
                       LogEnviarVerificacionAdapter (@Profile dev)
                       SmtpEnviarVerificacionAdapter (@Profile prod)
 ```

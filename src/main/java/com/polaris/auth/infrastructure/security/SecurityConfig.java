@@ -25,6 +25,7 @@ public class SecurityConfig {
 
     private final JwtService jwtService;
     private final OAuth2LoginSuccessHandler oauth2LoginSuccessHandler;
+    private final OAuth2LoginFailureHandler oauth2LoginFailureHandler;
 
     /** Rutas abiertas: el healthcheck, la documentacion y el propio login. */
     private static final String[] PUBLICAS = {
@@ -51,7 +52,8 @@ public class SecurityConfig {
                         .requestMatchers(PUBLICAS).permitAll()
                         .anyRequest().authenticated())
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler(oauth2LoginSuccessHandler))
+                        .successHandler(oauth2LoginSuccessHandler)
+                        .failureHandler(oauth2LoginFailureHandler))
                 // 401 en vez del redirect al login de Google: esto es una API, y un
                 // cliente que llama sin token quiere un codigo de error, no HTML.
                 .exceptionHandling(ex -> ex
