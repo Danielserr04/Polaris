@@ -8,34 +8,32 @@ Copiar desde la línea de abajo.
 
 ---
 
-**Polaris** — app web personal de uso propio: ocio, gastos, nutrición y gym. La
-abro varias veces al día y quiero que apetezca abrirla.
+**Polaris** — app web personal: ocio, gastos, nutrición y gym. La abro varias
+veces al día y quiero que apetezca abrirla.
 
-**Busco: acogedor, bonito, con alma.** Que se sienta un sitio, no un panel de
-control. Cálido, no clínico.
+**Busco: acogedor, bonito, con alma.** Un sitio, no un panel de control.
 
 **NO quiero** (mi primer intento salió así): todo monoespaciado, un solo peso de
 letra, grises azulados, densidad de terminal, cero movimiento.
 
 **Tipografía con contraste fuerte.** Una display con carácter y peso para
-títulos, contra una de texto ligera y legible para el resto. Ese salto entre
-gruesa y fina da el tono. Nada de un solo tipo para todo.
+títulos, contra una de texto ligera para el resto. Ese salto da el tono.
 
-**Color con mezcla y contraste.** Base oscura pero **cálida**, no gris azulado.
-Un acento con temperatura y contrastes que convivan. Huye del oscuro neutro.
+**Color cálido.** Base oscura pero cálida, no gris azulado. Un acento con
+temperatura y contrastes que convivan.
 
 **Que se sienta viva.** Transiciones, hover con intención, entradas escalonadas,
-microinteracciones al marcar algo. Discreto pero presente.
+microinteracciones. Discreto pero presente.
 
 **Modo oscuro, escritorio 1440.**
 
 **Tres pantallas:**
 
-1. **Inicio** — recibidor con un widget por módulo (Odisea, Kuiper, Fusión,
-   Atlas, Núcleo). *Solo Odisea tiene datos reales; el resto inventado, márcalo.*
+1. **Inicio** — un widget por módulo (Odisea, Kuiper, Fusión, Atlas, Núcleo).
+   *Solo Odisea tiene datos reales; el resto inventado, márcalo.*
 2. **Odisea** — mi lista de pelis, series, juegos y libros. Densa para escanear
    muchas, pero cálida. La ficha de detalle respira, con carátula grande.
-3. **Perfil** — cuenta, email, contraseña, Google. Formularios y estados.
+3. **Perfil** — cuenta, email, contraseña, Google.
 
 **Datos reales, sin relleno.** Cada ficha tiene tipo, título, año, sinopsis,
 carátula, géneros y duración (minutos en pelis, páginas en libros, nada en
