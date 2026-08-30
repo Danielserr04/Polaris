@@ -1,5 +1,9 @@
 package com.polaris.auth.domain.service;
 
+import com.polaris.auth.application.in.ActualizarPerfilInterface;
+import com.polaris.auth.application.in.CambiarEmailInterface;
+import com.polaris.auth.application.in.CambiarPasswordInterface;
+import com.polaris.auth.application.in.DesvincularGoogleInterface;
 import com.polaris.auth.application.in.GetOrCreateUsuarioInterface;
 import com.polaris.auth.application.in.GetUsuarioInterface;
 import com.polaris.auth.application.in.LoginInterface;
@@ -13,6 +17,7 @@ import com.polaris.auth.domain.model.PerfilGoogle;
 import com.polaris.auth.domain.model.Usuario;
 import com.polaris.auth.domain.model.UsuarioNotFoundException;
 import com.polaris.shared.error.DuplicateResourceException;
+import com.polaris.shared.error.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +34,11 @@ public class UsuarioService implements
         GetOrCreateUsuarioInterface,
         RegistrarUsuarioInterface,
         LoginInterface,
-        VerificarEmailInterface {
+        VerificarEmailInterface,
+        ActualizarPerfilInterface,
+        CambiarPasswordInterface,
+        CambiarEmailInterface,
+        DesvincularGoogleInterface {
 
     private final UsuarioRepositoryPort repository;
     private final PasswordHasherPort passwordHasher;
@@ -104,6 +113,102 @@ public class UsuarioService implements
     public Usuario verificar(Long usuarioId) {
         Usuario usuario = get(usuarioId);
         usuario.setEmailVerificado(true);
+        return repository.save(usuario);
+    }
+
+    /**
+     * Nombre y avatar son lo unico editable del perfil. El username no: es la
+     * mitad de tus credenciales, y cambiarlo dejaria de funcionar el login
+     * mientras el usuario cree que sigue igual. El email tiene su propio caso
+     * de uso porque obliga a re-verificar.
+     *
+     * <p>Ojo con Google: si la cuenta esta vinculada, el proximo login con
+     * Google vuelve a pisar nombre y avatar con los de Google. Es deliberado
+     * (ver getOrCreate), pero significa que editarlos aqui solo dura hasta
+     * entonces.
+     */
+    @Override
+    public Usuario actualizarPerfil(Long usuarioId, String nombre, String avatarUrl) {
+        Usuario usuario = get(usuarioId);
+        usuario.setNombre(nombre);
+        usuario.setAvatarUrl(avatarUrl);
+        return repository.save(usuario);
+    }
+
+    /**
+     * Cambiar la contrasena exige la actual, para que un token robado no baste
+     * para secuestrar la cuenta.
+     *
+     * <p>La excepcion es una cuenta que entro solo con Google y todavia no
+     * tiene contrasena: ahi no hay actual que pedir, y se esta anadiendo una
+     * segunda forma de entrar, no sustituyendo la que hay.
+     */
+    @Override
+    public void cambiarPassword(Long usuarioId, String passwordActual, String passwordNueva) {
+        Usuario usuario = get(usuarioId);
+
+        if (usuario.getPasswordHash() != null) {
+            if (passwordActual == null
+                    || !passwordHasher.coincide(passwordActual, usuario.getPasswordHash())) {
+                throw new CredencialesInvalidasException();
+            }
+        }
+
+        usuario.setPasswordHash(passwordHasher.hash(passwordNueva));
+        repository.save(usuario);
+    }
+
+    /**
+     * Cambiar el email deja la cuenta <b>sin verificar</b>: el correo nuevo no
+     * lo ha comprobado nadie. Quien llame se encarga de mandar el enlace.
+     *
+     * <p>Pide la contrasena actual por lo mismo que cambiarPassword: si no, un
+     * token robado permitiria apuntar la cuenta a otro correo y quedarsela. Una
+     * cuenta solo-Google no tiene contrasena que pedir, y ahi el propio login
+     * de Google es la garantia.
+     */
+    @Override
+    public Usuario cambiarEmail(Long usuarioId, String emailNuevo, String password) {
+        Usuario usuario = get(usuarioId);
+
+        if (usuario.getPasswordHash() != null) {
+            if (password == null || !passwordHasher.coincide(password, usuario.getPasswordHash())) {
+                throw new CredencialesInvalidasException();
+            }
+        }
+
+        String normalizado = normalizar(emailNuevo);
+
+        if (normalizado.equals(usuario.getEmail())) {
+            throw new ValidationException("Ese ya es tu email");
+        }
+        if (repository.findByEmail(normalizado).isPresent()) {
+            throw new DuplicateResourceException("Ese email ya esta registrado");
+        }
+
+        usuario.setEmail(normalizado);
+        usuario.setEmailVerificado(false);
+        return repository.save(usuario);
+    }
+
+    /**
+     * Desvincular Google solo se permite si queda otra forma de entrar. Sin
+     * contrasena, quitarle el googleId a la cuenta la deja inaccesible para
+     * siempre: no hay nada con lo que volver a autenticarse.
+     */
+    @Override
+    public Usuario desvincularGoogle(Long usuarioId) {
+        Usuario usuario = get(usuarioId);
+
+        if (usuario.getGoogleId() == null) {
+            throw new ValidationException("Esta cuenta no esta vinculada con Google");
+        }
+        if (usuario.getPasswordHash() == null) {
+            throw new ValidationException(
+                    "Pon una contrasena antes de desvincular Google, o te quedas sin forma de entrar");
+        }
+
+        usuario.setGoogleId(null);
         return repository.save(usuario);
     }
 

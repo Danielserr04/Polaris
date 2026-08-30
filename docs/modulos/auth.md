@@ -160,6 +160,49 @@ uso: buscar por `googleId` y, si no existe, buscar por email o crear.
 | POST | `/api/auth/registro` | Registro nativo. Manda email de verificación |
 | POST | `/api/auth/login` | Login nativo por username o email |
 | GET | `/api/auth/verificacion?token=` | Confirma el email del enlace de registro |
+| PUT | `/api/auth/usuario` | **Protegido.** Edita tu nombre y tu avatar |
+| PUT | `/api/auth/usuario/password` | **Protegido.** Cambia tu contraseña, o pon una si entraste solo con Google |
+| PUT | `/api/auth/usuario/email` | **Protegido.** Cambia tu email. Queda sin verificar |
+| POST | `/api/auth/usuario/verificacion` | **Protegido.** Te reenvía el email de verificación |
+| DELETE | `/api/auth/usuario/google` | **Protegido.** Desvincula Google |
+
+## El perfil de cuenta
+
+Lo editable y lo que no:
+
+**Nombre y avatar** se cambian sin más. Pero si la cuenta está vinculada con
+Google, **el siguiente login con Google los vuelve a pisar** con los suyos. Es
+deliberado (ver `getOrCreate` arriba), y significa que editarlos solo dura hasta
+entonces.
+
+**El `username` no se toca.** Es la mitad de tus credenciales: cambiarlo rompería
+el login mientras crees que sigue igual.
+
+**El email tiene endpoint propio** porque obliga a re-verificar. Al cambiarlo la
+cuenta queda `emailVerificado = false` y se manda el enlace al correo nuevo.
+Hasta que lo abras, el login nativo responde 403 — **pero el token que ya tienes
+sigue valiendo**, así que no te quedas fuera a media sesión.
+
+### Las dos reglas que evitan quedarse sin entrar
+
+**Cambiar contraseña y cambiar email exigen la contraseña actual.** Sin eso, un
+token robado bastaría para apuntar la cuenta a otro correo y quedársela. La
+excepción son las cuentas que entraron solo con Google y todavía no tienen
+contraseña: ahí no hay actual que pedir, y poner una es *añadir* una segunda
+forma de entrar, no sustituir la que hay.
+
+**Desvincular Google exige tener contraseña.** Sin ella, quitar el `googleId`
+deja la cuenta inaccesible para siempre: no queda nada con lo que autenticarse.
+Se rechaza con un 400 que lo dice.
+
+### Lo que el DTO cuenta y lo que calla
+
+`UsuarioFormDto` lleva `emailVerificado`, `tieneGoogle` y `tienePassword` para
+que la pantalla sepa qué enseñar: pedir la contraseña actual o dejar poner una
+nueva, ofrecer desvincular Google, avisar del email sin verificar.
+
+Son **booleanos**. Ni el `googleId` ni el hash salen nunca de la aplicación: la
+pantalla no necesita su valor, solo saber si existen.
 
 ## Configuración
 
@@ -218,9 +261,15 @@ Con credenciales reales de Google Cloud Console, contra MySQL:
 
 ## Pendiente
 
-- **Reenviar la verificación.** No existe el endpoint. Hace falta en cuanto el
-  correo salga de verdad: si el envío falla, o el token de 24 h caduca antes de
-  que abras el correo, la cuenta se queda sin verificar y sin salida.
+- **Borrar la cuenta.** No existe, y no es un olvido: borrar un usuario tiene
+  que arrastrar sus datos de Odisea, pero la regla 2 de `CLAUDE.md` prohíbe que
+  `auth` llame a `odisea`. Hace falta decidir el mecanismo — lo natural es un
+  evento de `shared/` que cada módulo escucha — y eso es una nota de decisión,
+  no algo que se improvise.
+- **Cambiar la contraseña no invalida los tokens ya emitidos.** El JWT es sin
+  estado: no hay dónde revocarlo. Si sospechas que te han robado uno, hoy la
+  única defensa es esperar a que caduque (12 h). Se arregla con un contador de
+  versión en el usuario que entre en el token, y es trabajo aparte.
 - Cuando exista React (tras B3), `OAuth2LoginSuccessHandler` deja de devolver
   JSON y pasa a redirigir al frontend con el token.
 - Refresh token propio. Hoy la sesión caduca a las 12 h y toca volver a
