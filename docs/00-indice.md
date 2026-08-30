@@ -10,6 +10,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[convenciones]] — naming, commits, errores, tests
 - [[modelo-datos]] — todas las tablas
 - [[roadmap]] — fases y estado actual
+- [[briefing-diseno]] — el texto que se le pasa a una herramienta de diseño (D0)
 
 ## Módulos
 
