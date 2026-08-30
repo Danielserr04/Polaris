@@ -33,10 +33,42 @@ ni ninguna decisión visual tomada.** Empezamos por ahí.
    importa más la legibilidad a tamaño pequeño que el carácter.
 3. **Componentes base**: fila de lista, badge de estado, botón (primario y
    secundario), campo de búsqueda, tarjeta de detalle, valoración en estrellas.
-4. **Una pantalla de muestra** que los use todos: el listado de Odisea en
-   escritorio.
+4. **Dos pantallas de muestra** que los usen todos:
+   - **El dashboard**, que hace de recibidor: da entrada a los cinco módulos y
+     enseña un *widget* de cada uno con lo importante de un vistazo.
+   - **El listado de Odisea**, que es la pantalla de trabajo típica.
 
 Escritorio primero, ancho 1440. El móvil viene después.
+
+### Sobre el dashboard
+
+Es lo primero que veo al abrir la app. Tiene que responder a "¿qué tengo hoy?"
+sin hacer clic, y a la vez ser la puerta a los cinco módulos.
+
+Un widget por módulo. Lo que enseñaría cada uno:
+
+| Widget | Qué muestra |
+|---|---|
+| **Odisea** | Lo que tengo en curso, con su progreso. 3 o 4 elementos |
+| **Kuiper** | Gastado este mes contra el presupuesto |
+| **Fusión** | Macros de hoy contra el objetivo |
+| **Atlas** | Última sesión y la siguiente que toca |
+| **Núcleo** | Peso actual y la tendencia |
+
+**Aviso importante y no negociable:** de esos cinco módulos **solo Odisea existe
+de verdad**. Kuiper, Fusión, Atlas y Núcleo no están construidos: no hay API ni
+tablas. Sus widgets son **maqueta especulativa** — los números que pongas ahí te
+los estarás inventando, y hay que tratarlos como tales.
+
+Diséñalos igualmente, porque quiero ver cómo queda el conjunto y porque el
+dashboard es lo que decide la retícula del shell. Pero:
+
+- **Marca en tu entrega qué widgets son reales y cuáles inventados.** No quiero
+  descubrirlo yo dentro de tres semanas.
+- Prioriza que la **retícula aguante** widgets de tamaños y formas distintos (una
+  lista, una barra de progreso, un número grande, una gráfica pequeña) por encima
+  de que los datos concretos sean verosímiles.
+- El widget de Odisea sí con datos reales, los de más abajo.
 
 ### El carácter que busco
 
@@ -133,7 +165,9 @@ tiene que servir también ahí.
 
 ### Qué no quiero
 
-- Texto de relleno ni datos inventados. Usa los de arriba.
+- Texto de relleno ni datos inventados en Odisea. Usa los de arriba. La
+  excepcion son los widgets de los modulos que aun no existen, y ahi quiero que
+  este marcado.
 - Pantallas de marketing o de producto: esto no se vende a nadie.
 - Densidad de dashboard corporativo con tarjetas grandes y huecas.
 - Que la lista y la ficha parezcan de dos apps distintas.
