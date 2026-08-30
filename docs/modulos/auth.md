@@ -202,6 +202,20 @@ La contrapartida está en el apartado siguiente: hoy no hay forma de reenviar el
 enlace, así que un fallo de SMTP deja esa cuenta sin verificar hasta que se
 toque la BD a mano.
 
+## Verificado de punta a punta (2026-08-30)
+
+Con credenciales reales de Google Cloud Console, contra MySQL:
+
+| Camino | Resultado |
+|---|---|
+| Login con Google, cuenta nueva | Crea el usuario, `username` derivado del correo, con nombre y avatar |
+| `email_verificado` en cuentas de Google | **`1`** — Google ya lo comprobó, no se pide otra vez |
+| **Vinculación**: cuenta nativa sin verificar + login de Google con ese correo | **Un solo usuario**, mismo `id`. Se rellena `googleId` y el email pasa a verificado |
+| Login nativo después de vincular | **200**, antes daba 403. El `passwordHash` sobrevive |
+| Login por email en vez de username, con mayúsculas | 200 |
+| Contraseña incorrecta | 401 |
+| El JWT de Google en el resto de la API | 200 en `/api/auth/usuario` y en el catálogo de Odisea |
+
 ## Pendiente
 
 - **Reenviar la verificación.** No existe el endpoint. Hace falta en cuanto el

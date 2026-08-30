@@ -94,7 +94,7 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | Fase | Estado |
 |---|---|
 | B0 | **Hecho** |
-| B1 | **Hecho** — falta el cliente OAuth de Google Cloud Console |
+| B1 | **Hecho** — login nativo y Google, los dos verificados de punta a punta |
 | B2 | **Hecho** — cerrado con el corte a Flyway |
 | B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
 | B4 – B8 | Pendiente |
