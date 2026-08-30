@@ -36,28 +36,57 @@ PUT    /api/odisea/entrada/{id}
 DELETE /api/odisea/entrada/{id}
 
 GET    /api/odisea/catalogo/buscar?q=&tipo=    proxy a la API externa
-POST   /api/odisea/entrada/importar            del catálogo externo a tu lista
+POST   /api/odisea/catalogo/importar           del catálogo externo a tu lista
 GET    /api/odisea/entrada/estadisticas
 ```
+
+`importar` cuelga de `catalogo` y no de `entrada`, como se había apuntado
+antes: lo que identifica la petición es una ficha de la fuente externa, no una
+entrada tuya que todavía no existe.
 
 ## APIs externas (B3)
 
 | Tipo | Fuente | Estado |
 |---|---|---|
-| Películas y series | TMDB | Decidido |
-| Juegos | IGDB o RAWG | **Pendiente** |
-| Libros | Google Books u OpenLibrary | **Pendiente** |
+| Películas y series | TMDB | **Hecho** — `TmdbCatalogoAdapter` |
+| Juegos | IGDB o RAWG | **Sin decidir** |
+| Libros | Google Books u OpenLibrary | **Sin decidir** |
 
 IGDB tiene mejores datos; RAWG es mucho más fácil de autenticar.
 
-Cada fuente es un adaptador de salida detrás de un puerto común. El servicio pide "busca esto de tipo JUEGO" y no sabe quién responde.
+Cada fuente es un adaptador de salida detrás de `CatalogoExternoPort`. El
+servicio recibe **la lista entera de adaptadores** y elige por tipo con
+`soporta()`: pide "busca esto de tipo JUEGO" y no sabe quién responde. Añadir
+una fuente es escribir un adaptador y nada más — ni tocar el servicio, ni
+registrarla en ningún sitio.
+
+Buscar un tipo sin fuente decidida devuelve **400** con el tipo en el mensaje,
+no un 404 ni un 500: el tipo existe, lo que no hay todavía es de dónde sacarlo.
 
 Al importar se comprueba `(fuente_externa, id_externo)` para no duplicar fichas.
+Si otro usuario ya importó esa película, se reutiliza su `Titulo`: el catálogo
+es compartido. Lo que se crea siempre es tu `Entrada`, en estado `PENDIENTE`.
+Importar dos veces lo mismo da **409**, no una entrada duplicada.
+
+### TMDB
+
+Autentica con el *API Read Access Token* (v4) en la cabecera `Authorization`, no
+con la `api_key` de v3 en la query: una clave en la URL acaba en los logs de
+cualquier proxy por el que pase.
+
+**Sin `POLARIS_TMDB_TOKEN` la aplicación arranca igual** y la búsqueda responde
+400 diciendo que falta. Tumbar el contexto entero por una clave que solo hace
+falta en dos endpoints sería el mismo error que ya se cometió con las de Google.
+
+Películas y series son endpoints distintos y sus campos no se llaman igual
+(`title`/`name`, `release_date`/`first_air_date`, `runtime`/`episode_run_time`).
+Esa traducción vive dentro del adaptador y no sale de ahí.
 
 ## Pendiente
 
 - **Temporadas y episodios.** No encajan en el modelo actual. De momento `progreso` guarda el número de episodio y basta. Cuando haga falta de verdad, tabla aparte.
-- Decidir IGDB vs RAWG y Google Books vs OpenLibrary.
+- Decidir IGDB vs RAWG y Google Books vs OpenLibrary. Es lo único que falta
+  para cerrar B3: el puerto y el servicio ya están, solo faltan los adaptadores.
 
 ## Estado
 
@@ -65,6 +94,7 @@ Al importar se comprueba `(fuente_externa, id_externo)` para no duplicar fichas.
 |---|---|
 | `Titulo` | **Hecho** — CRUD completo, filtros por `tipo` y `texto` con Specifications, verificado contra MySQL |
 | `Entrada` | **Hecho** — CRUD completo, filtros por `tipo` y `estado`, aislada por `usuario_id`, verificada contra MySQL |
+| Catálogo externo | **TMDB hecho** — búsqueda e importación. Juegos y libros, sin fuente decidida |
 
 ## Decisiones de implementación (B2)
 

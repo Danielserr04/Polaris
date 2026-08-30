@@ -61,7 +61,12 @@ Excepciones de dominio propias, traducidas a HTTP en un `@RestControllerAdvice` 
 | `DuplicateResourceException` | 409 |
 | `UnauthorizedException` | 401 |
 | `ForbiddenException` | 403 |
+| `ExternalServiceException` | 502 + log |
 | Cualquier otra | 500 + log |
+
+El 502 existe para separar "ha fallado TMDB" de "hemos fallado nosotros". Con
+un 500 para todo no hay forma de saber si mirar nuestros logs o el estado de la
+API externa.
 
 **El Controller no construye respuestas de error a mano.** Lanza y deja que el advice traduzca.
 

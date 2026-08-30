@@ -22,4 +22,7 @@ public interface EntradaRepositoryPort {
 
     /** Para que TituloService pueda impedir borrar un titulo con entradas asociadas. */
     boolean existsByTituloId(Long tituloId);
+
+    /** Para que importar dos veces la misma ficha no duplique tu entrada. */
+    boolean existsByUsuarioIdAndTituloId(Long usuarioId, Long tituloId);
 }

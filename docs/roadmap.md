@@ -32,6 +32,14 @@ Al volcado solo se le cambiaron los nombres de indices y claves ajenas, que Hibe
 Clientes de TMDB, juegos y libros como adaptadores de salida. Endpoint de búsqueda y de importación. Claves en variables de entorno.
 **Entregable:** buscas un título y se guarda con carátula.
 
+**A medias.** `CatalogoExternoPort`, `CatalogoService`, los dos endpoints y el
+adaptador de TMDB están escritos y probados. Falta:
+
+- Un `POLARIS_TMDB_TOKEN` real para probarlo contra la API de verdad. Hasta
+  entonces el mapeo del JSON solo está probado con respuestas simuladas.
+- **Decidir IGDB vs RAWG y Google Books vs OpenLibrary**, y escribir esos dos
+  adaptadores. Buscar juegos o libros hoy devuelve 400.
+
 ### B4 — Núcleo
 `Perfil` y `RegistroPeso`. Módulo pequeño, pero bloquea a Fusión y Atlas, así que va antes que ellos.
 

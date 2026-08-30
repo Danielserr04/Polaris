@@ -10,4 +10,6 @@ public interface EntradaRepository extends JpaRepository<EntradaEntity, Long>,
         JpaSpecificationExecutor<EntradaEntity> {
 
     boolean existsByTitulo_Id(Long tituloId);
+
+    boolean existsByUsuarioIdAndTitulo_Id(Long usuarioId, Long tituloId);
 }

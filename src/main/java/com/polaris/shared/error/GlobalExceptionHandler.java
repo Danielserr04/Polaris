@@ -4,7 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -46,11 +46,27 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Una API externa ha fallado. 502 y no 500: el problema no esta aqui. Se
+     * loguea entero porque el mensaje que llega al cliente es deliberadamente
+     * generico.
+     */
+    @ExceptionHandler(ExternalServiceException.class)
+    public ResponseEntity<ErrorResponse> handleExternalService(ExternalServiceException ex,
+                                                               HttpServletRequest request) {
+        log.error("Fallo de una API externa en {} {}", request.getMethod(), request.getRequestURI(), ex);
+        return build(HttpStatus.BAD_GATEWAY, ex.getMessage(), request);
+    }
+
+    /**
      * Fallos de Bean Validation en los DTOs de entrada. Se juntan todos los campos
      * en un solo mensaje para no romper el formato unico de ErrorResponse.
+     *
+     * <p>BindException y no MethodArgumentNotValidException: la segunda hereda de
+     * la primera y solo cubre los @RequestBody. Un DTO validado que llega por
+     * query params lanza BindException a secas y se escapaba al 500 generico.
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleBeanValidation(MethodArgumentNotValidException ex,
+    @ExceptionHandler(BindException.class)
+    public ResponseEntity<ErrorResponse> handleBeanValidation(BindException ex,
                                                               HttpServletRequest request) {
         String mensaje = ex.getBindingResult().getFieldErrors().stream()
                 .map(error -> error.getField() + ": " + error.getDefaultMessage())

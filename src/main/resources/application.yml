@@ -79,6 +79,17 @@ polaris:
     # En dev el enlace va al log y esto ni se lee.
     remitente: ${POLARIS_CORREO_REMITENTE:no-reply@polaris.local}
 
+  # Catalogo externo de peliculas y series (B3).
+  tmdb:
+    url-base: https://api.themoviedb.org/3
+    # "API Read Access Token" (v4), que va en la cabecera Authorization.
+    # Vacio a proposito: la aplicacion arranca sin el y la busqueda responde
+    # 400 diciendo que falta, en vez de tumbar el contexto entero.
+    token: ${POLARIS_TMDB_TOKEN:}
+    # poster_path llega relativo. w500 es el ancho util para una caratula.
+    imagen-base: https://image.tmdb.org/t/p/w500
+    idioma: es-ES
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

@@ -47,4 +47,9 @@ public class TituloJpaAdapter implements TituloRepositoryPort {
     public boolean existsByIdExternoAndFuenteExterna(String idExterno, FuenteExterna fuente) {
         return repository.existsByIdExternoAndFuenteExterna(idExterno, fuente);
     }
+
+    @Override
+    public Optional<Titulo> findByIdExternoAndFuenteExterna(String idExterno, FuenteExterna fuente) {
+        return repository.findByIdExternoAndFuenteExterna(idExterno, fuente).map(mapper::toDomain);
+    }
 }

@@ -39,3 +39,12 @@ polaris:
     expiracion-segundos: 3600
     emisor: polaris
   url-base: http://localhost:8080
+
+  # Los tests de dominio mockean el puerto y no llaman a TMDB. Estos valores
+  # existen solo para que el adaptador se pueda construir si algun test levanta
+  # el contexto completo.
+  tmdb:
+    url-base: https://api.themoviedb.org/3
+    token: ""
+    imagen-base: https://image.tmdb.org/t/p/w500
+    idioma: es-ES

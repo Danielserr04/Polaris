@@ -60,4 +60,9 @@ public class EntradaJpaAdapter implements EntradaRepositoryPort {
     public boolean existsByTituloId(Long tituloId) {
         return repository.existsByTitulo_Id(tituloId);
     }
+
+    @Override
+    public boolean existsByUsuarioIdAndTituloId(Long usuarioId, Long tituloId) {
+        return repository.existsByUsuarioIdAndTitulo_Id(usuarioId, tituloId);
+    }
 }

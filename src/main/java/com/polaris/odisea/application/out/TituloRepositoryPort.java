@@ -22,4 +22,7 @@ public interface TituloRepositoryPort {
     void deleteById(Long id);
 
     boolean existsByIdExternoAndFuenteExterna(String idExterno, FuenteExterna fuente);
+
+    /** Al importar: si la ficha ya esta, se reutiliza en vez de duplicarla. */
+    Optional<Titulo> findByIdExternoAndFuenteExterna(String idExterno, FuenteExterna fuente);
 }
