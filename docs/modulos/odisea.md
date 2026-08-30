@@ -50,7 +50,7 @@ entrada tuya que todavía no existe.
 |---|---|---|
 | Películas y series | TMDB | **Hecho** — `TmdbCatalogoAdapter` |
 | Juegos | IGDB | **Hecho** — `IgdbCatalogoAdapter` |
-| Libros | Google Books u OpenLibrary | **Sin decidir** |
+| Libros | OpenLibrary | **Hecho** — `OpenLibraryCatalogoAdapter` |
 
 **IGDB sobre RAWG**, decidido el 2026-08-30. RAWG se autentica con una clave y ya, pero su catálogo está agregado de varias fuentes y se nota: duplicados, géneros inconsistentes y fichas a medias en cuanto sales de lo conocido. IGDB está curado. Se acepta el coste de autenticación a cambio de los datos.
 
@@ -102,11 +102,36 @@ segundos y la portada es un `image_id` suelto con el que hay que componer la URL
 **`duracionMin` se queda a `null` en los juegos.** El campo son minutos en una
 película y páginas en un libro; en un juego no significa nada.
 
+### OpenLibrary
+
+**Elegida sobre Google Books porque no necesita clave.** Es el único adaptador
+que no obliga a pasar por una consola de nadie.
+
+**Solo se usa el endpoint de búsqueda**, también para pedir una ficha concreta
+(`q=key:/works/OL...`). El de detalle de un *work* parecía lo natural, pero
+devuelve documentos de tipo `redirect` cuando OpenLibrary ha fusionado dos
+obras, y además no trae el número de páginas, que vive en las ediciones. La
+búsqueda devuelve todo de una vez y siempre la clave canónica.
+
+**Es el único tipo que llena `duracionMin`**, con las páginas.
+
+**En `sinopsis` va la autoría, no un resumen.** La búsqueda no devuelve
+descripción, y la del *work* llega unas veces como texto y otras como objeto.
+En una lista de libros, quién lo escribió es más útil que un resumen a medias.
+
+**Un 422 de OpenLibrary se traduce a 400, no a 502.** Contesta 422 a búsquedas
+que no sabe resolver, como una sola palabra corriente (`el`). Eso no es que la
+API esté rota, es que la consulta no vale.
+
+Requiere un `User-Agent` que identifique a quien llama; limita el tráfico anónimo.
+
 ## Pendiente
 
 - **Temporadas y episodios.** No encajan en el modelo actual. De momento `progreso` guarda el número de episodio y basta. Cuando haga falta de verdad, tabla aparte.
-- Decidir Google Books vs OpenLibrary y escribir ese adaptador. Es lo único que
-  falta para cerrar B3.
+- **Curar los géneros de OpenLibrary.** Sus materias son ruido: mezclan géneros
+  de verdad con cosas como "New York Times reviewed" o "Large type books". Hoy
+  se descartan las que llevan `:` o `=` y se cortan a cinco, pero lo que queda
+  sigue sin ser una lista de géneros decente.
 
 ## Estado
 
@@ -114,7 +139,7 @@ película y páginas en un libro; en un juego no significa nada.
 |---|---|
 | `Titulo` | **Hecho** — CRUD completo, filtros por `tipo` y `texto` con Specifications, verificado contra MySQL |
 | `Entrada` | **Hecho** — CRUD completo, filtros por `tipo` y `estado`, aislada por `usuario_id`, verificada contra MySQL |
-| Catálogo externo | **TMDB e IGDB hechos** — búsqueda e importación de pelis, series y juegos. Libros, sin fuente decidida |
+| Catálogo externo | **Hecho** — los cuatro tipos: TMDB, IGDB y OpenLibrary |
 
 ## Decisiones de implementación (B2)
 

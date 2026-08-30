@@ -68,7 +68,7 @@ Consumido por [[fusion]] y por [[atlas]]. El dato vive aquí una sola vez.
 | imagen_url | varchar | |
 | generos | varchar | separados por coma |
 | duracion_min | int | páginas si es libro |
-| fuente_externa | varchar | TMDB, IGDB, GOOGLE_BOOKS, MANUAL |
+| fuente_externa | enum | TMDB, IGDB, OPEN_LIBRARY, MANUAL |
 | id_externo | varchar | índice con fuente_externa |
 
 **`entrada`** — tu relación con esa ficha

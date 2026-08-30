@@ -1,6 +1,6 @@
 # Roadmap
 
-Sin fechas. Se avanza por entregables. **Fase actual: B3.** B0, B1 y B2 cerrados.
+Sin fechas. Se avanza por entregables. **Fase actual: B4.** B0, B1, B2 y B3 cerrados.
 
 ## Backend
 
@@ -32,14 +32,13 @@ Al volcado solo se le cambiaron los nombres de indices y claves ajenas, que Hibe
 Clientes de TMDB, juegos y libros como adaptadores de salida. Endpoint de búsqueda y de importación. Claves en variables de entorno.
 **Entregable:** buscas un título y se guarda con carátula.
 
-**A medias.** `CatalogoExternoPort`, `CatalogoService` y los dos endpoints están
-hechos, con los adaptadores de **TMDB** (pelis y series, verificado contra la API
-real) e **IGDB** (juegos). Falta:
+**Hecho el 2026-08-30.** `CatalogoExternoPort`, `CatalogoService`, los dos
+endpoints y los tres adaptadores: **TMDB** (pelis y series), **IGDB** (juegos) y
+**OpenLibrary** (libros). Los tres verificados contra sus APIs reales, no solo
+con respuestas simuladas.
 
-- Las credenciales de IGDB, que se sacan de Twitch. Hasta entonces el adaptador
-  solo está probado con respuestas simuladas.
-- **Decidir Google Books vs OpenLibrary** y escribir ese adaptador. Buscar
-  libros hoy devuelve 400.
+`V2__fuente_externa_open_library.sql` es la primera migración escrita a mano:
+cambiar el enum de Java no basta, `fuente_externa` es un `ENUM` de MySQL.
 
 ### B4 — Núcleo
 `Perfil` y `RegistroPeso`. Módulo pequeño, pero bloquea a Fusión y Atlas, así que va antes que ellos.
@@ -94,9 +93,12 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 
 | Fase | Estado |
 |---|---|
-| B0 | En curso |
-| D0 | Pendiente — antes o durante B2 |
-| B1 – B8 | Pendiente |
-| D1 | Pendiente — tras B3 |
+| B0 | **Hecho** |
+| B1 | **Hecho** — falta el cliente OAuth de Google Cloud Console |
+| B2 | **Hecho** — cerrado con el corte a Flyway |
+| B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
+| B4 – B8 | Pendiente |
+| D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
+| D1 | Pendiente — ya toca, B3 está cerrado |
 
 Actualizar esta tabla al cerrar cada fase.

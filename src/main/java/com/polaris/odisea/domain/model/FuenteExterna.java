@@ -7,6 +7,6 @@ package com.polaris.odisea.domain.model;
 public enum FuenteExterna {
     TMDB,
     IGDB,
-    GOOGLE_BOOKS,
+    OPEN_LIBRARY,
     MANUAL
 }

@@ -57,3 +57,8 @@ polaris:
     client-id: ""
     client-secret: ""
     imagen-base: https://images.igdb.com/igdb/image/upload/t_cover_big/
+
+  openlibrary:
+    url-base: https://openlibrary.org
+    imagen-base: https://covers.openlibrary.org/b/id/
+    user-agent: "Polaris/tests"

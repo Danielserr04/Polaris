@@ -104,6 +104,14 @@ polaris:
     # tamano: t_cover_big es el util para una caratula.
     imagen-base: https://images.igdb.com/igdb/image/upload/t_cover_big/
 
+  # Catalogo externo de libros (B3). No necesita ninguna clave.
+  openlibrary:
+    url-base: https://openlibrary.org
+    # cover_i es un id numerico; -L lo compone el adaptador.
+    imagen-base: https://covers.openlibrary.org/b/id/
+    # OpenLibrary pide identificarse y limita el trafico anonimo.
+    user-agent: ${POLARIS_OPENLIBRARY_USER_AGENT:Polaris/0.1 (app personal)}
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html
