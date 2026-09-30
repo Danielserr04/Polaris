@@ -1,10 +1,12 @@
 package com.polaris.fusion.domain.service;
 
 import com.polaris.fusion.application.out.AlimentoRepositoryPort;
+import com.polaris.fusion.application.out.ComidaLineaRepositoryPort;
 import com.polaris.fusion.domain.model.Alimento;
 import com.polaris.fusion.domain.model.AlimentoFilter;
 import com.polaris.fusion.domain.model.AlimentoNotFoundException;
 import com.polaris.fusion.domain.model.FuenteAlimento;
+import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,6 +36,9 @@ class AlimentoServiceTest {
 
     @Mock
     private AlimentoRepositoryPort repository;
+
+    @Mock
+    private ComidaLineaRepositoryPort comidaLineaRepository;
 
     @InjectMocks
     private AlimentoService service;
@@ -126,6 +131,18 @@ class AlimentoServiceTest {
     }
 
     @Test
+    @DisplayName("delete lanza ValidationException y no borra si el alimento esta en alguna comida")
+    void deleteLanzaSiEstaEnUnaComida() {
+        when(repository.findById(5L)).thenReturn(Optional.of(alimento(5L, "Arroz")));
+        when(comidaLineaRepository.existsByAlimentoId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(5L))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
     @DisplayName("delete lanza AlimentoNotFoundException y no borra si no existe")
     void deleteLanzaSiNoExiste() {
         when(repository.findById(42L)).thenReturn(Optional.empty());
@@ -134,5 +151,6 @@ class AlimentoServiceTest {
                 .isInstanceOf(AlimentoNotFoundException.class);
 
         verify(repository, never()).deleteById(any());
+        verify(comidaLineaRepository, never()).existsByAlimentoId(any());
     }
 }
