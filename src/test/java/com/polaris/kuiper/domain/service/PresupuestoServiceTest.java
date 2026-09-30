@@ -201,6 +201,43 @@ class PresupuestoServiceTest {
     }
 
     @Test
+    @DisplayName("update lanza CategoriaNotFoundException, no 403, y no guarda si la nueva categoria es de otro usuario")
+    void updateLanzaSiLaCategoriaEsDeOtroUsuario() {
+        when(repository.findById(5L)).thenReturn(Optional.of(presupuesto(5L, USUARIO, 10L, MENSUAL)));
+        when(categoriaRepository.findById(11L))
+                .thenReturn(Optional.of(categoria(11L, OTRO_USUARIO, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, presupuesto(null, null, 11L, MENSUAL)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update lanza CategoriaNotFoundException y no guarda si la nueva categoria no existe")
+    void updateLanzaSiLaCategoriaNoExiste() {
+        when(repository.findById(5L)).thenReturn(Optional.of(presupuesto(5L, USUARIO, 10L, MENSUAL)));
+        when(categoriaRepository.findById(11L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, presupuesto(null, null, 11L, MENSUAL)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update lanza ValidationException y no guarda si la nueva categoria es de ingreso")
+    void updateLanzaSiLaCategoriaEsDeIngreso() {
+        when(repository.findById(5L)).thenReturn(Optional.of(presupuesto(5L, USUARIO, 10L, MENSUAL)));
+        when(categoriaRepository.findById(11L)).thenReturn(Optional.of(categoria(11L, USUARIO, TipoMovimiento.INGRESO)));
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, presupuesto(null, null, 11L, MENSUAL)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("update lanza PresupuestoNotFoundException y no guarda si es de otro usuario")
     void updateLanzaSiEsDeOtroUsuario() {
         when(repository.findById(5L)).thenReturn(Optional.of(presupuesto(5L, OTRO_USUARIO, 10L, MENSUAL)));
