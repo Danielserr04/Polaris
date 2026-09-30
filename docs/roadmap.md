@@ -68,7 +68,7 @@ Resumen del día (`GET /api/fusion/resumen?fecha=`, [[021-resumen-diario-fusion]
 ### B7 — Atlas
 `Ejercicio`, `Rutina`, `RutinaEjercicio`, `Sesion`, `SerieRegistro`. La parte con miga son las consultas de progresión.
 
-`Ejercicio` hecho ([[023-ejercicio-catalogo-y-propios]], `V12`). `Rutina` y `RutinaEjercicio` hechos como agregado ([[024-rutina-agregado-con-lineas]], `V13`). Faltan `Sesion`, `SerieRegistro`, y el peso corporal desde Atlas (mismo patrón que Fusión, [[022-peso-corporal-desde-fusion-y-atlas]]).
+`Ejercicio` hecho ([[023-ejercicio-catalogo-y-propios]], `V12`). `Rutina` y `RutinaEjercicio` hechos como agregado ([[024-rutina-agregado-con-lineas]], `V13`). Peso corporal desde Atlas hecho (mismo patrón que Fusión, [[022-peso-corporal-desde-fusion-y-atlas]]). Faltan `Sesion`, `SerieRegistro` y las consultas de progresión.
 
 ### B8 — Cierre
 Tests de los servicios de dominio, OpenAPI completo, logs, revisión de índices.
