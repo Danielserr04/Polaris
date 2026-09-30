@@ -100,10 +100,12 @@ Una sola tabla para los cuatro tipos de contenido. Añadir uno nuevo es un valor
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| nombre | varchar | |
-| color | varchar | hex |
-| icono | varchar | |
-| tipo | varchar | INGRESO, GASTO |
+| nombre | varchar(100) | único por usuario+tipo |
+| color | varchar(7) | hex #RRGGBB, opcional |
+| icono | varchar(50) | opcional |
+| tipo | enum | INGRESO, GASTO |
+
+Ver [[011-categoria-nombre-unico-por-tipo]].
 
 **`movimiento`**
 

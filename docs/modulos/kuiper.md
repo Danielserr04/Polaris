@@ -49,6 +49,6 @@ Antes de escribir la primera entidad, merece la pena abrir el proyecto viejo y q
 
 | Entidad | Estado |
 |---|---|
-| `Categoria` | Pendiente — B5 |
+| `Categoria` | **Hecha** — CRUD en `/api/kuiper/categoria`. Ver [[011-categoria-nombre-unico-por-tipo]]. Falta bloquear el borrado si tiene movimientos o presupuestos (llega con `Movimiento`) |
 | `Movimiento` | Pendiente — B5 |
 | `Presupuesto` | Pendiente — B5 |
