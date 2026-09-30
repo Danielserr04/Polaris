@@ -1,10 +1,11 @@
 package com.polaris.fusion.domain.model;
 
 /**
- * De donde sale la ficha. Hoy solo MANUAL: la API de alimentos esta sin
- * elegir (docs/modulos/fusion.md). Cuando se elija, su valor entra aqui con
- * una migracion nueva, porque fuente_externa es un ENUM de MySQL (como en V2).
+ * De donde sale la ficha. MANUAL o importada de Open Food Facts (ver
+ * docs/decisiones/018-alimentos-open-food-facts.md). Cada valor nuevo exige una
+ * migracion, porque fuente_externa es un ENUM de MySQL (como en V2 y V11).
  */
 public enum FuenteAlimento {
-    MANUAL
+    MANUAL,
+    OPEN_FOOD_FACTS
 }

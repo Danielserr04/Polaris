@@ -3,6 +3,7 @@ package com.polaris.fusion.infrastructure.persistence;
 import com.polaris.fusion.application.out.AlimentoRepositoryPort;
 import com.polaris.fusion.domain.model.Alimento;
 import com.polaris.fusion.domain.model.AlimentoFilter;
+import com.polaris.fusion.domain.model.FuenteAlimento;
 import com.polaris.fusion.infrastructure.persistence.mapper.AlimentoEntityMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -36,6 +37,11 @@ public class AlimentoJpaAdapter implements AlimentoRepositoryPort {
     public List<Alimento> findAll(AlimentoFilter filter) {
         Specification<AlimentoEntity> spec = AlimentoSpecifications.from(filter);
         return mapper.toDomainList(repository.findAll(spec, Sort.by("nombre")));
+    }
+
+    @Override
+    public Optional<Alimento> findByFuenteExternaAndIdExterno(FuenteAlimento fuente, String idExterno) {
+        return repository.findByFuenteExternaAndIdExterno(fuente, idExterno).map(mapper::toDomain);
     }
 
     @Override

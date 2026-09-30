@@ -112,6 +112,14 @@ polaris:
     # OpenLibrary pide identificarse y limita el trafico anonimo.
     user-agent: ${POLARIS_OPENLIBRARY_USER_AGENT:Polaris/0.1 (app personal)}
 
+  # Catalogo externo de alimentos (B6). Open Food Facts: sin clave ni secreto.
+  openfoodfacts:
+    url-base: https://world.openfoodfacts.org
+    # OFF exige un User-Agent que identifique a quien llama.
+    user-agent: ${POLARIS_OPENFOODFACTS_USER_AGENT:Polaris/0.1 (app personal)}
+    # Conexion y lectura. OFF va lento a ratos; sin tope una peticion se colgaria.
+    timeout-segundos: 15
+
 springdoc:
   swagger-ui:
     path: /swagger-ui.html

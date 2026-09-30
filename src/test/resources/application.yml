@@ -62,3 +62,8 @@ polaris:
     url-base: https://openlibrary.org
     imagen-base: https://covers.openlibrary.org/b/id/
     user-agent: "Polaris/tests"
+
+  openfoodfacts:
+    url-base: https://world.openfoodfacts.org
+    user-agent: "Polaris/tests"
+    timeout-segundos: 15
