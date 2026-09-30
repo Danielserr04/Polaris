@@ -2,6 +2,7 @@ package com.polaris.atlas.domain.service;
 
 import com.polaris.atlas.application.out.EjercicioRepositoryPort;
 import com.polaris.atlas.application.out.RutinaEjercicioRepositoryPort;
+import com.polaris.atlas.application.out.SerieRegistroRepositoryPort;
 import com.polaris.atlas.domain.model.Ejercicio;
 import com.polaris.atlas.domain.model.EjercicioCatalogoNoModificableException;
 import com.polaris.atlas.domain.model.EjercicioFilter;
@@ -41,6 +42,9 @@ class EjercicioServiceTest {
 
     @Mock
     private RutinaEjercicioRepositoryPort rutinaEjercicioRepository;
+
+    @Mock
+    private SerieRegistroRepositoryPort serieRegistroRepository;
 
     @InjectMocks
     private EjercicioService service;
@@ -216,6 +220,19 @@ class EjercicioServiceTest {
     }
 
     @Test
+    @DisplayName("delete lanza ValidationException (400) y no borra un ejercicio propio con series registradas")
+    void deleteNoBorraSiTieneSeries() {
+        when(repository.findById(5L)).thenReturn(Optional.of(ejercicio(5L, USUARIO, "Flexiones")));
+        when(serieRegistroRepository.existsByEjercicioId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("series registradas");
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
     @DisplayName("delete no consulta el uso en rutinas si el ejercicio es del catalogo o de otro usuario")
     void deleteNoConsultaUsoSiNoEsPropio() {
         when(repository.findById(5L)).thenReturn(Optional.of(ejercicio(5L, null, "Sentadilla")));
@@ -225,6 +242,7 @@ class EjercicioServiceTest {
         assertThatThrownBy(() -> service.delete(USUARIO, 6L)).isInstanceOf(EjercicioNotFoundException.class);
 
         verify(rutinaEjercicioRepository, never()).existsByEjercicioId(any());
+        verify(serieRegistroRepository, never()).existsByEjercicioId(any());
     }
 
     @Test

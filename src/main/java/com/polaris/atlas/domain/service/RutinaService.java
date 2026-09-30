@@ -7,6 +7,7 @@ import com.polaris.atlas.application.in.ListRutinaInterface;
 import com.polaris.atlas.application.in.UpdateRutinaInterface;
 import com.polaris.atlas.application.out.EjercicioRepositoryPort;
 import com.polaris.atlas.application.out.RutinaRepositoryPort;
+import com.polaris.atlas.application.out.SesionRutinaRepositoryPort;
 import com.polaris.atlas.domain.model.Rutina;
 import com.polaris.atlas.domain.model.RutinaEjercicio;
 import com.polaris.atlas.domain.model.RutinaFilter;
@@ -30,8 +31,9 @@ import java.util.Set;
  * Cada ejercicio de una linea tiene que ser visible para el usuario (catalogo o
  * suyo): si no, 400 sin distinguir "no existe" de "es de otro".
  *
- * <p>Pendiente con Sesion: el borrado de una rutina con sesiones asociadas se
- * decidira al crear Sesion. Hoy borra sin mas porque esa tabla no existe.
+ * <p>Una rutina con sesiones registradas no se borra: 400, como Ejercicio con
+ * sus rutinas; para retirarla se pone activa=false. Ver
+ * docs/decisiones/025-sesion-agregado-con-series.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -46,6 +48,7 @@ public class RutinaService implements
 
     private final RutinaRepositoryPort repository;
     private final EjercicioRepositoryPort ejercicioRepository;
+    private final SesionRutinaRepositoryPort sesionRepository;
 
     @Override
     public Rutina create(Long usuarioId, Rutina rutina) {
@@ -78,6 +81,12 @@ public class RutinaService implements
     @Override
     public void delete(Long usuarioId, Long id) {
         getPropia(usuarioId, id);
+
+        if (sesionRepository.existsByRutinaId(id)) {
+            throw new ValidationException(
+                    "No se puede borrar una rutina que tiene sesiones registradas; marcala como inactiva");
+        }
+
         repository.deleteById(id);
     }
 

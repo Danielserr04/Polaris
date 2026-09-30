@@ -2,6 +2,7 @@ package com.polaris.atlas.domain.service;
 
 import com.polaris.atlas.application.out.EjercicioRepositoryPort;
 import com.polaris.atlas.application.out.RutinaRepositoryPort;
+import com.polaris.atlas.application.out.SesionRutinaRepositoryPort;
 import com.polaris.atlas.domain.model.Ejercicio;
 import com.polaris.atlas.domain.model.Rutina;
 import com.polaris.atlas.domain.model.RutinaEjercicio;
@@ -46,6 +47,9 @@ class RutinaServiceTest {
 
     @Mock
     private EjercicioRepositoryPort ejercicioRepository;
+
+    @Mock
+    private SesionRutinaRepositoryPort sesionRepository;
 
     @InjectMocks
     private RutinaService service;
@@ -352,6 +356,33 @@ class RutinaServiceTest {
         service.delete(USUARIO, 5L);
 
         verify(repository).deleteById(5L);
+    }
+
+    @Test
+    @DisplayName("delete lanza ValidationException (400) y no borra una rutina que tiene sesiones")
+    void deleteNoBorraSiTieneSesiones() {
+        when(repository.findById(5L)).thenReturn(Optional.of(rutina(5L, USUARIO, "Push", linea(1L, USUARIO, 10L, 1))));
+        when(sesionRepository.existsByRutinaId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("sesiones")
+                .hasMessageContaining("inactiva");
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("delete no consulta las sesiones si la rutina es de otro usuario o no existe")
+    void deleteNoConsultaSesionesSiNoEsPropia() {
+        when(repository.findById(5L))
+                .thenReturn(Optional.of(rutina(5L, OTRO_USUARIO, "Push", linea(1L, OTRO_USUARIO, 10L, 1))));
+        when(repository.findById(6L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L)).isInstanceOf(RutinaNotFoundException.class);
+        assertThatThrownBy(() -> service.delete(USUARIO, 6L)).isInstanceOf(RutinaNotFoundException.class);
+
+        verify(sesionRepository, never()).existsByRutinaId(any());
     }
 
     @Test

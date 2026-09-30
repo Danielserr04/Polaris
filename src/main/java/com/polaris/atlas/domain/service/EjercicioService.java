@@ -7,6 +7,7 @@ import com.polaris.atlas.application.in.ListEjercicioInterface;
 import com.polaris.atlas.application.in.UpdateEjercicioInterface;
 import com.polaris.atlas.application.out.EjercicioRepositoryPort;
 import com.polaris.atlas.application.out.RutinaEjercicioRepositoryPort;
+import com.polaris.atlas.application.out.SerieRegistroRepositoryPort;
 import com.polaris.atlas.domain.model.Ejercicio;
 import com.polaris.atlas.domain.model.EjercicioCatalogoNoModificableException;
 import com.polaris.atlas.domain.model.EjercicioFilter;
@@ -24,8 +25,8 @@ import java.util.List;
  *
  * <p>Un ejercicio propio usado en alguna rutina no se borra: 400, como
  * AlimentoService con sus comidas. Ver docs/decisiones/024-rutina-agregado-con-lineas.md.
- * Pendiente con SerieRegistro: uno con series registradas tampoco se podra
- * borrar. Hoy no se comprueba porque esa tabla no existe.
+ * Lo mismo si tiene series registradas en alguna sesion. Ver
+ * docs/decisiones/025-sesion-agregado-con-series.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -38,6 +39,7 @@ public class EjercicioService implements
 
     private final EjercicioRepositoryPort repository;
     private final RutinaEjercicioRepositoryPort rutinaEjercicioRepository;
+    private final SerieRegistroRepositoryPort serieRegistroRepository;
 
     /** Siempre propio: el catalogo no se crea por la API. El usuarioId sale del JWT, nunca del body. */
     @Override
@@ -74,6 +76,9 @@ public class EjercicioService implements
 
         if (rutinaEjercicioRepository.existsByEjercicioId(id)) {
             throw new ValidationException("No se puede borrar un ejercicio que esta en alguna rutina");
+        }
+        if (serieRegistroRepository.existsByEjercicioId(id)) {
+            throw new ValidationException("No se puede borrar un ejercicio que tiene series registradas");
         }
 
         repository.deleteById(id);
