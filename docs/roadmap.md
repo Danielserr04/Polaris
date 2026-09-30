@@ -63,7 +63,7 @@ Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí convi
 - `Comida` y `ComidaLinea` ([[017-comida-agregado-con-lineas-macros-al-vuelo]], `V10`): un agregado, macros siempre al vuelo.
 - API de alimentos: **Open Food Facts** ([[018-alimentos-open-food-facts]], `V11`), búsqueda e importación, sin claves. No se ha probado contra la API real (ver la nota de la decisión).
 
-Resumen del día (`GET /api/fusion/resumen?fecha=`, [[021-resumen-diario-fusion]]) hecho. **Falta** probar Open Food Facts contra la API real.
+Resumen del día (`GET /api/fusion/resumen?fecha=`, [[021-resumen-diario-fusion]]) hecho. Peso corporal visible y apuntable desde Fusión ([[022-peso-corporal-desde-fusion-y-atlas]]). **Falta** probar Open Food Facts contra la API real.
 
 ### B7 — Atlas
 `Ejercicio`, `Rutina`, `RutinaEjercicio`, `Sesion`, `SerieRegistro`. La parte con miga son las consultas de progresión.

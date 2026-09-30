@@ -48,6 +48,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[019-zona-horaria-europe-madrid]]
 - [[020-violacion-unicidad-409-y-errores-http-cliente]]
 - [[021-resumen-diario-fusion]]
+- [[022-peso-corporal-desde-fusion-y-atlas]]
 
 ## Cómo se mantiene esto
 
