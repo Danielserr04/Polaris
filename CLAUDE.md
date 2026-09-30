@@ -60,4 +60,4 @@ La vault de Obsidian es la carpeta `docs/`. Se abre esa carpeta, no la raíz del
 
 ## Estado
 
-Fase **B7** (Atlas), en curso: `Ejercicio` hecho. B0 a B6 cerrados salvo probar Open Food Facts contra la API real. Ver `docs/roadmap.md`.
+Fase **B8** (Cierre). B0 a B7 cerrados, salvo probar Open Food Facts contra la API real. Ver `docs/roadmap.md`.
