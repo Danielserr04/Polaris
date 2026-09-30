@@ -1,11 +1,13 @@
 package com.polaris.atlas.domain.service;
 
 import com.polaris.atlas.application.out.EjercicioRepositoryPort;
+import com.polaris.atlas.application.out.RutinaEjercicioRepositoryPort;
 import com.polaris.atlas.domain.model.Ejercicio;
 import com.polaris.atlas.domain.model.EjercicioCatalogoNoModificableException;
 import com.polaris.atlas.domain.model.EjercicioFilter;
 import com.polaris.atlas.domain.model.EjercicioNotFoundException;
 import com.polaris.shared.error.DuplicateResourceException;
+import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,6 +38,9 @@ class EjercicioServiceTest {
 
     @Mock
     private EjercicioRepositoryPort repository;
+
+    @Mock
+    private RutinaEjercicioRepositoryPort rutinaEjercicioRepository;
 
     @InjectMocks
     private EjercicioService service;
@@ -195,6 +200,31 @@ class EjercicioServiceTest {
         service.delete(USUARIO, 5L);
 
         verify(repository).deleteById(5L);
+    }
+
+    @Test
+    @DisplayName("delete lanza ValidationException (400) y no borra un ejercicio propio que esta en alguna rutina")
+    void deleteNoBorraSiEstaEnUnaRutina() {
+        when(repository.findById(5L)).thenReturn(Optional.of(ejercicio(5L, USUARIO, "Flexiones")));
+        when(rutinaEjercicioRepository.existsByEjercicioId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("rutina");
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("delete no consulta el uso en rutinas si el ejercicio es del catalogo o de otro usuario")
+    void deleteNoConsultaUsoSiNoEsPropio() {
+        when(repository.findById(5L)).thenReturn(Optional.of(ejercicio(5L, null, "Sentadilla")));
+        when(repository.findById(6L)).thenReturn(Optional.of(ejercicio(6L, OTRO_USUARIO, "Flexiones")));
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L)).isInstanceOf(EjercicioCatalogoNoModificableException.class);
+        assertThatThrownBy(() -> service.delete(USUARIO, 6L)).isInstanceOf(EjercicioNotFoundException.class);
+
+        verify(rutinaEjercicioRepository, never()).existsByEjercicioId(any());
     }
 
     @Test

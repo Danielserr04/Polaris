@@ -6,11 +6,13 @@ import com.polaris.atlas.application.in.GetEjercicioInterface;
 import com.polaris.atlas.application.in.ListEjercicioInterface;
 import com.polaris.atlas.application.in.UpdateEjercicioInterface;
 import com.polaris.atlas.application.out.EjercicioRepositoryPort;
+import com.polaris.atlas.application.out.RutinaEjercicioRepositoryPort;
 import com.polaris.atlas.domain.model.Ejercicio;
 import com.polaris.atlas.domain.model.EjercicioCatalogoNoModificableException;
 import com.polaris.atlas.domain.model.EjercicioFilter;
 import com.polaris.atlas.domain.model.EjercicioNotFoundException;
 import com.polaris.shared.error.DuplicateResourceException;
+import com.polaris.shared.error.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,9 +22,10 @@ import java.util.List;
  * Catalogo compartido (usuarioId nulo, solo lectura) mas ejercicios propios
  * (editables solo por su dueno). Ver docs/decisiones/023-ejercicio-catalogo-y-propios.md.
  *
- * <p>Pendiente con SerieRegistro: un ejercicio con series registradas no se
- * podra borrar (400, como AlimentoService con sus comidas). Hoy borra sin mas
- * porque esa tabla no existe.
+ * <p>Un ejercicio propio usado en alguna rutina no se borra: 400, como
+ * AlimentoService con sus comidas. Ver docs/decisiones/024-rutina-agregado-con-lineas.md.
+ * Pendiente con SerieRegistro: uno con series registradas tampoco se podra
+ * borrar. Hoy no se comprueba porque esa tabla no existe.
  */
 @Service
 @RequiredArgsConstructor
@@ -34,6 +37,7 @@ public class EjercicioService implements
         DeleteEjercicioInterface {
 
     private final EjercicioRepositoryPort repository;
+    private final RutinaEjercicioRepositoryPort rutinaEjercicioRepository;
 
     /** Siempre propio: el catalogo no se crea por la API. El usuarioId sale del JWT, nunca del body. */
     @Override
@@ -67,6 +71,11 @@ public class EjercicioService implements
     @Override
     public void delete(Long usuarioId, Long id) {
         getPropio(usuarioId, id);
+
+        if (rutinaEjercicioRepository.existsByEjercicioId(id)) {
+            throw new ValidationException("No se puede borrar un ejercicio que esta en alguna rutina");
+        }
+
         repository.deleteById(id);
     }
 

@@ -216,7 +216,7 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 |---|---|
 | id | BIGINT AUTO_INCREMENT |
 | usuario_id | bigint |
-| nombre | varchar |
+| nombre | varchar | `UNIQUE (usuario_id, nombre)` |
 | descripcion | text |
 | activa | boolean |
 
@@ -225,6 +225,7 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 | Campo | Tipo |
 |---|---|
 | id | BIGINT AUTO_INCREMENT |
+| usuario_id | bigint |
 | rutina_id | bigint |
 | ejercicio_id | bigint |
 | orden | int |
