@@ -49,7 +49,7 @@ cambiar el enum de Java no basta, `fuente_externa` es un `ENUM` de MySQL.
 `Categoria`, `Movimiento`, `Presupuesto`, y el endpoint de resumen mensual.
 **Entregable:** control de gastos funcionando.
 
-**En curso:** `Categoria` (ver [[011-categoria-nombre-unico-por-tipo]], `V5`) y `Movimiento` (ver [[012-movimiento-categoria-mismo-tipo]], `V6`) hechas el 2026-09-30. Faltan `Presupuesto` y el resumen mensual.
+**En curso:** `Categoria` (ver [[011-categoria-nombre-unico-por-tipo]], `V5`), `Movimiento` (ver [[012-movimiento-categoria-mismo-tipo]], `V6`) y `Presupuesto` (ver [[013-presupuesto-solo-gastos-uno-por-periodo]], `V7`) hechas el 2026-09-30. Falta el resumen mensual.
 
 Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí conviene es revisar el proyecto viejo antes de empezar y quedarse con lo aprendido del dominio.
 
@@ -102,7 +102,7 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B2 | **Hecho** — cerrado con el corte a Flyway |
 | B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
 | B4 | **Hecho** — `Perfil` y `RegistroPeso` |
-| B5 | **En curso** — `Categoria` y `Movimiento` hechas; faltan `Presupuesto` y resumen |
+| B5 | **En curso** — `Categoria`, `Movimiento` y `Presupuesto` hechas; falta el resumen |
 | B6 – B8 | Pendiente |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |

@@ -7,6 +7,7 @@ import com.polaris.kuiper.application.in.ListCategoriaInterface;
 import com.polaris.kuiper.application.in.UpdateCategoriaInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
+import com.polaris.kuiper.application.out.PresupuestoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaFilter;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
@@ -20,10 +21,11 @@ import java.util.List;
 /**
  * Nombre unico por usuario y tipo. Ver docs/decisiones/011-categoria-nombre-unico-por-tipo.md.
  *
- * <p>Una categoria con movimientos no se borra ni cambia de tipo (400, como
- * TituloService con sus entradas): dejaria movimientos huerfanos o de tipo
- * distinto al de su categoria. Falta hacer lo mismo con los presupuestos
- * cuando existan. Ver docs/decisiones/012-movimiento-categoria-mismo-tipo.md.
+ * <p>Una categoria con movimientos o presupuestos no se borra ni cambia de
+ * tipo (400, como TituloService con sus entradas): dejaria filas huerfanas o
+ * de tipo distinto al de su categoria. Ver
+ * docs/decisiones/012-movimiento-categoria-mismo-tipo.md y
+ * docs/decisiones/013-presupuesto-solo-gastos-uno-por-periodo.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -36,6 +38,7 @@ public class CategoriaService implements
 
     private final CategoriaRepositoryPort repository;
     private final MovimientoRepositoryPort movimientoRepository;
+    private final PresupuestoRepositoryPort presupuestoRepository;
 
     @Override
     public Categoria create(Long usuarioId, Categoria categoria) {
@@ -60,8 +63,9 @@ public class CategoriaService implements
         Categoria existente = getPropia(usuarioId, id);
         comprobarNombreLibre(usuarioId, categoria, existente.getId());
 
-        if (existente.getTipo() != categoria.getTipo() && movimientoRepository.existsByCategoriaId(id)) {
-            throw new ValidationException("No se puede cambiar el tipo de una categoria que tiene movimientos");
+        if (existente.getTipo() != categoria.getTipo() && estaEnUso(id)) {
+            throw new ValidationException(
+                    "No se puede cambiar el tipo de una categoria que tiene movimientos o presupuestos");
         }
 
         categoria.setId(existente.getId());
@@ -73,11 +77,16 @@ public class CategoriaService implements
     public void delete(Long usuarioId, Long id) {
         getPropia(usuarioId, id);
 
-        if (movimientoRepository.existsByCategoriaId(id)) {
-            throw new ValidationException("No se puede borrar una categoria que tiene movimientos asociados");
+        if (estaEnUso(id)) {
+            throw new ValidationException("No se puede borrar una categoria que tiene movimientos o presupuestos");
         }
 
         repository.deleteById(id);
+    }
+
+    private boolean estaEnUso(Long categoriaId) {
+        return movimientoRepository.existsByCategoriaId(categoriaId)
+                || presupuestoRepository.existsByCategoriaId(categoriaId);
     }
 
     /**

@@ -39,6 +39,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[010-registro-peso-un-peso-por-dia]]
 - [[011-categoria-nombre-unico-por-tipo]]
 - [[012-movimiento-categoria-mismo-tipo]]
+- [[013-presupuesto-solo-gastos-uno-por-periodo]]
 
 ## Cómo se mantiene esto
 
