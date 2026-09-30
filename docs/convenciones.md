@@ -62,6 +62,8 @@ Excepciones de dominio propias, traducidas a HTTP en un `@RestControllerAdvice` 
 | `UnauthorizedException` | 401 |
 | `ForbiddenException` | 403 |
 | `ExternalServiceException` | 502 + log |
+| `HttpMessageNotReadableException` (JSON mal formado, cuerpo ausente, enum o tipo invalido en el body) | 400, con el campo y los valores admitidos si es un enum |
+| `MethodArgumentTypeMismatchException` y fallo de conversion en query params (`BindException`) | 400, `campo: valor no valido` (+ valores admitidos si es un enum) |
 | Cualquier otra | 500 + log |
 
 El 502 existe para separar "ha fallado TMDB" de "hemos fallado nosotros". Con
