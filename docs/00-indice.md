@@ -36,6 +36,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[007-esquema-ddl-auto-luego-flyway]]
 - [[008-tooling-claude-code]]
 - [[009-perfil-unico-por-usuario]]
+- [[010-registro-peso-un-peso-por-dia]]
 
 ## Cómo se mantiene esto
 

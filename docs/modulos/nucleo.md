@@ -33,7 +33,7 @@ Si aparece la tentación de meter un cálculo aquí, la pregunta es: ¿lo necesi
 | Entidad | Estado |
 |---|---|
 | `Perfil` | **Hecha** — `GET`/`PUT /api/nucleo/perfil`, un perfil por usuario. Ver [[009-perfil-unico-por-usuario]] |
-| `RegistroPeso` | Pendiente |
+| `RegistroPeso` | **Hecha** — CRUD en `/api/nucleo/registro-peso`, filtro `desde`/`hasta`. Ver [[010-registro-peso-un-peso-por-dia]] |
 
 ## Notas
 

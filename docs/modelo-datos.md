@@ -46,12 +46,12 @@ Ver [[009-perfil-unico-por-usuario]].
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| fecha | date | único por usuario+fecha |
-| peso_kg | DECIMAL(5,2) | |
-| grasa_pct | DECIMAL(4,1) | opcional |
+| fecha | date | único por usuario+fecha; no puede ser futura |
+| peso_kg | DECIMAL(5,2) | mayor que 0 |
+| grasa_pct | DECIMAL(4,1) | opcional, 0-100 |
 | notas | text | |
 
-Consumido por [[fusion]] y por [[atlas]]. El dato vive aquí una sola vez.
+Consumido por [[fusion]] y por [[atlas]]. El dato vive aquí una sola vez. Ver [[010-registro-peso-un-peso-por-dia]].
 
 ---
 
