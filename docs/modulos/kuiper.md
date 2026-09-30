@@ -34,7 +34,7 @@ POST   /api/kuiper/categoria
 ...
 
 GET    /api/kuiper/presupuesto
-GET    /api/kuiper/resumen?periodo=       balance del mes, gasto por categoría
+GET    /api/kuiper/resumen?periodo=2026-09   balance del mes, gasto por categoría y presupuesto mensual
 ```
 
 ## Qué se aprovecha de lumen-app
@@ -52,3 +52,4 @@ Antes de escribir la primera entidad, merece la pena abrir el proyecto viejo y q
 | `Categoria` | **Hecha** — CRUD en `/api/kuiper/categoria`. Ver [[011-categoria-nombre-unico-por-tipo]]. No se borra ni cambia de tipo con movimientos ni presupuestos |
 | `Movimiento` | **Hecha** — CRUD en `/api/kuiper/movimiento`, filtros `desde`/`hasta`/`categoriaId`/`tipo`. Ver [[012-movimiento-categoria-mismo-tipo]] |
 | `Presupuesto` | **Hecha** — CRUD en `/api/kuiper/presupuesto`, filtros `periodo`/`categoriaId`. Ver [[013-presupuesto-solo-gastos-uno-por-periodo]] |
+| Resumen mensual | **Hecho** — `GET /api/kuiper/resumen`. Ver [[014-resumen-mensual-agregado-en-servicio]] |

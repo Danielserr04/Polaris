@@ -26,6 +26,6 @@ Estado: aceptada · 2026-09-30
 
 ## Consecuencias
 
-- El endpoint de resumen mensual compara `importe_limite` con la suma de movimientos de esa categoría y periodo; el `MENSUAL` compara contra el mes pedido y el `ANUAL` contra el año.
+- El resumen mensual compara el gasto del mes con el presupuesto `MENSUAL` ([[014-resumen-mensual-agregado-en-servicio]]). El `ANUAL` se guarda, pero ningún endpoint lo compara todavía con el gasto del año.
 - Para cambiar una categoría de gasto a ingreso hay que borrar antes sus presupuestos (y mover sus movimientos).
 - Cambiar los valores del enum de periodo exige una migración nueva, como en V2.
