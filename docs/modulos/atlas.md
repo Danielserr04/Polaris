@@ -64,7 +64,7 @@ GET    /api/atlas/records                       mejores marcas por ejercicio
 | Entidad | Estado |
 |---|---|
 | `Ejercicio` | **Hecha** — CRUD en `/api/atlas/ejercicio`, filtros `?grupoMuscular=` y `?q=`. Catálogo compartido (solo lectura) más ejercicios propios. Ver [[023-ejercicio-catalogo-y-propios]] |
-| `Rutina` | Pendiente — B7 |
-| `RutinaEjercicio` | Pendiente — B7 |
+| `Rutina` | **Hecha** — CRUD en `/api/atlas/rutina`, filtro `?activa=`; agregado con sus ejercicios. Ver [[024-rutina-agregado-con-lineas]] |
+| `RutinaEjercicio` | **Hecha** — dentro del agregado `Rutina`, sin endpoints propios. Lleva `usuario_id` |
 | `Sesion` | Pendiente — B7 |
 | `SerieRegistro` | Pendiente — B7 |
