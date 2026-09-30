@@ -12,9 +12,9 @@ import java.time.LocalDate;
 
 /**
  * Lo que llega en un POST o PUT. Sin usuarioId: lo pone el servicio a partir
- * del JWT, nunca del body. Los limites de digitos son los de la columna
- * (DECIMAL(5,2) y DECIMAL(4,1); notas es TEXT, 65535) para que un valor que no cabe sea un 400 y no
- * un error de MySQL.
+ * del JWT, nunca del body. Los limites de digitos y de tamano son los de la
+ * columna (DECIMAL(5,2), DECIMAL(4,1) y TEXT, que son 65535) para que un valor
+ * que no cabe sea un 400 y no un error de MySQL.
  */
 public record RegistroPesoRequestDto(
         @NotNull @PastOrPresent LocalDate fecha,
