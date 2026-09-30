@@ -27,6 +27,6 @@ Estado: aceptada · 2026-09-30
 
 ## Consecuencias
 
-- **Pendiente con `Presupuesto`:** la misma protección de borrado y cambio de tipo para categorías con presupuestos.
+- **Presupuestos:** la misma protección de borrado y cambio de tipo se aplica a categorías con presupuestos ([[013-presupuesto-solo-gastos-uno-por-periodo]]).
 - Para cambiar el tipo de una categoría en uso hay que crear otra y mover los movimientos a mano.
 - El resumen mensual podrá agrupar por categoría sin comprobar tipos.

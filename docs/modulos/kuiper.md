@@ -49,6 +49,6 @@ Antes de escribir la primera entidad, merece la pena abrir el proyecto viejo y q
 
 | Entidad | Estado |
 |---|---|
-| `Categoria` | **Hecha** — CRUD en `/api/kuiper/categoria`. Ver [[011-categoria-nombre-unico-por-tipo]]. No se borra ni cambia de tipo con movimientos; falta lo mismo con presupuestos |
+| `Categoria` | **Hecha** — CRUD en `/api/kuiper/categoria`. Ver [[011-categoria-nombre-unico-por-tipo]]. No se borra ni cambia de tipo con movimientos ni presupuestos |
 | `Movimiento` | **Hecha** — CRUD en `/api/kuiper/movimiento`, filtros `desde`/`hasta`/`categoriaId`/`tipo`. Ver [[012-movimiento-categoria-mismo-tipo]] |
-| `Presupuesto` | Pendiente — B5 |
+| `Presupuesto` | **Hecha** — CRUD en `/api/kuiper/presupuesto`, filtros `periodo`/`categoriaId`. Ver [[013-presupuesto-solo-gastos-uno-por-periodo]] |

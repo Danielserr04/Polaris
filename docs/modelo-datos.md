@@ -129,9 +129,11 @@ Ver [[012-movimiento-categoria-mismo-tipo]].
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| categoria_id | bigint | FK |
-| periodo | varchar | MENSUAL, ANUAL |
-| importe_limite | DECIMAL(10,2) | |
+| categoria_id | bigint | FK a `categoria`, del mismo usuario y de tipo GASTO |
+| periodo | enum | MENSUAL, ANUAL. Único con `(usuario_id, categoria_id)` |
+| importe_limite | DECIMAL(10,2) | mayor que 0 |
+
+Ver [[013-presupuesto-solo-gastos-uno-por-periodo]].
 
 `importe` siempre positivo y el signo lo pone `tipo`: evita sumas con signos mezclados.
 

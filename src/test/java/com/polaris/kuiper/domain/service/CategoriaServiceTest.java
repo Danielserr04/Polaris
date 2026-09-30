@@ -2,6 +2,7 @@ package com.polaris.kuiper.domain.service;
 
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
+import com.polaris.kuiper.application.out.PresupuestoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaFilter;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
@@ -40,6 +41,9 @@ class CategoriaServiceTest {
 
     @Mock
     private MovimientoRepositoryPort movimientoRepository;
+
+    @Mock
+    private PresupuestoRepositoryPort presupuestoRepository;
 
     @InjectMocks
     private CategoriaService service;
@@ -183,6 +187,34 @@ class CategoriaServiceTest {
                 .isInstanceOf(ValidationException.class);
 
         verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("delete lanza ValidationException y no borra si la categoria tiene presupuestos")
+    void deleteLanzaSiTienePresupuestos() {
+        when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
+        when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(false);
+        when(presupuestoRepository.existsByCategoriaId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("update lanza ValidationException y no guarda si cambia el tipo de una categoria con presupuestos")
+    void updateLanzaSiCambiaTipoConPresupuestos() {
+        when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndNombreAndTipo(USUARIO, "Comida", TipoMovimiento.INGRESO))
+                .thenReturn(Optional.empty());
+        when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(false);
+        when(presupuestoRepository.existsByCategoriaId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, categoria(null, null, "Comida", TipoMovimiento.INGRESO)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
     }
 
     @Test
