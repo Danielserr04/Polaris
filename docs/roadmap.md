@@ -63,7 +63,7 @@ Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí convi
 - `Comida` y `ComidaLinea` ([[017-comida-agregado-con-lineas-macros-al-vuelo]], `V10`): un agregado, macros siempre al vuelo.
 - API de alimentos: **Open Food Facts** ([[018-alimentos-open-food-facts]], `V11`), búsqueda e importación, sin claves. No se ha probado contra la API real (ver la nota de la decisión).
 
-**Falta:** el resumen del día (`GET /api/fusion/resumen?fecha=`, macros contra el objetivo vigente). Los datos ya están; solo falta el caso de uso.
+Resumen del día (`GET /api/fusion/resumen?fecha=`, [[021-resumen-diario-fusion]]) hecho. **Falta** probar Open Food Facts contra la API real.
 
 ### B7 — Atlas
 `Ejercicio`, `Rutina`, `RutinaEjercicio`, `Sesion`, `SerieRegistro`. La parte con miga son las consultas de progresión.
@@ -112,7 +112,7 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
 | B4 | **Hecho** — `Perfil` y `RegistroPeso` |
 | B5 | **Hecho** — `Categoria`, `Movimiento`, `Presupuesto` y resumen mensual |
-| B6 | **Casi cerrada** — `Alimento`, `ObjetivoNutricional`, `Comida` (con sus líneas) y Open Food Facts hechos; falta el resumen del día |
+| B6 | **Casi cerrada** — `Alimento`, `ObjetivoNutricional`, `Comida` (con sus líneas) y Open Food Facts y resumen del día hechos; falta probar Open Food Facts con la API real |
 | B7 – B8 | Pendiente |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |
