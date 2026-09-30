@@ -5,16 +5,26 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -141,6 +151,106 @@ public class GlobalExceptionHandler {
                 .map(constante -> ((Enum<?>) constante).name())
                 .collect(Collectors.joining(", "));
         return ". Valores admitidos: " + valores;
+    }
+
+    /**
+     * Falta un query param obligatorio (@RequestParam sin valor por defecto).
+     */
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<ErrorResponse> handleMissingParameter(MissingServletRequestParameterException ex,
+                                                                HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, "Falta el parametro obligatorio: " + ex.getParameterName(), request);
+    }
+
+    /**
+     * El metodo HTTP no esta soportado en esa ruta. Incluye la cabecera Allow
+     * con los metodos que si lo estan, como exige el RFC 9110.
+     */
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMethodNotSupported(HttpRequestMethodNotSupportedException ex,
+                                                                  HttpServletRequest request) {
+        Set<HttpMethod> admitidos = ex.getSupportedHttpMethods();
+        String mensaje = "Metodo " + ex.getMethod() + " no soportado en esta ruta";
+        if (admitidos != null && !admitidos.isEmpty()) {
+            mensaje += ". Metodos admitidos: " + admitidos.stream()
+                    .map(HttpMethod::name)
+                    .sorted()
+                    .collect(Collectors.joining(", "));
+        }
+        ResponseEntity<ErrorResponse> respuesta = build(HttpStatus.METHOD_NOT_ALLOWED, mensaje, request);
+        if (admitidos == null || admitidos.isEmpty()) {
+            return respuesta;
+        }
+        HttpHeaders cabeceras = new HttpHeaders();
+        cabeceras.putAll(respuesta.getHeaders());
+        cabeceras.setAllow(admitidos);
+        return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).headers(cabeceras).body(respuesta.getBody());
+    }
+
+    /**
+     * El Content-Type de la peticion no lo lee ningun conversor (p. ej. text/plain
+     * o form-urlencoded donde se espera JSON).
+     */
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleMediaTypeNotSupported(HttpMediaTypeNotSupportedException ex,
+                                                                     HttpServletRequest request) {
+        String mensaje = "Content-Type no soportado";
+        if (ex.getContentType() != null) {
+            mensaje += ": " + ex.getContentType();
+        }
+        if (!ex.getSupportedMediaTypes().isEmpty()) {
+            mensaje += ". Tipos admitidos: " + ex.getSupportedMediaTypes().stream()
+                    .map(MediaType::toString)
+                    .collect(Collectors.joining(", "));
+        }
+        return build(HttpStatus.UNSUPPORTED_MEDIA_TYPE, mensaje, request);
+    }
+
+    /**
+     * Ruta que no existe (ni controller ni recurso estatico). Sin este handler la
+     * red de seguridad la convertia en un 500.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResource(NoResourceFoundException ex,
+                                                          HttpServletRequest request) {
+        return build(HttpStatus.NOT_FOUND, "Recurso no encontrado", request);
+    }
+
+    /**
+     * Violaciones de integridad de la base de datos. Solo la de unicidad se
+     * traduce a 409: es lo que ocurre cuando dos peticiones simultaneas superan
+     * la comprobacion previa del servicio y chocan con el UNIQUE. Cualquier otra
+     * (FK, NOT NULL...) indica un fallo nuestro y sigue siendo 500. El mensaje no
+     * incluye el nombre del indice ni el SQL.
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ErrorResponse> handleDataIntegrity(DataIntegrityViolationException ex,
+                                                             HttpServletRequest request) {
+        if (esViolacionDeUnicidad(ex)) {
+            log.warn("Conflicto de unicidad en {} {}", request.getMethod(), request.getRequestURI());
+            return build(HttpStatus.CONFLICT, "El recurso ya existe", request);
+        }
+        return handleUnexpected(ex, request);
+    }
+
+    /** ER_DUP_ENTRY de MySQL: clave duplicada en un indice UNIQUE o PRIMARY. */
+    private static final int MYSQL_ER_DUP_ENTRY = 1062;
+
+    private boolean esViolacionDeUnicidad(Throwable ex) {
+        Throwable actual = ex;
+        for (int profundidad = 0; actual != null && profundidad < 20; profundidad++) {
+            // Cubre SQLIntegrityConstraintViolationException y el
+            // ConstraintViolationException de Hibernate (extiende JDBCException).
+            if (actual instanceof SQLException sql && sql.getErrorCode() == MYSQL_ER_DUP_ENTRY) {
+                return true;
+            }
+            if (actual instanceof org.hibernate.exception.ConstraintViolationException hibernate
+                    && hibernate.getErrorCode() == MYSQL_ER_DUP_ENTRY) {
+                return true;
+            }
+            actual = actual.getCause() == actual ? null : actual.getCause();
+        }
+        return false;
     }
 
     /**
