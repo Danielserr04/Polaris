@@ -100,10 +100,12 @@ Una sola tabla para los cuatro tipos de contenido. Añadir uno nuevo es un valor
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| nombre | varchar | |
-| color | varchar | hex |
-| icono | varchar | |
-| tipo | varchar | INGRESO, GASTO |
+| nombre | varchar(100) | único por usuario+tipo |
+| color | varchar(7) | hex #RRGGBB, opcional |
+| icono | varchar(50) | opcional |
+| tipo | enum | INGRESO, GASTO |
+
+Ver [[011-categoria-nombre-unico-por-tipo]].
 
 **`movimiento`**
 
@@ -111,13 +113,15 @@ Una sola tabla para los cuatro tipos de contenido. Añadir uno nuevo es un valor
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| fecha | date | índice |
-| importe | DECIMAL(10,2) | siempre positivo |
-| tipo | varchar | INGRESO, GASTO |
-| categoria_id | bigint | FK |
-| concepto | varchar | |
-| metodo_pago | varchar | |
-| recurrente | boolean | |
+| fecha | date | índice `(usuario_id, fecha)`; no puede ser futura |
+| importe | DECIMAL(10,2) | siempre positivo, mayor que 0 |
+| tipo | enum | INGRESO, GASTO. Debe coincidir con el de la categoría |
+| categoria_id | bigint | FK a `categoria`, del mismo usuario |
+| concepto | varchar(255) | opcional |
+| metodo_pago | varchar(50) | opcional, texto libre |
+| recurrente | boolean | por defecto falso |
+
+Ver [[012-movimiento-categoria-mismo-tipo]].
 
 **`presupuesto`**
 

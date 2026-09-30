@@ -1,0 +1,200 @@
+package com.polaris.kuiper.domain.service;
+
+import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
+import com.polaris.kuiper.domain.model.Categoria;
+import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
+import com.polaris.kuiper.domain.model.Movimiento;
+import com.polaris.kuiper.domain.model.MovimientoFilter;
+import com.polaris.kuiper.domain.model.MovimientoNotFoundException;
+import com.polaris.kuiper.domain.model.TipoMovimiento;
+import com.polaris.shared.error.ValidationException;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+/**
+ * Lo que mas importa: la categoria tiene que ser del usuario y de su mismo
+ * tipo, y un usuario nunca ve ni toca el movimiento de otro. Ver
+ * docs/decisiones/012-movimiento-categoria-mismo-tipo.md.
+ */
+@ExtendWith(MockitoExtension.class)
+class MovimientoServiceTest {
+
+    private static final Long USUARIO = 1L;
+    private static final Long OTRO_USUARIO = 2L;
+    private static final LocalDate HOY = LocalDate.of(2026, 9, 30);
+
+    @Mock
+    private MovimientoRepositoryPort repository;
+
+    @Mock
+    private CategoriaRepositoryPort categoriaRepository;
+
+    @InjectMocks
+    private MovimientoService service;
+
+    private static Categoria categoria(Long id, Long usuarioId, TipoMovimiento tipo) {
+        return Categoria.builder().id(id).usuarioId(usuarioId).nombre("Cat " + id).tipo(tipo).build();
+    }
+
+    private static Movimiento movimiento(Long id, Long usuarioId, Long categoriaId, TipoMovimiento tipo) {
+        return Movimiento.builder().id(id).usuarioId(usuarioId).fecha(HOY).importe(new BigDecimal("12.50"))
+                .tipo(tipo).categoriaId(categoriaId).build();
+    }
+
+    @Test
+    @DisplayName("create fija el usuarioId del JWT y anula el id que traiga")
+    void createFijaUsuarioYAnulaId() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Movimiento creado = service.create(USUARIO, movimiento(999L, 999L, 10L, TipoMovimiento.GASTO));
+
+        assertThat(creado.getId()).isNull();
+        assertThat(creado.getUsuarioId()).isEqualTo(USUARIO);
+    }
+
+    @Test
+    @DisplayName("create lanza CategoriaNotFoundException y no guarda si la categoria no existe")
+    void createLanzaSiLaCategoriaNoExiste() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.create(USUARIO, movimiento(null, null, 10L, TipoMovimiento.GASTO)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create lanza CategoriaNotFoundException, no 403, si la categoria es de otro usuario")
+    void createLanzaSiLaCategoriaEsDeOtroUsuario() {
+        when(categoriaRepository.findById(10L))
+                .thenReturn(Optional.of(categoria(10L, OTRO_USUARIO, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.create(USUARIO, movimiento(null, null, 10L, TipoMovimiento.GASTO)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create lanza ValidationException y no guarda si el tipo no coincide con el de la categoria")
+    void createLanzaSiElTipoNoCoincide() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.INGRESO)));
+
+        assertThatThrownBy(() -> service.create(USUARIO, movimiento(null, null, 10L, TipoMovimiento.GASTO)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("get devuelve el movimiento cuando es del usuario")
+    void getDevuelveMovimientoPropio() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        assertThat(service.get(USUARIO, 5L).getId()).isEqualTo(5L);
+    }
+
+    @Test
+    @DisplayName("get lanza MovimientoNotFoundException, no 403, si es de otro usuario")
+    void getLanzaNotFoundSiEsDeOtroUsuario() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, OTRO_USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.get(USUARIO, 5L))
+                .isInstanceOf(MovimientoNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("get lanza MovimientoNotFoundException si el id no existe")
+    void getLanzaNotFoundSiNoExiste() {
+        when(repository.findById(42L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.get(USUARIO, 42L))
+                .isInstanceOf(MovimientoNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("list delega usuarioId y filtro tal cual en el repositorio")
+    void listDelegaUsuarioYFiltro() {
+        MovimientoFilter filtro = MovimientoFilter.builder().tipo(TipoMovimiento.GASTO).categoriaId(10L).build();
+        List<Movimiento> esperado = List.of(movimiento(1L, USUARIO, 10L, TipoMovimiento.GASTO));
+        when(repository.findAll(USUARIO, filtro)).thenReturn(esperado);
+
+        assertThat(service.list(USUARIO, filtro)).isEqualTo(esperado);
+    }
+
+    @Test
+    @DisplayName("update conserva id y usuarioId del movimiento existente")
+    void updateConservaIdYUsuarioDelExistente() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+        when(categoriaRepository.findById(11L)).thenReturn(Optional.of(categoria(11L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Movimiento actualizado = service.update(USUARIO, 5L, movimiento(999L, 999L, 11L, TipoMovimiento.GASTO));
+
+        assertThat(actualizado.getId()).isEqualTo(5L);
+        assertThat(actualizado.getUsuarioId()).isEqualTo(USUARIO);
+        assertThat(actualizado.getCategoriaId()).isEqualTo(11L);
+    }
+
+    @Test
+    @DisplayName("update lanza ValidationException y no guarda si la nueva categoria es de otro tipo")
+    void updateLanzaSiElTipoNoCoincide() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+        when(categoriaRepository.findById(11L)).thenReturn(Optional.of(categoria(11L, USUARIO, TipoMovimiento.INGRESO)));
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, movimiento(null, null, 11L, TipoMovimiento.GASTO)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update lanza MovimientoNotFoundException y no guarda si es de otro usuario")
+    void updateLanzaSiEsDeOtroUsuario() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, OTRO_USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, movimiento(null, null, 10L, TipoMovimiento.GASTO)))
+                .isInstanceOf(MovimientoNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("delete comprueba propiedad antes de borrar")
+    void deleteComprobarPropiedadAntesDeBorrar() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        service.delete(USUARIO, 5L);
+
+        verify(repository).deleteById(5L);
+    }
+
+    @Test
+    @DisplayName("delete no borra si es de otro usuario")
+    void deleteNoBorraSiEsDeOtroUsuario() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, OTRO_USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(MovimientoNotFoundException.class);
+
+        verify(repository, never()).deleteById(any());
+    }
+}
