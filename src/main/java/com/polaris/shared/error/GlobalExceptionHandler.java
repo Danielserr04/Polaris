@@ -1,13 +1,20 @@
 package com.polaris.shared.error;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
+import java.util.Arrays;
 import java.util.stream.Collectors;
 
 /**
@@ -69,10 +76,71 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleBeanValidation(BindException ex,
                                                               HttpServletRequest request) {
         String mensaje = ex.getBindingResult().getFieldErrors().stream()
-                .map(error -> error.getField() + ": " + error.getDefaultMessage())
+                .map(error -> error.getField() + ": " + describirFallo(ex, error))
                 .collect(Collectors.joining(", "));
 
         return build(HttpStatus.BAD_REQUEST, mensaje, request);
+    }
+
+    /**
+     * Un query param que no se puede convertir al tipo del DTO (enum, fecha,
+     * numero) es un fallo de binding, no de validacion: se traduce a un mensaje
+     * legible en vez del texto tecnico de Spring, que trae nombres de clases.
+     */
+    private String describirFallo(BindException ex, FieldError error) {
+        if (!error.isBindingFailure()) {
+            return error.getDefaultMessage();
+        }
+        return "valor no valido" + sufijoValoresAdmitidos(ex.getBindingResult().getFieldType(error.getField()));
+    }
+
+    /**
+     * Variable de ruta o query param suelto que no se puede convertir, p. ej.
+     * /entrada/abc donde va un Long.
+     */
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ResponseEntity<ErrorResponse> handleTypeMismatch(MethodArgumentTypeMismatchException ex,
+                                                            HttpServletRequest request) {
+        String mensaje = ex.getName() + ": valor no valido" + sufijoValoresAdmitidos(ex.getRequiredType());
+        return build(HttpStatus.BAD_REQUEST, mensaje, request);
+    }
+
+    /**
+     * Cuerpo JSON que no se puede leer: enum invalido, tipo equivocado, JSON mal
+     * formado o cuerpo ausente. Es un error del cliente (400), no nuestro. El
+     * mensaje nunca incluye nombres de clases ni el detalle de Jackson.
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ErrorResponse> handleNotReadable(HttpMessageNotReadableException ex,
+                                                           HttpServletRequest request) {
+        return build(HttpStatus.BAD_REQUEST, mensajeCuerpoIlegible(ex), request);
+    }
+
+    private String mensajeCuerpoIlegible(HttpMessageNotReadableException ex) {
+        Throwable causa = ex.getCause();
+        if (causa instanceof MismatchedInputException mismatch && !mismatch.getPath().isEmpty()) {
+            String campo = mismatch.getPath().stream()
+                    .map(ref -> ref.getFieldName() != null ? ref.getFieldName() : "[" + ref.getIndex() + "]")
+                    .collect(Collectors.joining("."))
+                    .replace(".[", "[");
+            Class<?> destino = mismatch instanceof InvalidFormatException invalido ? invalido.getTargetType() : null;
+            return campo + ": valor no valido" + sufijoValoresAdmitidos(destino);
+        }
+        if (causa instanceof JsonProcessingException) {
+            return "El cuerpo de la peticion no es un JSON valido";
+        }
+        return "Falta el cuerpo de la peticion";
+    }
+
+    /** Si el destino es un enum, lista sus valores; si no, cadena vacia. */
+    private String sufijoValoresAdmitidos(Class<?> destino) {
+        if (destino == null || !destino.isEnum()) {
+            return "";
+        }
+        String valores = Arrays.stream(destino.getEnumConstants())
+                .map(constante -> ((Enum<?>) constante).name())
+                .collect(Collectors.joining(", "));
+        return ". Valores admitidos: " + valores;
     }
 
     /**
