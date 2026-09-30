@@ -25,6 +25,6 @@ Estado: aceptada · 2026-09-30
 
 ## Consecuencias
 
-- **Pendiente al llegar `Movimiento` y `Presupuesto`:** `DELETE` debe devolver 409 si la categoría tiene movimientos o presupuestos. Hoy borra sin más porque esas tablas no existen. Está anotado en `CategoriaService`.
+- **Borrado protegido:** con `Movimiento` (ver [[012-movimiento-categoria-mismo-tipo]]) una categoría con movimientos no se borra ni cambia de tipo, y devuelve 400 y no 409 como se anticipó aquí. Falta lo mismo con `Presupuesto`.
 - Cambiar un valor de `tipo` exige una migración nueva, como en V2.
 - No se revisó `lumen-app` antes de empezar (no accesible desde el entorno de trabajo). Los campos salen de [[modelo-datos]].

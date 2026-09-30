@@ -1,11 +1,13 @@
 package com.polaris.kuiper.domain.service;
 
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaFilter;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
 import com.polaris.kuiper.domain.model.TipoMovimiento;
 import com.polaris.shared.error.DuplicateResourceException;
+import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -35,6 +37,9 @@ class CategoriaServiceTest {
 
     @Mock
     private CategoriaRepositoryPort repository;
+
+    @Mock
+    private MovimientoRepositoryPort movimientoRepository;
 
     @InjectMocks
     private CategoriaService service;
@@ -161,10 +166,50 @@ class CategoriaServiceTest {
     @DisplayName("delete comprueba propiedad antes de borrar")
     void deleteComprobarPropiedadAntesDeBorrar() {
         when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
+        when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(false);
 
         service.delete(USUARIO, 5L);
 
         verify(repository).deleteById(5L);
+    }
+
+    @Test
+    @DisplayName("delete lanza ValidationException y no borra si la categoria tiene movimientos")
+    void deleteLanzaSiTieneMovimientos() {
+        when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
+        when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("update lanza ValidationException y no guarda si cambia el tipo de una categoria con movimientos")
+    void updateLanzaSiCambiaTipoConMovimientos() {
+        when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndNombreAndTipo(USUARIO, "Comida", TipoMovimiento.INGRESO))
+                .thenReturn(Optional.empty());
+        when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, categoria(null, null, "Comida", TipoMovimiento.INGRESO)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update permite cambiar el tipo si la categoria no tiene movimientos")
+    void updateCambiaTipoSinMovimientos() {
+        when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndNombreAndTipo(USUARIO, "Comida", TipoMovimiento.INGRESO))
+                .thenReturn(Optional.empty());
+        when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(false);
+        when(repository.save(any(Categoria.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThat(service.update(USUARIO, 5L, categoria(null, null, "Comida", TipoMovimiento.INGRESO)).getTipo())
+                .isEqualTo(TipoMovimiento.INGRESO);
     }
 
     @Test

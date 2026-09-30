@@ -113,13 +113,15 @@ Ver [[011-categoria-nombre-unico-por-tipo]].
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| fecha | date | índice |
-| importe | DECIMAL(10,2) | siempre positivo |
-| tipo | varchar | INGRESO, GASTO |
-| categoria_id | bigint | FK |
-| concepto | varchar | |
-| metodo_pago | varchar | |
-| recurrente | boolean | |
+| fecha | date | índice `(usuario_id, fecha)`; no puede ser futura |
+| importe | DECIMAL(10,2) | siempre positivo, mayor que 0 |
+| tipo | enum | INGRESO, GASTO. Debe coincidir con el de la categoría |
+| categoria_id | bigint | FK a `categoria`, del mismo usuario |
+| concepto | varchar(255) | opcional |
+| metodo_pago | varchar(50) | opcional, texto libre |
+| recurrente | boolean | por defecto falso |
+
+Ver [[012-movimiento-categoria-mismo-tipo]].
 
 **`presupuesto`**
 

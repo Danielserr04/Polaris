@@ -6,10 +6,12 @@ import com.polaris.kuiper.application.in.GetCategoriaInterface;
 import com.polaris.kuiper.application.in.ListCategoriaInterface;
 import com.polaris.kuiper.application.in.UpdateCategoriaInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaFilter;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
 import com.polaris.shared.error.DuplicateResourceException;
+import com.polaris.shared.error.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +20,10 @@ import java.util.List;
 /**
  * Nombre unico por usuario y tipo. Ver docs/decisiones/011-categoria-nombre-unico-por-tipo.md.
  *
- * <p>Todavia no impide borrar una categoria con movimientos o presupuestos:
- * esas tablas no existen. Esa comprobacion entra con Movimiento.
+ * <p>Una categoria con movimientos no se borra ni cambia de tipo (400, como
+ * TituloService con sus entradas): dejaria movimientos huerfanos o de tipo
+ * distinto al de su categoria. Falta hacer lo mismo con los presupuestos
+ * cuando existan. Ver docs/decisiones/012-movimiento-categoria-mismo-tipo.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -31,6 +35,7 @@ public class CategoriaService implements
         DeleteCategoriaInterface {
 
     private final CategoriaRepositoryPort repository;
+    private final MovimientoRepositoryPort movimientoRepository;
 
     @Override
     public Categoria create(Long usuarioId, Categoria categoria) {
@@ -54,6 +59,11 @@ public class CategoriaService implements
     public Categoria update(Long usuarioId, Long id, Categoria categoria) {
         Categoria existente = getPropia(usuarioId, id);
         comprobarNombreLibre(usuarioId, categoria, existente.getId());
+
+        if (existente.getTipo() != categoria.getTipo() && movimientoRepository.existsByCategoriaId(id)) {
+            throw new ValidationException("No se puede cambiar el tipo de una categoria que tiene movimientos");
+        }
+
         categoria.setId(existente.getId());
         categoria.setUsuarioId(existente.getUsuarioId());
         return repository.save(categoria);
@@ -62,6 +72,11 @@ public class CategoriaService implements
     @Override
     public void delete(Long usuarioId, Long id) {
         getPropia(usuarioId, id);
+
+        if (movimientoRepository.existsByCategoriaId(id)) {
+            throw new ValidationException("No se puede borrar una categoria que tiene movimientos asociados");
+        }
+
         repository.deleteById(id);
     }
 
