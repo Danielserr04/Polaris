@@ -41,6 +41,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[012-movimiento-categoria-mismo-tipo]]
 - [[013-presupuesto-solo-gastos-uno-por-periodo]]
 - [[014-resumen-mensual-agregado-en-servicio]]
+- [[015-alimento-catalogo-compartido-macros-por-100g]]
 
 ## Cómo se mantiene esto
 

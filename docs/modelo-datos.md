@@ -146,14 +146,16 @@ Ver [[013-presupuesto-solo-gastos-uno-por-periodo]].
 | Campo | Tipo | Nota |
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
-| nombre | varchar | |
-| marca | varchar | |
-| kcal_100g | DECIMAL(6,2) | |
-| proteinas_100g | DECIMAL(5,2) | |
-| carbohidratos_100g | DECIMAL(5,2) | |
-| grasas_100g | DECIMAL(5,2) | |
-| fuente_externa | varchar | |
-| id_externo | varchar | |
+| nombre | varchar(150) | |
+| marca | varchar(100) | opcional |
+| kcal_100g | DECIMAL(6,2) | 0-900 |
+| proteinas_100g | DECIMAL(5,2) | 0-100 |
+| carbohidratos_100g | DECIMAL(5,2) | 0-100 |
+| grasas_100g | DECIMAL(5,2) | 0-100 |
+| fuente_externa | enum | hoy solo MANUAL. Único con `id_externo` |
+| id_externo | varchar | nulo en los MANUAL |
+
+Catálogo compartido: sin `usuario_id`. Ver [[015-alimento-catalogo-compartido-macros-por-100g]].
 
 **`comida`**
 
