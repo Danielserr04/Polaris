@@ -60,4 +60,4 @@ La vault de Obsidian es la carpeta `docs/`. Se abre esa carpeta, no la raíz del
 
 ## Estado
 
-Fase **B6** (Fusión), casi cerrada: `Alimento`, `ObjetivoNutricional`, `Comida` y la importación desde Open Food Facts están hechos; falta el resumen del día. B0 a B5 cerrados. Ver `docs/roadmap.md`.
+Fase **B7** (Atlas), en curso: `Ejercicio` hecho. B0 a B6 cerrados salvo probar Open Food Facts contra la API real. Ver `docs/roadmap.md`.
