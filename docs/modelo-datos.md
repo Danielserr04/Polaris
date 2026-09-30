@@ -152,10 +152,10 @@ Ver [[013-presupuesto-solo-gastos-uno-por-periodo]].
 | proteinas_100g | DECIMAL(5,2) | 0-100 |
 | carbohidratos_100g | DECIMAL(5,2) | 0-100 |
 | grasas_100g | DECIMAL(5,2) | 0-100 |
-| fuente_externa | enum | hoy solo MANUAL. Único con `id_externo` |
-| id_externo | varchar | nulo en los MANUAL |
+| fuente_externa | enum | `ENUM('MANUAL','OPEN_FOOD_FACTS')`. Único con `id_externo` |
+| id_externo | varchar(255) | nulo en los MANUAL; el código de barras en los de Open Food Facts |
 
-Catálogo compartido: sin `usuario_id`. Ver [[015-alimento-catalogo-compartido-macros-por-100g]].
+Catálogo compartido: sin `usuario_id`. Ver [[015-alimento-catalogo-compartido-macros-por-100g]] y [[018-alimentos-open-food-facts]]. `V8` creó el enum solo con `MANUAL`; `V11` añadió `OPEN_FOOD_FACTS`.
 
 **`comida`**
 
@@ -164,16 +164,19 @@ Catálogo compartido: sin `usuario_id`. Ver [[015-alimento-catalogo-compartido-m
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
 | fecha | date | |
-| momento | varchar | DESAYUNO, COMIDA, CENA, SNACK |
+| momento | enum | DESAYUNO, COMIDA, CENA, SNACK. El orden del `ENUM` es el del día y el listado ordena por él |
+
+Sin unique por `(usuario_id, fecha, momento)`: un día puede tener varios SNACK. Índice `(usuario_id, fecha)`. Ver [[017-comida-agregado-con-lineas-macros-al-vuelo]].
 
 **`comida_linea`**
 
-| Campo | Tipo |
-|---|---|
-| id | BIGINT AUTO_INCREMENT |
-| comida_id | bigint |
-| alimento_id | bigint |
-| cantidad_g | DECIMAL(7,2) |
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | el mismo que el de la comida; lo fija el servicio |
+| comida_id | bigint | FK a `comida`, sin `ON DELETE CASCADE` (borra JPA) |
+| alimento_id | bigint | FK a `alimento`; índice para proteger el borrado del catálogo |
+| cantidad_g | DECIMAL(7,2) | mayor que 0 |
 
 **`objetivo_nutricional`**
 
@@ -181,11 +184,13 @@ Catálogo compartido: sin `usuario_id`. Ver [[015-alimento-catalogo-compartido-m
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| kcal_diarias | int | |
-| proteinas_obj | int | gramos |
-| carbos_obj | int | gramos |
-| grasas_obj | int | gramos |
-| vigente_desde | date | histórico, no se sobrescribe |
+| kcal_diarias | int NOT NULL | 500-10000 |
+| proteinas_obj | int NOT NULL | gramos, 0-1000 |
+| carbos_obj | int NOT NULL | gramos, 0-1000 |
+| grasas_obj | int NOT NULL | gramos, 0-1000 |
+| vigente_desde | date NOT NULL | histórico, no se sobrescribe. Único con `usuario_id` |
+
+Ver [[016-objetivo-nutricional-historico-inmutable]].
 
 Los macros se guardan por 100 g y se calculan al vuelo con `cantidad_g`. Nunca se guarda el total calculado: si corriges el alimento, se corrige el histórico.
 
@@ -259,5 +264,8 @@ Los macros se guardan por 100 g y se calculan al vuelo con `cantidad_g`. Nunca s
 | `entrada` | `(usuario_id, estado)` | el listado filtrado, la consulta más frecuente |
 | `movimiento` | `(usuario_id, fecha)` | vistas por mes |
 | `comida` | `(usuario_id, fecha)` | resumen del día |
+| `comida_linea` | `(alimento_id)` | comprobar si un alimento está en uso antes de borrarlo |
+| `alimento` | `(fuente_externa, id_externo)` único | evitar duplicados al importar |
+| `objetivo_nutricional` | `(usuario_id, vigente_desde)` único | el vigente en una fecha y el histórico |
 | `serie_registro` | `(ejercicio_id, sesion_id)` | progresión por ejercicio |
 | `registro_peso` | `(usuario_id, fecha)` único | un peso por día |
