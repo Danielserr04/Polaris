@@ -52,6 +52,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[023-ejercicio-catalogo-y-propios]]
 - [[024-rutina-agregado-con-lineas]]
 - [[025-sesion-agregado-con-series]]
+- [[026-progresion-y-records-por-volumen]]
 
 ## Cómo se mantiene esto
 

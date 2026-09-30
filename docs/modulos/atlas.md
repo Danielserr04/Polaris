@@ -55,9 +55,12 @@ GET    /api/atlas/records                       mejores marcas por ejercicio
 
 ## Pendiente
 
-- Definir qué métrica manda en la progresión: 1RM estimado (fórmula de Epley o Brzycki), volumen total, o peso máximo por serie
-- Catálogo inicial de ejercicios: buscar uno abierto o meterlos a mano
+- Catálogo inicial de ejercicios: decidido vacío, cada usuario crea los suyos (o inserta catálogo con `usuario_id` NULL)
 - Descansos y cronómetro: fuera de alcance por ahora
+
+## Progresión
+
+Métrica que manda: **volumen total** (reps × peso). Ver [[026-progresion-y-records-por-volumen]]. `/progresion` da el volumen por sesión de un ejercicio; `/records` da, por ejercicio, el peso máximo en una serie y el mayor volumen en una sesión. Se calcula en la base de datos.
 
 ## Estado
 
