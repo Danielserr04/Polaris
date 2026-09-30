@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -15,15 +17,19 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -68,6 +74,49 @@ class GlobalExceptionHandlerTest {
         @GetMapping("/suelto")
         String suelto(@RequestParam Estado estado) {
             return "ok";
+        }
+
+        @GetMapping("/unico-jdbc")
+        String unicoJdbc() {
+            throw new DataIntegrityViolationException("no filtrar esto",
+                    new SQLIntegrityConstraintViolationException(
+                            "Duplicate entry 'a' for key 'uk_secreto'", "23000", 1062));
+        }
+
+        @GetMapping("/unico-hibernate")
+        String unicoHibernate() {
+            throw new DataIntegrityViolationException("no filtrar esto",
+                    new org.hibernate.exception.ConstraintViolationException(
+                            "could not execute statement [insert into secreta]",
+                            new SQLIntegrityConstraintViolationException(
+                                    "Duplicate entry 'a' for key 'uk_secreto'", "23000", 1062),
+                            "insert into secreta", "uk_secreto"));
+        }
+
+        @GetMapping("/fk")
+        String claveAjena() {
+            throw new DataIntegrityViolationException("no filtrar esto",
+                    new org.hibernate.exception.ConstraintViolationException(
+                            "could not execute statement",
+                            new SQLIntegrityConstraintViolationException(
+                                    "Cannot add or update a child row: a foreign key constraint fails", "23000", 1452),
+                            "insert into secreta", "fk_secreta"));
+        }
+
+        @GetMapping("/not-null")
+        String noNulo() {
+            throw new DataIntegrityViolationException("no filtrar esto",
+                    new SQLIntegrityConstraintViolationException("Column 'x' cannot be null", "23000", 1048));
+        }
+
+        @GetMapping("/sin-causa")
+        String sinCausa() {
+            throw new DataIntegrityViolationException("sin causa");
+        }
+
+        @GetMapping("/inexistente")
+        String inexistente() throws Exception {
+            throw new NoResourceFoundException(HttpMethod.GET, "inexistente");
         }
 
         @GetMapping("/roto")
@@ -190,5 +239,74 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(get("/prueba/roto"))
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error").value("Error interno del servidor"));
+    }
+
+    @Test
+    void violacionDeUnicidadJdbcDevuelve409SinFiltrarIndicesNiSql() throws Exception {
+        mockMvc.perform(get("/prueba/unico-jdbc"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.path").value("/prueba/unico-jdbc"))
+                .andExpect(jsonPath("$.error").value("El recurso ya existe"))
+                .andExpect(jsonPath("$.error").value(not(containsString("uk_secreto"))));
+    }
+
+    @Test
+    void violacionDeUnicidadEnvueltaPorHibernateDevuelve409() throws Exception {
+        mockMvc.perform(get("/prueba/unico-hibernate"))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.error").value("El recurso ya existe"));
+    }
+
+    @Test
+    void violacionDeClaveAjenaNoSeTraduceA409() throws Exception {
+        mockMvc.perform(get("/prueba/fk"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("Error interno del servidor"));
+    }
+
+    @Test
+    void violacionNotNullNoSeTraduceA409() throws Exception {
+        mockMvc.perform(get("/prueba/not-null"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("Error interno del servidor"));
+    }
+
+    @Test
+    void violacionDeIntegridadSinCausaSqlSigueSiendo500() throws Exception {
+        mockMvc.perform(get("/prueba/sin-causa"))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    void metodoNoSoportadoDevuelve405ConCabeceraAllow() throws Exception {
+        mockMvc.perform(delete("/prueba"))
+                .andExpect(status().isMethodNotAllowed())
+                .andExpect(header().string("Allow", "POST"))
+                .andExpect(jsonPath("$.status").value(405))
+                .andExpect(jsonPath("$.error").value("Metodo DELETE no soportado en esta ruta. Metodos admitidos: POST"));
+    }
+
+    @Test
+    void contentTypeNoSoportadoDevuelve415() throws Exception {
+        mockMvc.perform(post("/prueba").contentType(MediaType.TEXT_PLAIN).content("hola"))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(jsonPath("$.status").value(415))
+                .andExpect(jsonPath("$.error").value(containsString("Content-Type no soportado: text/plain")));
+    }
+
+    @Test
+    void rutaInexistenteDevuelve404() throws Exception {
+        mockMvc.perform(get("/prueba/inexistente"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Recurso no encontrado"));
+    }
+
+    @Test
+    void parametroObligatorioAusenteDevuelve400() throws Exception {
+        mockMvc.perform(get("/prueba/suelto"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("Falta el parametro obligatorio: estado"));
     }
 }
