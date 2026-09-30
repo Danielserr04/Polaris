@@ -63,7 +63,7 @@ GET    /api/atlas/records                       mejores marcas por ejercicio
 
 | Entidad | Estado |
 |---|---|
-| `Ejercicio` | Pendiente — B7 |
+| `Ejercicio` | **Hecha** — CRUD en `/api/atlas/ejercicio`, filtros `?grupoMuscular=` y `?q=`. Catálogo compartido (solo lectura) más ejercicios propios. Ver [[023-ejercicio-catalogo-y-propios]] |
 | `Rutina` | Pendiente — B7 |
 | `RutinaEjercicio` | Pendiente — B7 |
 | `Sesion` | Pendiente — B7 |

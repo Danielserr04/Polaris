@@ -203,10 +203,12 @@ Los macros se guardan por 100 g y se calculan al vuelo con `cantidad_g`. Nunca s
 | Campo | Tipo | Nota |
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
-| nombre | varchar | |
-| grupo_muscular | varchar | |
-| equipamiento | varchar | |
-| es_propio | boolean | creado por ti vs catálogo |
+| usuario_id | bigint | nullable: NULL = catálogo compartido, con valor = ejercicio propio |
+| nombre | varchar(150) | único por `usuario_id` (el catálogo se valida en el servicio) |
+| grupo_muscular | varchar(50) | índice |
+| equipamiento | varchar(100) | nullable |
+
+Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo-y-propios]].
 
 **`rutina`**
 

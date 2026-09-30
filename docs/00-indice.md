@@ -49,6 +49,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[020-violacion-unicidad-409-y-errores-http-cliente]]
 - [[021-resumen-diario-fusion]]
 - [[022-peso-corporal-desde-fusion-y-atlas]]
+- [[023-ejercicio-catalogo-y-propios]]
 
 ## Cómo se mantiene esto
 
