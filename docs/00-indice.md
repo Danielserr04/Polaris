@@ -18,10 +18,10 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 | Nota | Módulo | Estado |
 |---|---|---|
 | [[auth]] | Identidad: OAuth2 Google y JWT | **Hecho** |
-| [[nucleo]] | Perfil y peso corporal | Pendiente |
+| [[nucleo]] | Perfil y peso corporal | **Hecho** (B4) |
 | [[odisea]] | Ocio: pelis, series, juegos, libros | **Hecho** (B2) |
-| [[kuiper]] | Gastos | Nuevo |
-| [[fusion]] | Nutrición | Nuevo |
+| [[kuiper]] | Gastos | **Hecho** (B5) |
+| [[fusion]] | Nutrición | En curso (B6, falta el resumen del día) |
 | [[atlas]] | Gym | Nuevo |
 
 ## Decisiones
@@ -42,6 +42,10 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[013-presupuesto-solo-gastos-uno-por-periodo]]
 - [[014-resumen-mensual-agregado-en-servicio]]
 - [[015-alimento-catalogo-compartido-macros-por-100g]]
+- [[016-objetivo-nutricional-historico-inmutable]]
+- [[017-comida-agregado-con-lineas-macros-al-vuelo]]
+- [[018-alimentos-open-food-facts]]
+- [[019-zona-horaria-europe-madrid]]
 
 ## Cómo se mantiene esto
 

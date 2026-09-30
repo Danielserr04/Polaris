@@ -56,7 +56,14 @@ Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí convi
 ### B6 — Fusión
 `Alimento`, `Comida`, `ComidaLinea`, `ObjetivoNutricional`. API de alimentos. Cálculo de macros del día contra objetivo.
 
-**En curso:** `Alimento` hecha el 2026-09-30 ([[015-alimento-catalogo-compartido-macros-por-100g]], `V8`), solo con creación manual. Faltan `Comida`, `ComidaLinea`, `ObjetivoNutricional`, la API de alimentos (sin elegir) y el resumen del día.
+**Casi cerrada (2026-09-30).** Hechas:
+
+- `Alimento` ([[015-alimento-catalogo-compartido-macros-por-100g]], `V8`), con borrado bloqueado si está en alguna comida.
+- `ObjetivoNutricional` ([[016-objetivo-nutricional-historico-inmutable]], `V9`): histórico inmutable, sin `PUT` ni `DELETE`.
+- `Comida` y `ComidaLinea` ([[017-comida-agregado-con-lineas-macros-al-vuelo]], `V10`): un agregado, macros siempre al vuelo.
+- API de alimentos: **Open Food Facts** ([[018-alimentos-open-food-facts]], `V11`), búsqueda e importación, sin claves. No se ha probado contra la API real (ver la nota de la decisión).
+
+**Falta:** el resumen del día (`GET /api/fusion/resumen?fecha=`, macros contra el objetivo vigente). Los datos ya están; solo falta el caso de uso.
 
 ### B7 — Atlas
 `Ejercicio`, `Rutina`, `RutinaEjercicio`, `Sesion`, `SerieRegistro`. La parte con miga son las consultas de progresión.
@@ -105,7 +112,7 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
 | B4 | **Hecho** — `Perfil` y `RegistroPeso` |
 | B5 | **Hecho** — `Categoria`, `Movimiento`, `Presupuesto` y resumen mensual |
-| B6 | **En curso** — `Alimento` hecha; faltan `Comida`, `ComidaLinea`, `ObjetivoNutricional`, API de alimentos y resumen |
+| B6 | **Casi cerrada** — `Alimento`, `ObjetivoNutricional`, `Comida` (con sus líneas) y Open Food Facts hechos; falta el resumen del día |
 | B7 – B8 | Pendiente |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |

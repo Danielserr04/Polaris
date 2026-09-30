@@ -167,6 +167,43 @@ class MovimientoServiceTest {
     }
 
     @Test
+    @DisplayName("update lanza CategoriaNotFoundException, no 403, y no guarda si la nueva categoria es de otro usuario")
+    void updateLanzaSiLaCategoriaEsDeOtroUsuario() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+        when(categoriaRepository.findById(11L))
+                .thenReturn(Optional.of(categoria(11L, OTRO_USUARIO, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, movimiento(null, null, 11L, TipoMovimiento.GASTO)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update lanza CategoriaNotFoundException y no guarda si la nueva categoria no existe")
+    void updateLanzaSiLaCategoriaNoExiste() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+        when(categoriaRepository.findById(11L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, movimiento(null, null, 11L, TipoMovimiento.GASTO)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update lanza ValidationException y no guarda si un ingreso apunta a una categoria de gasto")
+    void updateLanzaSiUnIngresoApuntaACategoriaDeGasto() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 12L, TipoMovimiento.INGRESO)));
+        when(categoriaRepository.findById(11L)).thenReturn(Optional.of(categoria(11L, USUARIO, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, movimiento(null, null, 11L, TipoMovimiento.INGRESO)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
     @DisplayName("update lanza MovimientoNotFoundException y no guarda si es de otro usuario")
     void updateLanzaSiEsDeOtroUsuario() {
         when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, OTRO_USUARIO, 10L, TipoMovimiento.GASTO)));
