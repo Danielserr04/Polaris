@@ -21,7 +21,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 | [[nucleo]] | Perfil y peso corporal | **Hecho** (B4) |
 | [[odisea]] | Ocio: pelis, series, juegos, libros | **Hecho** (B2) |
 | [[kuiper]] | Gastos | **Hecho** (B5) |
-| [[fusion]] | Nutrición | En curso (B6, falta el resumen del día) |
+| [[fusion]] | Nutrición | En curso (B6, casi cerrada) |
 | [[atlas]] | Gym | Nuevo |
 
 ## Decisiones
@@ -46,6 +46,8 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[017-comida-agregado-con-lineas-macros-al-vuelo]]
 - [[018-alimentos-open-food-facts]]
 - [[019-zona-horaria-europe-madrid]]
+- [[020-violacion-unicidad-409-y-errores-http-cliente]]
+- [[021-resumen-diario-fusion]]
 
 ## Cómo se mantiene esto
 
