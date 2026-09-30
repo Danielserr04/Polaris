@@ -66,7 +66,7 @@ public class ResumenService implements GetResumenMensualInterface {
 
     /**
      * Una fila por categoria con gasto en el mes o con presupuesto mensual, de
-     * mayor a menor gasto (y por nombre en los empates).
+     * mayor a menor gasto (y por nombre, sin distinguir mayusculas, en los empates).
      */
     private List<GastoCategoria> gastoPorCategoria(Long usuarioId, List<Movimiento> movimientos) {
         Map<Long, Categoria> categorias = new LinkedHashMap<>();
@@ -90,7 +90,7 @@ public class ResumenService implements GetResumenMensualInterface {
         return categorias.entrySet().stream()
                 .map(e -> fila(e.getValue(), gastado.getOrDefault(e.getKey(), CERO), limites.get(e.getKey())))
                 .sorted(Comparator.comparing(GastoCategoria::getGastado).reversed()
-                        .thenComparing(g -> g.getCategoria().getNombre()))
+                        .thenComparing(g -> g.getCategoria().getNombre(), String.CASE_INSENSITIVE_ORDER))
                 .toList();
     }
 

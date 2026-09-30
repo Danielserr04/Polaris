@@ -139,6 +139,20 @@ class ResumenServiceTest {
     }
 
     @Test
+    @DisplayName("el desempate por nombre no distingue mayusculas de minusculas")
+    void empateOrdenaPorNombreSinDistinguirMayusculas() {
+        Categoria ahorro = Categoria.builder().id(20L).usuarioId(USUARIO).nombre("ahorro")
+                .tipo(TipoMovimiento.GASTO).build();
+        Categoria zapatos = Categoria.builder().id(21L).usuarioId(USUARIO).nombre("Zapatos")
+                .tipo(TipoMovimiento.GASTO).build();
+        conMovimientos(mov(zapatos, "10.00"), mov(ahorro, "10.00"));
+
+        List<GastoCategoria> filas = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria();
+
+        assertThat(filas).extracting(f -> f.getCategoria().getNombre()).containsExactly("ahorro", "Zapatos");
+    }
+
+    @Test
     @DisplayName("compara lo gastado con el presupuesto mensual: limite y restante")
     void presupuestoMensualConRestante() {
         conMovimientos(mov(COMIDA, "80.00"));
