@@ -248,6 +248,7 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 | Campo | Tipo | Nota |
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | regla dura 5, como `rutina_ejercicio` |
 | sesion_id | bigint | |
 | ejercicio_id | bigint | |
 | numero_serie | int | |

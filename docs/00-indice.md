@@ -51,6 +51,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[022-peso-corporal-desde-fusion-y-atlas]]
 - [[023-ejercicio-catalogo-y-propios]]
 - [[024-rutina-agregado-con-lineas]]
+- [[025-sesion-agregado-con-series]]
 
 ## Cómo se mantiene esto
 

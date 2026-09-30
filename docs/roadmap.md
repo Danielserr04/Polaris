@@ -68,7 +68,7 @@ Resumen del día (`GET /api/fusion/resumen?fecha=`, [[021-resumen-diario-fusion]
 ### B7 — Atlas
 `Ejercicio`, `Rutina`, `RutinaEjercicio`, `Sesion`, `SerieRegistro`. La parte con miga son las consultas de progresión.
 
-`Ejercicio` hecho ([[023-ejercicio-catalogo-y-propios]], `V12`). `Rutina` y `RutinaEjercicio` hechos como agregado ([[024-rutina-agregado-con-lineas]], `V13`). Peso corporal desde Atlas hecho (mismo patrón que Fusión, [[022-peso-corporal-desde-fusion-y-atlas]]). Faltan `Sesion`, `SerieRegistro` y las consultas de progresión.
+`Ejercicio` hecho ([[023-ejercicio-catalogo-y-propios]], `V12`). `Rutina` y `RutinaEjercicio` hechos como agregado ([[024-rutina-agregado-con-lineas]], `V13`). Peso corporal desde Atlas hecho (mismo patrón que Fusión, [[022-peso-corporal-desde-fusion-y-atlas]]). `Sesion` y `SerieRegistro` hechos como agregado ([[025-sesion-agregado-con-series]], `V14`). Falta la progresión (`/progresion`, `/records`).
 
 ### B8 — Cierre
 Tests de los servicios de dominio, OpenAPI completo, logs, revisión de índices.
@@ -115,7 +115,7 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B4 | **Hecho** — `Perfil` y `RegistroPeso` |
 | B5 | **Hecho** — `Categoria`, `Movimiento`, `Presupuesto` y resumen mensual |
 | B6 | **Casi cerrada** — `Alimento`, `ObjetivoNutricional`, `Comida` (con sus líneas) y Open Food Facts y resumen del día hechos; falta probar Open Food Facts con la API real |
-| B7 | **En curso** — `Ejercicio`, `Rutina` y `RutinaEjercicio` hechos |
+| B7 | **En curso** — `Ejercicio`, `Rutina`, `Sesion` y series hechos; falta la progresión |
 | B8 | Pendiente |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |

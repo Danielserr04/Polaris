@@ -67,5 +67,5 @@ GET    /api/atlas/records                       mejores marcas por ejercicio
 | `Rutina` | **Hecha** — CRUD en `/api/atlas/rutina`, filtro `?activa=`; agregado con sus ejercicios. Ver [[024-rutina-agregado-con-lineas]] |
 | Peso corporal | **Hecho** — `GET`/`POST /api/atlas/peso` a través de un puerto propio hacia Núcleo; sin tabla propia. Ver [[022-peso-corporal-desde-fusion-y-atlas]] |
 | `RutinaEjercicio` | **Hecha** — dentro del agregado `Rutina`, sin endpoints propios. Lleva `usuario_id` |
-| `Sesion` | Pendiente — B7 |
-| `SerieRegistro` | Pendiente — B7 |
+| `Sesion` | **Hecha** — CRUD en `/api/atlas/sesion`, filtros `?desde=&hasta=&rutinaId=`; agregado con sus series. Ver [[025-sesion-agregado-con-series]] |
+| `SerieRegistro` | **Hecha** — dentro del agregado `Sesion`, sin endpoints propios. Lleva `usuario_id` |
