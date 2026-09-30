@@ -1,0 +1,24 @@
+package com.polaris.nucleo.infrastructure.persistence.dto.in;
+
+import jakarta.validation.constraints.DecimalMax;
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+/**
+ * Lo que llega en un POST o PUT. Sin usuarioId: lo pone el servicio a partir
+ * del JWT, nunca del body. Los limites de digitos son los de la columna
+ * (DECIMAL(5,2) y DECIMAL(4,1)) para que un valor que no cabe sea un 400 y no
+ * un error de MySQL.
+ */
+public record RegistroPesoRequestDto(
+        @NotNull @PastOrPresent LocalDate fecha,
+        @NotNull @DecimalMin(value = "0.0", inclusive = false) @Digits(integer = 3, fraction = 2) BigDecimal pesoKg,
+        @DecimalMin("0.0") @DecimalMax("100.0") @Digits(integer = 3, fraction = 1) BigDecimal grasaPct,
+        String notas
+) {
+}

@@ -1,6 +1,6 @@
 # Roadmap
 
-Sin fechas. Se avanza por entregables. **Fase actual: B4.** B0, B1, B2 y B3 cerrados.
+Sin fechas. Se avanza por entregables. **Fase actual: B5.** B0 a B4 cerrados.
 
 ## Backend
 
@@ -42,6 +42,8 @@ cambiar el enum de Java no basta, `fuente_externa` es un `ENUM` de MySQL.
 
 ### B4 — Núcleo
 `Perfil` y `RegistroPeso`. Módulo pequeño, pero bloquea a Fusión y Atlas, así que va antes que ellos.
+
+**Hecho el 2026-09-30.** `Perfil` (uno por usuario, `GET`/`PUT`, ver [[009-perfil-unico-por-usuario]]) y `RegistroPeso` (CRUD, un peso por día, ver [[010-registro-peso-un-peso-por-dia]]). Migraciones `V3` y `V4`, verificadas contra MySQL 8.4 real.
 
 ### B5 — Kuiper
 `Categoria`, `Movimiento`, `Presupuesto`, y el endpoint de resumen mensual.
@@ -97,7 +99,8 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B1 | **Hecho** — login nativo y Google, los dos verificados de punta a punta |
 | B2 | **Hecho** — cerrado con el corte a Flyway |
 | B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
-| B4 – B8 | Pendiente |
+| B4 | **Hecho** — `Perfil` y `RegistroPeso` |
+| B5 – B8 | Pendiente |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |
 

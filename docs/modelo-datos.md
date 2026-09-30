@@ -29,14 +29,16 @@ por email (ver [[auth]]). Nunca ninguno de los dos.
 
 **`perfil`**
 
-| Campo | Tipo |
-|---|---|
-| id | BIGINT AUTO_INCREMENT |
-| usuario_id | bigint |
-| altura_cm | int |
-| fecha_nacimiento | date |
-| sexo | varchar |
-| nivel_actividad | varchar |
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | único: un perfil por usuario |
+| altura_cm | int | opcional |
+| fecha_nacimiento | date | opcional |
+| sexo | enum | HOMBRE, MUJER. Opcional |
+| nivel_actividad | enum | SEDENTARIO, LIGERO, MODERADO, ALTO, MUY_ALTO. Opcional |
+
+Ver [[009-perfil-unico-por-usuario]].
 
 **`registro_peso`**
 
@@ -44,12 +46,12 @@ por email (ver [[auth]]). Nunca ninguno de los dos.
 |---|---|---|
 | id | BIGINT AUTO_INCREMENT | |
 | usuario_id | bigint | |
-| fecha | date | único por usuario+fecha |
-| peso_kg | DECIMAL(5,2) | |
-| grasa_pct | DECIMAL(4,1) | opcional |
+| fecha | date | único por usuario+fecha; no puede ser futura |
+| peso_kg | DECIMAL(5,2) | mayor que 0 |
+| grasa_pct | DECIMAL(4,1) | opcional, 0-100 |
 | notas | text | |
 
-Consumido por [[fusion]] y por [[atlas]]. El dato vive aquí una sola vez.
+Consumido por [[fusion]] y por [[atlas]]. El dato vive aquí una sola vez. Ver [[010-registro-peso-un-peso-por-dia]].
 
 ---
 
