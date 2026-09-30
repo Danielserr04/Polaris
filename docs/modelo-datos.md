@@ -29,14 +29,16 @@ por email (ver [[auth]]). Nunca ninguno de los dos.
 
 **`perfil`**
 
-| Campo | Tipo |
-|---|---|
-| id | BIGINT AUTO_INCREMENT |
-| usuario_id | bigint |
-| altura_cm | int |
-| fecha_nacimiento | date |
-| sexo | varchar |
-| nivel_actividad | varchar |
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | único: un perfil por usuario |
+| altura_cm | int | opcional |
+| fecha_nacimiento | date | opcional |
+| sexo | enum | HOMBRE, MUJER. Opcional |
+| nivel_actividad | enum | SEDENTARIO, LIGERO, MODERADO, ALTO, MUY_ALTO. Opcional |
+
+Ver [[009-perfil-unico-por-usuario]].
 
 **`registro_peso`**
 
