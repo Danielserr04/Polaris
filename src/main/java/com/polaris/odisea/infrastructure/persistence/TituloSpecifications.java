@@ -1,6 +1,7 @@
 package com.polaris.odisea.infrastructure.persistence;
 
 import com.polaris.odisea.domain.model.TituloFilter;
+import com.polaris.shared.persistence.PatronLike;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -29,9 +30,9 @@ public final class TituloSpecifications {
         if (filter == null || filter.getTexto() == null || filter.getTexto().isBlank()) {
             return null;
         }
-        String patron = "%" + filter.getTexto().toLowerCase() + "%";
+        String patron = PatronLike.contieneMinusculas(filter.getTexto());
         return (root, query, cb) -> cb.or(
-                cb.like(cb.lower(root.get("titulo")), patron),
-                cb.like(cb.lower(root.get("tituloOriginal")), patron));
+                cb.like(cb.lower(root.get("titulo")), patron, PatronLike.ESCAPE),
+                cb.like(cb.lower(root.get("tituloOriginal")), patron, PatronLike.ESCAPE));
     }
 }

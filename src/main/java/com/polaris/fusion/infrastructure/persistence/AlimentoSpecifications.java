@@ -1,6 +1,7 @@
 package com.polaris.fusion.infrastructure.persistence;
 
 import com.polaris.fusion.domain.model.AlimentoFilter;
+import com.polaris.shared.persistence.PatronLike;
 import org.springframework.data.jpa.domain.Specification;
 
 /**
@@ -20,9 +21,9 @@ public final class AlimentoSpecifications {
         if (filter == null || filter.getTexto() == null || filter.getTexto().isBlank()) {
             return null;
         }
-        String patron = "%" + filter.getTexto().toLowerCase() + "%";
+        String patron = PatronLike.contieneMinusculas(filter.getTexto());
         return (root, query, cb) -> cb.or(
-                cb.like(cb.lower(root.get("nombre")), patron),
-                cb.like(cb.lower(root.get("marca")), patron));
+                cb.like(cb.lower(root.get("nombre")), patron, PatronLike.ESCAPE),
+                cb.like(cb.lower(root.get("marca")), patron, PatronLike.ESCAPE));
     }
 }
