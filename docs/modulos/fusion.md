@@ -51,6 +51,9 @@ GET    /api/fusion/objetivo/historico     todos, del más reciente al más antig
 POST   /api/fusion/objetivo               crea uno nuevo, no sustituye
 
 GET    /api/fusion/resumen?fecha=         macros del día vs objetivo vigente en esa fecha (por defecto hoy)
+
+GET    /api/fusion/peso?desde=&hasta=     peso corporal (vive en Núcleo)
+POST   /api/fusion/peso                   apunta o actualiza el del día
 ```
 
 El listado de `comida` va ordenado por fecha descendente y momento en el orden del día (DESAYUNO, COMIDA, CENA, SNACK); devuelve solo los totales, no las líneas. Los macros de una línea y los totales de la comida se calculan al vuelo, con escala 2; el total es la suma de las líneas ya redondeadas.
@@ -77,4 +80,5 @@ El listado de `comida` va ordenado por fecha descendente y momento en el orden d
 | `Comida` | **Hecha** — CRUD en `/api/fusion/comida`, con líneas anidadas y macros al vuelo. Ver [[017-comida-agregado-con-lineas-macros-al-vuelo]] |
 | `ComidaLinea` | **Hecha** — dentro del agregado `Comida`, sin endpoints propios. Lleva `usuario_id` |
 | `ObjetivoNutricional` | **Hecha** — `GET` (vigente), `GET /historico` y `POST`; sin `PUT` ni `DELETE`. Ver [[016-objetivo-nutricional-historico-inmutable]] |
+| Peso corporal | **Hecho** — `GET`/`POST /api/fusion/peso` a través de un puerto propio hacia Núcleo; sin tabla propia. Ver [[022-peso-corporal-desde-fusion-y-atlas]] |
 | Resumen del día | **Hecho** — `GET /api/fusion/resumen?fecha=`. Ver [[021-resumen-diario-fusion]] |
