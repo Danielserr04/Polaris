@@ -56,6 +56,8 @@ Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí convi
 ### B6 — Fusión
 `Alimento`, `Comida`, `ComidaLinea`, `ObjetivoNutricional`. API de alimentos. Cálculo de macros del día contra objetivo.
 
+**En curso:** `Alimento` hecha el 2026-09-30 ([[015-alimento-catalogo-compartido-macros-por-100g]], `V8`), solo con creación manual. Faltan `Comida`, `ComidaLinea`, `ObjetivoNutricional`, la API de alimentos (sin elegir) y el resumen del día.
+
 ### B7 — Atlas
 `Ejercicio`, `Rutina`, `RutinaEjercicio`, `Sesion`, `SerieRegistro`. La parte con miga son las consultas de progresión.
 
@@ -103,7 +105,8 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B3 | **Hecho** — TMDB, IGDB y OpenLibrary |
 | B4 | **Hecho** — `Perfil` y `RegistroPeso` |
 | B5 | **Hecho** — `Categoria`, `Movimiento`, `Presupuesto` y resumen mensual |
-| B6 – B8 | Pendiente |
+| B6 | **En curso** — `Alimento` hecha; faltan `Comida`, `ComidaLinea`, `ObjetivoNutricional`, API de alimentos y resumen |
+| B7 – B8 | Pendiente |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |
 

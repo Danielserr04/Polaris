@@ -57,7 +57,7 @@ Adaptador de salida detrás de un puerto, igual que en [[odisea]].
 
 | Entidad | Estado |
 |---|---|
-| `Alimento` | Pendiente — B6 |
+| `Alimento` | **Hecha** — CRUD en `/api/fusion/alimento`, búsqueda `?q=`. Solo creación manual; sin API externa todavía. Ver [[015-alimento-catalogo-compartido-macros-por-100g]]. Falta bloquear el borrado si está en una comida (llega con `ComidaLinea`) |
 | `Comida` | Pendiente — B6 |
 | `ComidaLinea` | Pendiente — B6 |
 | `ObjetivoNutricional` | Pendiente — B6 |
