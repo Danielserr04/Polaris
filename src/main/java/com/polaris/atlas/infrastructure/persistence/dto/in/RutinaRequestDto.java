@@ -1,5 +1,6 @@
 package com.polaris.atlas.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -16,7 +17,9 @@ import java.util.List;
 public record RutinaRequestDto(
         @NotBlank @Size(max = 100) String nombre,
         @Size(max = 2000) String descripcion,
+        @Schema(description = "false retira la rutina sin borrarla")
         @NotNull Boolean activa,
+        @Schema(description = "De 1 a 50 ejercicios; en el PUT sustituyen a las anteriores")
         @NotNull @Size(min = 1, max = 50) List<@NotNull @Valid RutinaEjercicioRequestDto> lineas
 ) {
 }

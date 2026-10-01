@@ -1,6 +1,7 @@
 package com.polaris.odisea.infrastructure.persistence.dto.in;
 
 import com.polaris.odisea.domain.model.TipoContenido;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,6 +11,8 @@ import jakarta.validation.constraints.NotNull;
  */
 public record ImportarEntradaRequestDto(
         @NotBlank(message = "es obligatorio")
+        @Schema(description = "Id de la ficha en la fuente externa, tal como lo devuelve la busqueda",
+                example = "438631")
         String idExterno,
 
         @NotNull(message = "es obligatorio")

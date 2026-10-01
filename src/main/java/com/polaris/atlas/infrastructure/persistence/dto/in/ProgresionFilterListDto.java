@@ -1,5 +1,6 @@
 package com.polaris.atlas.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;
@@ -11,8 +12,11 @@ import java.time.LocalDate;
  */
 public record ProgresionFilterListDto(
         @NotNull(message = "es obligatorio")
+        @Parameter(description = "Id del ejercicio (obligatorio): del catalogo o propio")
         Long ejercicioId,
+        @Parameter(description = "Fecha minima, inclusive (yyyy-MM-dd)")
         LocalDate desde,
+        @Parameter(description = "Fecha maxima, inclusive (yyyy-MM-dd)")
         LocalDate hasta
 ) {
 }

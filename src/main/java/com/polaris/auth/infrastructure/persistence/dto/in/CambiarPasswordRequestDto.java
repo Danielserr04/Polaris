@@ -1,5 +1,6 @@
 package com.polaris.auth.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.Size;
  * tiene, el servicio la exige y responde 401 sin ella.
  */
 public record CambiarPasswordRequestDto(
+        @Schema(description = "Obligatoria si la cuenta ya tiene contrasena; se omite en cuentas solo de Google")
         String passwordActual,
 
         @NotBlank(message = "no puede estar vacia")

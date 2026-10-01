@@ -1,6 +1,7 @@
 package com.polaris.odisea.infrastructure.persistence.dto.in;
 
 import com.polaris.odisea.domain.model.TipoContenido;
+import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -10,9 +11,12 @@ import jakarta.validation.constraints.NotNull;
  */
 public record CatalogoBuscarDto(
         @NotBlank(message = "no puede estar vacio")
+        @Parameter(description = "Texto a buscar: titulo (o titulo y autor, en libros)", example = "dune")
         String q,
 
         @NotNull(message = "es obligatorio")
+        @Parameter(description = "Tipo de contenido; decide la fuente: PELICULA y SERIE en TMDB, JUEGO en IGDB, LIBRO en "
+                + "Open Library")
         TipoContenido tipo
 ) {
 }

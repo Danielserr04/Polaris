@@ -1,5 +1,6 @@
 package com.polaris.fusion.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -7,6 +8,8 @@ import jakarta.validation.constraints.Size;
 public record ImportarAlimentoRequestDto(
         @NotBlank(message = "es obligatorio")
         @Size(max = 20, message = "no puede superar los 20 caracteres")
+        @Schema(description = "Codigo de barras del producto en Open Food Facts, solo digitos",
+                example = "8410000000000")
         String idExterno
 ) {
 }

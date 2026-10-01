@@ -15,9 +15,14 @@ import com.polaris.kuiper.infrastructure.persistence.mapper.MovimientoFormDtoMap
 import com.polaris.kuiper.infrastructure.persistence.mapper.MovimientoListDtoMapper;
 import com.polaris.kuiper.infrastructure.persistence.mapper.MovimientoRequestDtoMapper;
 import com.polaris.shared.security.UsuarioActual;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -35,10 +40,11 @@ import java.util.List;
  * Inyecta las interfaces de caso de uso, no el Service. Todo se filtra y se
  * comprueba contra usuarioActual: son datos personales.
  */
+@Tag(name = "Kuiper - Movimiento",
+     description = "Ingresos y gastos. El importe va siempre en positivo: el signo lo da el tipo.")
 @RestController
 @RequestMapping("/api/kuiper/movimiento")
 @RequiredArgsConstructor
-@SecurityRequirement(name = "bearer-jwt")
 public class MovimientoController {
 
     private final CreateMovimientoInterface createMovimiento;
@@ -52,23 +58,45 @@ public class MovimientoController {
     private final MovimientoListDtoMapper listDtoMapper;
     private final UsuarioActual usuarioActual;
 
+    @Operation(summary = "Lista tus movimientos",
+            description = "Del mas reciente al mas antiguo. Filtros opcionales: rango de fechas inclusivo, "
+                    + "categoria y tipo.")
+    @ApiResponse(responseCode = "200", description = "Listado, vacio si nada coincide")
+    @ApiResponse(responseCode = "400",
+            description = "Algun filtro no tiene un formato valido (fecha yyyy-MM-dd, valor de enum o numero)")
     @GetMapping
-    public ResponseEntity<List<MovimientoListDto>> list(MovimientoFilterListDto filtro) {
+    public ResponseEntity<List<MovimientoListDto>> list(@ParameterObject MovimientoFilterListDto filtro) {
         List<Movimiento> movimientos = listMovimiento.list(usuarioActual.id(), filterMapper.toFilter(filtro));
         return ResponseEntity.ok(listDtoMapper.toListDtoList(movimientos));
     }
 
+    @Parameter(name = "id", description = "Id del movimiento", in = ParameterIn.PATH)
+    @Operation(summary = "Devuelve un movimiento",
+            description = "Incluye el nombre, color e icono de la categoria.")
+    @ApiResponse(responseCode = "200", description = "El movimiento")
+    @ApiResponse(responseCode = "404", description = "No existe, o pertenece a otro usuario")
     @GetMapping("/{id}")
     public ResponseEntity<MovimientoFormDto> get(@PathVariable Long id) {
         return ResponseEntity.ok(formDtoMapper.toFormDto(getMovimiento.get(usuarioActual.id(), id)));
     }
 
+    @Operation(summary = "Registra un movimiento",
+            description = "La categoria tiene que ser tuya y del mismo tipo que el movimiento.")
+    @ApiResponse(responseCode = "201", description = "Movimiento creado")
+    @ApiResponse(responseCode = "400", description = "Datos no validos, o el tipo no coincide con el de la categoria")
+    @ApiResponse(responseCode = "404", description = "La categoria no existe o es de otro usuario")
     @PostMapping
     public ResponseEntity<MovimientoFormDto> create(@Valid @RequestBody MovimientoRequestDto dto) {
         Movimiento creado = createMovimiento.create(usuarioActual.id(), requestDtoMapper.toDomain(dto));
         return ResponseEntity.status(HttpStatus.CREATED).body(formDtoMapper.toFormDto(creado));
     }
 
+    @Parameter(name = "id", description = "Id del movimiento", in = ParameterIn.PATH)
+    @Operation(summary = "Edita un movimiento",
+            description = "Reemplaza todos los campos del movimiento.")
+    @ApiResponse(responseCode = "200", description = "Movimiento actualizado")
+    @ApiResponse(responseCode = "400", description = "Datos no validos, o el tipo no coincide con el de la categoria")
+    @ApiResponse(responseCode = "404", description = "El movimiento o la categoria no existen, o son de otro usuario")
     @PutMapping("/{id}")
     public ResponseEntity<MovimientoFormDto> update(@PathVariable Long id,
                                                      @Valid @RequestBody MovimientoRequestDto dto) {
@@ -76,6 +104,11 @@ public class MovimientoController {
         return ResponseEntity.ok(formDtoMapper.toFormDto(actualizado));
     }
 
+    @Parameter(name = "id", description = "Id del movimiento", in = ParameterIn.PATH)
+    @Operation(summary = "Borra un movimiento",
+            description = "No afecta a la categoria.")
+    @ApiResponse(responseCode = "204", description = "Movimiento borrado")
+    @ApiResponse(responseCode = "404", description = "No existe, o pertenece a otro usuario")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deleteMovimiento.delete(usuarioActual.id(), id);

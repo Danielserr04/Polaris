@@ -1,0 +1,17 @@
+# Solo para los tests de integracion (@ActiveProfiles("integracion")). Replica lo
+# que la app real tiene en src/main/resources/application.yml y el
+# application.yml de test no trae: el esquema lo construye Flyway (V1..Vn) y
+# Hibernate solo lo valida. La URL y las credenciales las pone
+# IntegracionBase con las del contenedor.
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  flyway:
+    enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+    open-in-view: false

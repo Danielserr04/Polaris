@@ -1,5 +1,6 @@
 package com.polaris.fusion.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -19,9 +20,13 @@ import java.math.BigDecimal;
 public record AlimentoRequestDto(
         @NotBlank @Size(max = 150) String nombre,
         @Size(max = 100) String marca,
+        @Schema(description = "kcal por cada 100 g, de 0 a 900", example = "130.00")
         @NotNull @DecimalMin("0.0") @DecimalMax("900.0") @Digits(integer = 3, fraction = 2) BigDecimal kcal100g,
+        @Schema(description = "Gramos de proteina por cada 100 g, de 0 a 100")
         @NotNull @DecimalMin("0.0") @DecimalMax("100.0") @Digits(integer = 3, fraction = 2) BigDecimal proteinas100g,
+        @Schema(description = "Gramos de carbohidratos por cada 100 g, de 0 a 100")
         @NotNull @DecimalMin("0.0") @DecimalMax("100.0") @Digits(integer = 3, fraction = 2) BigDecimal carbohidratos100g,
+        @Schema(description = "Gramos de grasa por cada 100 g, de 0 a 100")
         @NotNull @DecimalMin("0.0") @DecimalMax("100.0") @Digits(integer = 3, fraction = 2) BigDecimal grasas100g
 ) {
 }

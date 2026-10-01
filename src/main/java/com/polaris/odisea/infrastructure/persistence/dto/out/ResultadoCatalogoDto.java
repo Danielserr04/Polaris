@@ -2,6 +2,7 @@ package com.polaris.odisea.infrastructure.persistence.dto.out;
 
 import com.polaris.odisea.domain.model.FuenteExterna;
 import com.polaris.odisea.domain.model.TipoContenido;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Un resultado de la busqueda externa, todavia sin guardar.
@@ -19,6 +20,7 @@ public record ResultadoCatalogoDto(
         Integer anio,
         String sinopsis,
         String imagenUrl,
+        @Schema(description = "Id del titulo en el catalogo de Polaris si ya esta importado; null si no")
         Long tituloId
 ) {
 }
