@@ -3,6 +3,7 @@ import { RequireAuth } from '../auth/RequireAuth';
 import { AuthCallback } from '../pages/AuthCallback';
 import { Login } from '../pages/Login';
 import { Pendiente } from '../pages/Pendiente';
+import { Perfil } from '../pages/Perfil';
 import { AppShell } from './AppShell';
 
 export function App() {
@@ -17,7 +18,7 @@ export function App() {
           <Route path="kuiper" element={<Pendiente eyebrow="Kuiper" title="Gastos" />} />
           <Route path="fusion" element={<Pendiente eyebrow="Fusión" title="Hoy" />} />
           <Route path="atlas" element={<Pendiente eyebrow="Atlas" title="Progresión" />} />
-          <Route path="perfil" element={<Pendiente eyebrow="Cuenta" title="Perfil" />} />
+          <Route path="perfil" element={<Perfil />} />
           <Route path="*" element={<Pendiente eyebrow="Polaris" title="No encontrada" />} />
         </Route>
       </Route>

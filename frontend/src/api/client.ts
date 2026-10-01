@@ -15,6 +15,12 @@ interface Opciones {
   metodo?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   cuerpo?: unknown;
   query?: Record<string, string | number | boolean | undefined | null>;
+  /**
+   * Por defecto un 401 con sesion cierra la sesion (token caducado). Los endpoints que
+   * responden 401 por una contrasena mala (cambiar contrasena, cambiar email) lo desactivan:
+   * ahi el token sigue valiendo y el 401 es un error de formulario.
+   */
+  cerrarSesionEn401?: boolean;
 }
 
 function conQuery(ruta: string, query?: Opciones['query']): string {
@@ -43,7 +49,7 @@ async function leerError(res: Response): Promise<string> {
  * rutas devuelve al usuario al login. Un 401 sin sesion (credenciales malas en el
  * login) es un error normal.
  */
-export async function api<T>(ruta: string, { metodo = 'GET', cuerpo, query }: Opciones = {}): Promise<T> {
+export async function api<T>(ruta: string, { metodo = 'GET', cuerpo, query, cerrarSesionEn401 = true }: Opciones = {}): Promise<T> {
   const token = getToken();
   const res = await fetch(conQuery(ruta, query), {
     method: metodo,
@@ -56,7 +62,7 @@ export async function api<T>(ruta: string, { metodo = 'GET', cuerpo, query }: Op
   });
 
   if (!res.ok) {
-    if (res.status === 401 && token) cerrarSesion();
+    if (res.status === 401 && token && cerrarSesionEn401) cerrarSesion();
     throw new ApiError(res.status, await leerError(res));
   }
   if (res.status === 204) return undefined as T;
