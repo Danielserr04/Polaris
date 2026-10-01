@@ -114,7 +114,9 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Perfil (datos, email, contraseña, Google, cierre de sesión) | **Hecho** |
 | Inicio (bandas por módulo, con datos reales) | **Hecho** |
 | Odisea (lista, filtros, ficha, edición, borrado y alta desde el catálogo externo) | **Hecho** |
-| Kuiper, Fusión, Atlas | Pendiente |
+| Kuiper: Resumen y Movimientos (listado con filtros, alta con categoría nueva, edición y borrado) | **Hecho** |
+| Kuiper: gestión de categorías y presupuestos (hoy solo se ven; se ponen por la API) | Pendiente |
+| Fusión, Atlas | Pendiente |
 
 ## Después
 

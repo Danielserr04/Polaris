@@ -1,0 +1,18 @@
+/* Solo lo que Kuiper necesita y no esta ya en styles/kit.css */
+.kui-cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:1100px){.kui-cols{grid-template-columns:1fr}}
+.kui-stack{display:flex;flex-direction:column;gap:16px}
+.kui-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
+.kui-toolbar__sel{width:220px}
+.table__r--mov{grid-template-columns:76px minmax(0,1fr) 150px 120px;cursor:pointer;width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;font:inherit;text-align:left}
+.table__r--mov:focus-visible{outline-offset:-2px}
+.kui-cat{display:inline-flex;align-items:center;gap:8px;min-width:0;color:var(--text-3)}
+.kui-cat i{width:8px;height:8px;border-radius:2px;flex:none;background:var(--cat,var(--accent))}
+.kui-cat span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-vacio{padding:22px 18px;color:var(--text-3);font-size:13.5px}
+.kui-sinpres{display:flex;justify-content:space-between;gap:12px;font-size:13px;color:var(--text-3)}.kui-sinpres b{font-weight:500;color:var(--text-2)}
+.kui-form{display:flex;flex-direction:column;gap:14px}
+.kui-form__row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kui-form__nuevacat{display:flex;gap:8px;align-items:flex-end}.kui-form__nuevacat>:first-child{flex:1}
+.kui-form__borrar{margin-right:auto}
+@media (max-width:640px){.kui-form__row{grid-template-columns:1fr}.table__r--mov{grid-template-columns:60px minmax(0,1fr) 100px}.table__r--mov .kui-cat{display:none}}
