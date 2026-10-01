@@ -41,3 +41,13 @@
 --accent:#2f8a77;--accent-hover:#26715f;--accent-press:#1f5c4e;--accent-soft:rgba(47,138,119,.12);--accent-deep:#1b1812;--text-on-accent:#ffffff;
 --link:#26715f;--link-hover:#1f5c4e;--block-shadow-color:#1b1812;--scrim:rgba(27,24,18,.4);
 }
+
+/* Tema claro: cada modulo con su acento oscurecido para que tenga contraste sobre el fondo claro.
+   El selector es por ancestro (html[data-theme="light"]), asi que el login, que no lo lleva, sigue oscuro. */
+[data-theme="light"] [data-module="polaris"]{--accent:#2f8a77;--accent-hover:#26715f;--accent-press:#1f5c4e;--accent-soft:rgba(47,138,119,.12);--accent-deep:#1b1812;--text-on-accent:#fff}
+[data-theme="light"] [data-module="odisea"]{--accent:#b04a77;--accent-hover:#963c63;--accent-press:#7d3053;--accent-soft:rgba(176,74,119,.12);--accent-deep:#1b1812;--text-on-accent:#fff}
+[data-theme="light"] [data-module="kuiper"]{--accent:#9a6c0c;--accent-hover:#82590a;--accent-press:#6b4807;--accent-soft:rgba(154,108,12,.12);--accent-deep:#1b1812;--text-on-accent:#fff}
+[data-theme="light"] [data-module="fusion"]{--accent:#c2552a;--accent-hover:#a54722;--accent-press:#8a3a1b;--accent-soft:rgba(194,85,42,.12);--accent-deep:#1b1812;--text-on-accent:#fff}
+[data-theme="light"] [data-module="atlas"]{--accent:#4a63c0;--accent-hover:#3d54a8;--accent-press:#324590;--accent-soft:rgba(74,99,192,.12);--accent-deep:#1b1812;--text-on-accent:#fff}
+[data-theme="light"] [data-module="nucleo"]{--accent:#7d6f3f;--accent-hover:#675b33;--accent-press:#54492a;--accent-soft:rgba(125,111,63,.14);--accent-deep:#1b1812;--text-on-accent:#fff}
+[data-theme="light"]{--mod-polaris:#2f8a77;--mod-odisea:#b04a77;--mod-kuiper:#9a6c0c;--mod-fusion:#c2552a;--mod-atlas:#4a63c0;--mod-nucleo:#7d6f3f;}

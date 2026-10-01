@@ -6,7 +6,7 @@
 @media (max-width:760px){
   /* Shell */
   .app__nav{display:none}
-  .app__mtop{display:flex;position:fixed;top:0;left:0;right:0;z-index:var(--z-sticky);height:calc(56px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;align-items:center;justify-content:space-between;box-sizing:border-box;background:linear-gradient(180deg,rgba(18,17,14,.92),rgba(18,17,14,0))}
+  .app__mtop{display:flex;position:fixed;top:0;left:0;right:0;z-index:var(--z-sticky);height:calc(56px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;align-items:center;justify-content:space-between;box-sizing:border-box;background:linear-gradient(180deg,color-mix(in oklab,var(--bg-app) 92%,transparent),transparent)}
   .app__mbrand,.m-av{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
   .m-av{border-radius:50%}
   .app__main{padding:calc(64px + env(safe-area-inset-top)) 20px calc(120px + env(safe-area-inset-bottom))}

@@ -13,7 +13,8 @@ import {
 import type { UsuarioDto } from '../api/tipos';
 import { cerrarSesion } from '../auth/sesion';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Avatar, Badge, Button, Card, Dialog, Icon, Input, Toast, Tooltip } from '../design-system';
+import { Alert, Avatar, Badge, Button, Card, Dialog, Icon, Input, SegmentedControl, Toast, Tooltip } from '../design-system';
+import { guardarTema, useTemaElegido, type Tema } from '../lib/tema';
 import './perfil.css';
 
 // ---------------------------------------------------------------- textos de error
@@ -143,6 +144,7 @@ function PerfilContenido({ usuario: u }: { usuario: UsuarioDto }) {
         <EmailCard u={u} avisar={mostrar} />
         <PasswordCard u={u} avisar={mostrar} />
         <GoogleCard u={u} avisar={mostrar} />
+        <AparienciaCard />
       </div>
       {aviso && (
         <Toast fixed tone={aviso.tono} onClose={cerrar}>
@@ -637,6 +639,30 @@ function GoogleCard({ u, avisar }: CardProps) {
           )}
         </div>
       </Dialog>
+    </Card>
+  );
+}
+
+// ---------------------------------------------------------------- 05 apariencia
+
+function AparienciaCard() {
+  const tema = useTemaElegido();
+  return (
+    <Card delay={300} eyebrow="05" title="Apariencia">
+      <div className="stack-12">
+        <SegmentedControl
+          value={tema}
+          onChange={(v) => guardarTema(v as Tema)}
+          options={[
+            { value: 'oscuro', label: 'Oscuro' },
+            { value: 'claro', label: 'Claro' },
+            { value: 'sistema', label: 'Sistema' },
+          ]}
+        />
+        <span className="muted" style={{ fontSize: 13 }}>
+          Oscuro es el tema de la marca. «Sistema» sigue la preferencia de tu dispositivo. Se guarda en este navegador.
+        </span>
+      </div>
     </Card>
   );
 }

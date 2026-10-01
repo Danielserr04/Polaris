@@ -145,3 +145,8 @@ body{min-height:100vh}
 .feed__r--stack{grid-template-columns:28px minmax(0,1fr) 52px;min-height:56px;padding:8px 18px}
 @media (max-width:1280px){.band{grid-template-columns:150px minmax(0,1fr);gap:18px 28px}.band__aside{grid-column:2}.prow{grid-template-columns:18px minmax(90px,130px) minmax(0,1fr) 92px}}
 @media (max-width:900px){.band{grid-template-columns:1fr;gap:16px}.band__aside{grid-column:auto}.macros3{grid-template-columns:1fr}}
+
+/* Tema claro: sin cielo estrellado ni velo oscuro detras de la app */
+[data-theme="light"] .app__sky,[data-theme="light"] .app__veil{display:none}
+/* La caratula (placeholder) es un cartel oscuro tambien en claro: su texto va claro */
+[data-theme="light"] .cover{--text-1:#f3eee4;--text-2:#cfc6b6;--text-3:#a39a8b}

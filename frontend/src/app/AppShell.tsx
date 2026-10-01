@@ -1,6 +1,7 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useUsuario } from '../api/auth';
 import { Avatar, Logo, NavBar, StarTrails } from '../design-system';
+import { useAplicarTema, useTemaAplicado } from '../lib/tema';
 import { MobileTabs } from './MobileTabs';
 import { NAV, type ModuloId } from './modulos';
 
@@ -17,9 +18,11 @@ export function AppShell() {
   const navigate = useNavigate();
   const { activo, modulo } = moduloActual(pathname);
   const { data: usuario } = useUsuario();
+  const tema = useTemaAplicado();
+  useAplicarTema(tema);
 
   return (
-    <div className="app" data-module={modulo}>
+    <div className="app" data-module={modulo} data-theme={tema === 'light' ? 'light' : undefined}>
       <div className="app__sky">
         <StarTrails pole={[0.5, -0.08]} speed={0.35} density={0.7} />
       </div>
