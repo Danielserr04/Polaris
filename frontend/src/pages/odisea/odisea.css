@@ -1,0 +1,44 @@
+/* Odisea: lo que el kit del diseño no trae (carátula real, esqueletos, formulario de edición). */
+
+/* Carátula real: mismo marco y sombra de bloque que el placeholder tipográfico */
+.cover.cover--img{padding:0;background:var(--surface-2)}
+.cover--img img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* Lista: un único elemento enfocable */
+.listbox{outline-offset:2px}
+.listbox:focus-visible{outline:2px solid var(--focus-ring)}
+
+/* El listado de entradas de la API no trae la duración (vive en la ficha del título), así que la
+   columna de ListRow se oculta en vez de mostrar una hilera de guiones. Quitar cuando la traiga. */
+.listbox--sin-duracion{--pl-row-cols:18px minmax(0,1fr) 108px 52px 92px 116px}
+.listbox--sin-duracion [role="row"]>:nth-child(5){display:none}
+
+/* Esqueletos de carga */
+.sk{background:var(--surface-2);border-radius:3px;animation:odisea-sk 1.4s ease-in-out infinite}
+.sk--line{display:block;height:12px}
+.sk--h{height:26px}
+.cover.sk{box-shadow:none;border-color:var(--border-1)}
+.odisea-sk-row{display:flex;align-items:center;height:var(--row-h);padding:0 14px;border-bottom:1px solid var(--border-1)}
+.odisea-sk-row:last-child{border-bottom:0}
+@keyframes odisea-sk{0%,100%{opacity:.55}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.sk{animation:none}}
+
+/* Ficha: si es más alta que la ventana, se desplaza dentro de sí misma y las acciones siguen a mano */
+.detail{max-height:calc(100vh - 112px);overflow-y:auto}
+
+/* Ficha: acciones al pie */
+.detail__actions{display:flex;gap:8px;justify-content:flex-end;padding-top:18px;border-top:1px solid var(--border-1)}
+
+/* Resultados de la búsqueda externa */
+.result__t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text-1)}
+.result__t b{font-weight:500}
+.results{max-height:min(52vh,420px);overflow-y:auto}
+
+/* Formulario de edición */
+.odisea-form__row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.odisea-form__rating{display:flex;align-items:center;gap:8px;min-height:40px}
+.odisea-form .pl-input input[type="date"]{color-scheme:dark}
+.odisea-textarea{box-sizing:border-box;width:100%;min-height:96px;padding:10px 12px;resize:vertical;background:var(--bg-sunken);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text-1);font-family:var(--font-sans);font-size:14px;line-height:1.5;transition:border-color var(--dur-fast),box-shadow var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
+.odisea-textarea::placeholder{color:var(--text-3)}
+.odisea-textarea:hover{border-color:var(--border-strong)}
+.odisea-textarea:focus{outline:none;border-color:var(--accent);box-shadow:3px 3px 0 0 var(--accent-deep);transform:translate(-1px,-1px)}
