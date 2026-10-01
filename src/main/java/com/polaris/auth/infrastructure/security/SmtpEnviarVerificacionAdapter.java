@@ -56,8 +56,21 @@ public class SmtpEnviarVerificacionAdapter implements EnviarVerificacionPort {
         } catch (MailException e) {
             // El usuario ya esta creado: reventar aqui le dejaria una cuenta a
             // medias sin forma de reintentar. Se registra y se sigue; el token
-            // se puede reenviar. El correo NO se escribe en el log.
-            log.error("No se pudo enviar la verificacion al usuario {}", nombre, e);
+            // se puede reenviar. Ni el correo ni el token se escriben en el log, y
+            // tampoco el mensaje de la excepcion: las respuestas del servidor SMTP
+            // ("550 <direccion>: Recipient address rejected") traen la direccion
+            // del destinatario. Se deja el tipo de la causa, que basta para
+            // diagnosticar (autenticacion, conexion, destinatario).
+            log.error("No se pudo enviar la verificacion al usuario {}. Causa: {}",
+                    nombre, causaRaiz(e).getClass().getName());
         }
+    }
+
+    private static Throwable causaRaiz(Throwable e) {
+        Throwable actual = e;
+        for (int profundidad = 0; actual.getCause() != null && actual.getCause() != actual && profundidad < 20; profundidad++) {
+            actual = actual.getCause();
+        }
+        return actual;
     }
 }

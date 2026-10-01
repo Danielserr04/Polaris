@@ -75,6 +75,8 @@ Tests de los servicios de dominio, OpenAPI completo, logs, revisión de índices
 
 OpenAPI completo hecho: `@Tag`, `@Operation` y `@ApiResponse` en los 22 controllers (82 operaciones), Bearer global con las 4 rutas públicas sin seguridad, y `ErrorResponse` en todos los 4xx/5xx.
 
+Logs revisados y `requestId` por petición (cabecera `X-Request-Id` y MDC) hechos ([[029-logs-y-requestid]]).
+
 Revisión de índices hecha con `EXPLAIN` real sobre datos de volumen ([[028-revision-de-indices-b8]], `V15`: índice de `serie_registro` para los récords, de 846 ms a 1,6 ms).
 
 Tests de los servicios de dominio: ya cubiertos. Testcontainers y tests de integración con MySQL real hechos ([[027-testcontainers-tests-de-integracion]]): `-DexcludedGroups=integracion` los salta y sin Docker se saltan solos.
@@ -122,7 +124,7 @@ Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 | B5 | **Hecho** — `Categoria`, `Movimiento`, `Presupuesto` y resumen mensual |
 | B6 | **Casi cerrada** — `Alimento`, `ObjetivoNutricional`, `Comida` (con sus líneas) y Open Food Facts y resumen del día hechos; falta probar Open Food Facts con la API real |
 | B7 | **Hecho** — `Ejercicio`, `Rutina`, `Sesion`, series, peso y progresión |
-| B8 | Pendiente |
+| B8 | **Hecho** — tests de integración, OpenAPI, índices (`V15`) y logs. Queda anotado en las ADR 028 y 029 lo que se vigila (N+1 de `GET /api/odisea/entrada`, listados sin paginar) |
 | D0 | Pendiente — se saltó su ventana (era antes o durante B2) |
 | D1 | Pendiente — ya toca, B3 está cerrado |
 

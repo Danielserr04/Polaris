@@ -126,6 +126,22 @@ springdoc:
   api-docs:
     path: /v3/api-docs
 
+logging:
+  pattern:
+    # Spring Boot inserta este fragmento entre el hilo y el logger, en consola
+    # y en fichero, sin tocar el resto del formato por defecto. requestId lo
+    # pone RequestIdFilter en el MDC; fuera de una peticion (arranque, hilos
+    # propios) sale "-". Ver docs/decisiones/029-logs-y-requestid.md.
+    correlation: "[%X{requestId:--}] "
+  level:
+    # Hibernate escribe aqui, a ERROR, el mensaje de MySQL de cada SQLException,
+    # y el de una clave duplicada trae el VALOR ("Duplicate entry 'x@y.com' for
+    # key ..."): un dato personal en el log por un 409 que es un caso normal.
+    # GlobalExceptionHandler ya registra lo que hace falta: el 409 en WARN sin
+    # el valor y el 500 con la excepcion completa (su causa lleva el mensaje de
+    # MySQL). Ver docs/decisiones/029-logs-y-requestid.md.
+    org.hibernate.engine.jdbc.spi.SqlExceptionHelper: "OFF"
+
 ---
 spring:
   config:

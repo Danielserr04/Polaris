@@ -11,8 +11,12 @@ import org.springframework.stereotype.Component;
  * Escribe el enlace de verificacion en el log, para poder probar el registro
  * de punta a punta hoy mismo.
  *
- * <p>El adaptador de prod (SmtpEnviarVerificacionAdapter) se escribe cuando se
- * apruebe spring-boot-starter-mail. Ver docs/modulos/auth.md.
+ * <p>ES LA UNICA CLASE QUE ESCRIBE UN TOKEN Y UN EMAIL EN EL LOG, y por eso esta
+ * limitada a {@code @Profile("dev")} (en prod la sustituye
+ * SmtpEnviarVerificacionAdapter, que no los loguea). No quitar el perfil ni
+ * copiar este log a otra clase: el token de verificacion es una credencial de
+ * un solo uso. Hay un test que fija el perfil. Ver
+ * docs/decisiones/029-logs-y-requestid.md y docs/modulos/auth.md.
  *
  * <p>Constructor explicito y no @RequiredArgsConstructor: @Value necesita
  * anotar el parametro del constructor, y Lombok no copia anotaciones propias

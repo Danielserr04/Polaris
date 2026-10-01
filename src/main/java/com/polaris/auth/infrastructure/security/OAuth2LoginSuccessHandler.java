@@ -45,7 +45,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
         Usuario usuario = getOrCreateUsuario.getOrCreate(aPerfilGoogle(oauth2User));
 
-        log.info("Login correcto de usuario {} ({})", usuario.getId(), usuario.getEmail());
+        // Solo el id: el email es un dato personal y el id basta para seguir al usuario.
+        log.info("Login correcto de usuario {}", usuario.getId());
 
         TokenDto body = TokenDto.bearer(
                 jwtService.generar(usuario.getId()),

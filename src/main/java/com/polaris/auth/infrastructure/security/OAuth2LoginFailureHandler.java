@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 /**
  * Que hacer cuando el login con Google no sale.
@@ -32,6 +33,17 @@ import java.nio.charset.StandardCharsets;
 @RequiredArgsConstructor
 public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
 
+    /**
+     * Codigos de error OAuth2 que provoca el cliente y no la configuracion del
+     * servidor. Cualquier otro (invalid_client, redirect_uri_mismatch,
+     * invalid_token_response...) es un fallo nuestro y se loguea como ERROR.
+     */
+    private static final Set<String> CODIGOS_DEL_CLIENTE = Set.of(
+            "access_denied",
+            "invalid_request",
+            "authorization_request_not_found",
+            "invalid_state_parameter");
+
     private final ObjectMapper objectMapper;
 
     @Override
@@ -40,10 +52,17 @@ public class OAuth2LoginFailureHandler implements AuthenticationFailureHandler {
                                         AuthenticationException exception) throws IOException {
 
         if (exception instanceof OAuth2AuthenticationException oauth2Exception) {
-            log.error("Fallo el login con Google. Codigo: {} · Descripcion: {}",
-                    oauth2Exception.getError().getErrorCode(),
-                    oauth2Exception.getError().getDescription(),
-                    exception);
+            String codigo = oauth2Exception.getError().getErrorCode();
+            if (CODIGOS_DEL_CLIENTE.contains(codigo)) {
+                // El usuario cancela en Google, o el callback llega sin estado o
+                // caducado: situacion del cliente, no un fallo nuestro. Sin stacktrace.
+                log.warn("Login con Google no completado. Codigo: {}", codigo);
+            } else {
+                log.error("Fallo el login con Google. Codigo: {} · Descripcion: {}",
+                        codigo,
+                        oauth2Exception.getError().getDescription(),
+                        exception);
+            }
         } else {
             log.error("Fallo el login con Google", exception);
         }

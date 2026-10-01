@@ -3,6 +3,8 @@ package com.polaris.shared.error;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import ch.qos.logback.classic.Level;
+import com.polaris.shared.testing.CapturaLogs;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -24,6 +26,7 @@ import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.not;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -308,5 +311,35 @@ class GlobalExceptionHandlerTest {
         mockMvc.perform(get("/prueba/suelto"))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Falta el parametro obligatorio: estado"));
+    }
+
+    @Test
+    void elCincuentaYTresRegistraElStacktraceYLosCuatrocientosNo() throws Exception {
+        try (CapturaLogs logs = CapturaLogs.de(GlobalExceptionHandler.class)) {
+            mockMvc.perform(get("/prueba/roto")).andExpect(status().isInternalServerError());
+            mockMvc.perform(get("/prueba/1")).andExpect(status().isNotFound());
+            mockMvc.perform(get("/prueba/suelto")).andExpect(status().isBadRequest());
+            mockMvc.perform(get("/prueba/unico-jdbc")).andExpect(status().isConflict());
+
+            // 500: un solo ERROR, con la excepcion completa y sin la query string.
+            assertThat(logs.eventos(Level.ERROR)).hasSize(1);
+            assertThat(logs.eventos(Level.ERROR).get(0).getThrowableProxy().getMessage())
+                    .isEqualTo("detalle interno secreto");
+            // 4xx: nunca con excepcion, y el 409 en WARN sin el valor duplicado.
+            assertThat(logs.eventos().stream().filter(e -> e.getLevel() != Level.ERROR))
+                    .allSatisfy(e -> assertThat(e.getThrowableProxy()).isNull());
+            assertThat(logs.eventos(Level.WARN)).hasSize(1);
+            assertThat(logs.texto()).doesNotContain("Duplicate entry").doesNotContain("uk_secreto");
+        }
+    }
+
+    @Test
+    void elLogDeUnCuatrocientosNoIncluyeLaQueryString() throws Exception {
+        try (CapturaLogs logs = CapturaLogs.de(GlobalExceptionHandler.class)) {
+            mockMvc.perform(get("/prueba/suelto").param("secreto", "valor-privado"))
+                    .andExpect(status().isBadRequest());
+
+            assertThat(logs.texto()).contains("/prueba/suelto").doesNotContain("valor-privado");
+        }
     }
 }
