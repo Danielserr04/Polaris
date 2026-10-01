@@ -1,5 +1,7 @@
 package com.polaris.auth.infrastructure.persistence.dto.out;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.Instant;
 
 /**
@@ -19,6 +21,7 @@ public record UsuarioFormDto(
         String email,
         String nombre,
         String avatarUrl,
+        @Schema(description = "Alta de la cuenta, en UTC (ISO-8601)", example = "2026-09-30T10:15:00Z")
         Instant creadoEn,
         boolean emailVerificado,
         boolean tieneGoogle,
