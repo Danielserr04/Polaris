@@ -115,6 +115,20 @@ class OpenApiConfigTest {
         assertThat(operacion.getResponses()).containsKey("401");
     }
 
+    @Test
+    void todaRespuestaDeclaraLaCabeceraXRequestId() {
+        Operation protegida = operacion("/api/algo", new ApiResponses()
+                .addApiResponse("200", new ApiResponse())
+                .addApiResponse("404", new ApiResponse()));
+
+        config.respuestasDeError().customise(openApi);
+
+        // tambien el 401 que se anade solo
+        assertThat(protegida.getResponses()).containsKeys("200", "404", "401");
+        protegida.getResponses().values().forEach(respuesta ->
+                assertThat(respuesta.getHeaders()).containsKey("X-Request-Id"));
+    }
+
     private Operation operacion(String ruta, ApiResponses respuestas) {
         Operation operacion = new Operation().responses(respuestas);
         openApi.getPaths().addPathItem(ruta, new PathItem().get(operacion));

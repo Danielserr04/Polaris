@@ -1,14 +1,17 @@
 package com.polaris.shared.config;
 
 import com.polaris.shared.error.ErrorResponse;
+import com.polaris.shared.web.RequestIdFilter;
 import io.swagger.v3.core.converter.ModelConverters;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.Operation;
+import io.swagger.v3.oas.models.headers.Header;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.media.Content;
 import io.swagger.v3.oas.models.media.MediaType;
 import io.swagger.v3.oas.models.media.Schema;
+import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -30,6 +33,9 @@ import java.util.List;
  * <p>Errores: los controllers solo declaran codigo y descripcion de cada respuesta de
  * error; el cuerpo (siempre {@link ErrorResponse}, ver GlobalExceptionHandler) se
  * rellena aqui para no repetir el schema en cada endpoint.
+ *
+ * <p>Cabecera: toda respuesta (2xx, 4xx, 5xx) declara {@code X-Request-Id}, que pone
+ * RequestIdFilter. No esta en el cuerpo de ErrorResponse.
  */
 @Configuration
 public class OpenApiConfig {
@@ -76,6 +82,11 @@ public class OpenApiConfig {
                             .description("Falta el token o no es valido"));
                 }
                 operacion.getResponses().forEach((codigo, respuesta) -> {
+                    respuesta.addHeaderObject(RequestIdFilter.CABECERA, new Header()
+                            .description("Identificador de la peticion (RequestIdFilter): el mismo que el "
+                                    + "cliente envio en X-Request-Id si era valido, o un UUID generado. "
+                                    + "Aparece en cada linea del log de esa peticion.")
+                            .schema(new StringSchema()));
                     if ((codigo.startsWith("4") || codigo.startsWith("5")) && sinCuerpoPropio(respuesta)) {
                         respuesta.setContent(new Content().addMediaType("application/json",
                                 new MediaType().schema(referencia)));
