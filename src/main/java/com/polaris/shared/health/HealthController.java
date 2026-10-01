@@ -1,6 +1,12 @@
 package com.polaris.shared.health;
 
 import com.polaris.shared.health.dto.HealthDto;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirements;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,6 +26,8 @@ import java.sql.SQLException;
  * que pide docs/roadmap.md, y para no meter una dependencia mas en la fase 0.
  */
 @Slf4j
+@Tag(name = "Shared - Health",
+     description = "Comprobacion de que la aplicacion y MySQL responden. Ruta publica.")
 @RestController
 @RequestMapping("/health")
 public class HealthController {
@@ -34,6 +42,13 @@ public class HealthController {
         this.nombreApp = nombreApp;
     }
 
+    @Operation(summary = "Comprueba el estado de la aplicacion",
+            description = "Abre una conexion a MySQL con un timeout de 2 segundos. No requiere token.")
+    @ApiResponse(responseCode = "200", description = "La aplicacion y MySQL responden (status UP)")
+    @ApiResponse(responseCode = "503",
+            description = "MySQL no responde (status DOWN): el cuerpo es el mismo HealthDto, no un error",
+            content = @Content(mediaType = "application/json", schema = @Schema(implementation = HealthDto.class)))
+    @SecurityRequirements
     @GetMapping
     public ResponseEntity<HealthDto> health() {
         boolean baseDatosViva = comprobarBaseDatos();

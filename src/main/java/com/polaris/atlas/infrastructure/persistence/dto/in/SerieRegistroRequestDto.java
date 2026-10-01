@@ -1,5 +1,6 @@
 package com.polaris.atlas.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Digits;
@@ -17,10 +18,15 @@ import java.math.BigDecimal;
  * rangos: aqui solo se corta pronto lo obvio.
  */
 public record SerieRegistroRequestDto(
+        @Schema(description = "Id de un ejercicio del catalogo o tuyo")
         @NotNull Long ejercicioId,
+        @Schema(description = "Posicion de la serie dentro de su ejercicio, desde 1; no se puede repetir")
         @NotNull @Min(1) @Max(999) Integer numeroSerie,
         @NotNull @Min(1) @Max(999) Integer reps,
+        @Schema(description = "Peso en kg, de 0 a 1000, con 2 decimales como mucho; 0 si es con el peso corporal",
+                example = "80.00")
         @NotNull @DecimalMin("0.0") @DecimalMax("1000.0") @Digits(integer = 4, fraction = 2) BigDecimal pesoKg,
+        @Schema(description = "Esfuerzo percibido (RPE), de 1 a 10 en pasos de 0.5; opcional", example = "8.5")
         @DecimalMin("1.0") @DecimalMax("10.0") @Digits(integer = 2, fraction = 1) BigDecimal rpe
 ) {
 }

@@ -1,5 +1,7 @@
 package com.polaris.fusion.infrastructure.persistence.dto.out;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 
 /**
@@ -7,6 +9,7 @@ import java.time.LocalDate;
  */
 public record ResumenDiarioDto(
         LocalDate fecha,
+        @Schema(description = "Fecha de inicio del objetivo aplicado; null si no habia ninguno")
         LocalDate objetivoVigenteDesde,
         MacroResumenDto kcal,
         MacroResumenDto proteinas,
