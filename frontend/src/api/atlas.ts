@@ -226,3 +226,87 @@ export function useCrearEjercicio() {
     onSuccess: invalidar,
   });
 }
+
+export function useActualizarEjercicio(id: number) {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: EjercicioRequest) => api<Ejercicio>(`${BASE}/ejercicio/${id}`, { metodo: 'PUT', cuerpo }),
+    // Cambia el nombre en rutinas, sesiones y records.
+    onSuccess: invalidar,
+  });
+}
+
+/** `alBorrar` se llama nada mas borrar, antes de invalidar (mismo motivo que useBorrarComida de Fusion). */
+export function useBorrarEjercicio(alBorrar?: () => void) {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (id: number) => api<void>(`${BASE}/ejercicio/${id}`, { metodo: 'DELETE' }),
+    onSuccess: () => {
+      alBorrar?.();
+      return invalidar();
+    },
+  });
+}
+
+export interface RutinaRequest {
+  nombre: string;
+  descripcion: string | null;
+  activa: boolean;
+  lineas: { ejercicioId: number; orden: number; seriesObjetivo: number; repsObjetivo: string }[];
+}
+
+/** La rutina completa con sus lineas, para editarla. */
+export function useRutina(id: number | undefined) {
+  return useQuery({
+    queryKey: [...claves.rutinas, 'ficha', id ?? 0] as const,
+    queryFn: () => pedirRutina(id as number),
+    enabled: id !== undefined,
+    gcTime: 0,
+  });
+}
+
+export function useCrearRutina() {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: RutinaRequest) => api<RutinaCompleta>(`${BASE}/rutina`, { metodo: 'POST', cuerpo }),
+    onSuccess: invalidar,
+  });
+}
+
+export function useActualizarRutina(id: number) {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: RutinaRequest) => api<RutinaCompleta>(`${BASE}/rutina/${id}`, { metodo: 'PUT', cuerpo }),
+    onSuccess: invalidar,
+  });
+}
+
+/** `alBorrar` se llama nada mas borrar, antes de invalidar (mismo motivo que useBorrarComida de Fusion). */
+export function useBorrarRutina(alBorrar?: () => void) {
+  const qc = useQueryClient();
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (id: number) => api<void>(`${BASE}/rutina/${id}`, { metodo: 'DELETE' }),
+    onSuccess: (_, id) => {
+      alBorrar?.();
+      qc.removeQueries({ queryKey: [...claves.rutinas, 'ficha', id] });
+      return invalidar();
+    },
+  });
+}
+
+export interface PesoRequest {
+  fecha: string;
+  pesoKg: number;
+  grasaPct: number | null;
+  notas: string | null;
+}
+
+/** Un peso por dia: si ya hay registro en esa fecha, lo reemplaza. */
+export function useApuntarPeso() {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: PesoRequest) => api<PesoCorporal>(`${BASE}/peso`, { metodo: 'POST', cuerpo }),
+    onSuccess: invalidar,
+  });
+}

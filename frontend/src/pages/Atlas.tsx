@@ -1,8 +1,13 @@
 import { useMemo, useState } from 'react';
-import { mensajeError, useProgresion, usePesos, useRecords, useSesiones, useSesionesCompletas, type SesionCompleta } from '../api/atlas';
+import { mensajeError, type Ejercicio, useProgresion, usePesos, useRecords, useSesiones, useSesionesCompletas, type SesionCompleta } from '../api/atlas';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Badge, BarChart, Button, Card, LineChart, Select, Stat } from '../design-system';
+import { Alert, Badge, BarChart, Button, Card, LineChart, Select, Stat, Tabs } from '../design-system';
+import { EjerciciosTab } from './atlas/EjerciciosTab';
+import { FormularioEjercicio } from './atlas/FormularioEjercicio';
+import { FormularioPeso } from './atlas/FormularioPeso';
+import { FormularioRutina } from './atlas/FormularioRutina';
 import { FormularioSesion } from './atlas/FormularioSesion';
+import { RutinasTab } from './atlas/RutinasTab';
 import './atlas/atlas.css';
 import { diasEntre, deIso, iso, lunesDe, nombreMes, num, relativa, semanaIso, sumarDias } from '../lib/fechas';
 
@@ -21,8 +26,15 @@ const tono = (n: number) => (n > 0 ? 'up' : n < 0 ? 'down' : 'flat') as 'up' | '
 // Una sesion abierta: nueva (sin id) o una existente.
 type Abierta = { id?: number } | null;
 
+type Pestana = 'prog' | 'ej' | 'rut';
+
 export function Atlas() {
   const [abierta, setAbierta] = useState<Abierta>(null);
+  const [pestana, setPestana] = useState<Pestana>('prog');
+  const [pesoAbierto, setPesoAbierto] = useState(false);
+  const [ejercicioAbierto, setEjercicioAbierto] = useState<{ ejercicio?: Ejercicio } | null>(null);
+  const [rutinaAbierta, setRutinaAbierta] = useState<{ id?: number } | null>(null);
+  const [recuento, setRecuento] = useState<number | null>(null);
   const hoy = useMemo(() => new Date(), []);
   const hoyIso = iso(hoy);
   const lunes = lunesDe(hoy);
@@ -98,16 +110,45 @@ export function Atlas() {
     <div>
       <PageHeader
         eyebrow="Atlas"
-        coord={`SEMANA ${semanaIso(hoy)}`}
-        title="Progresión"
+        coord={pestana === 'prog' ? `SEMANA ${semanaIso(hoy)}` : recuento !== null ? `${recuento} ${pestana === 'ej' ? (recuento === 1 ? 'EJERCICIO' : 'EJERCICIOS') : recuento === 1 ? 'RUTINA' : 'RUTINAS'}` : pestana === 'ej' ? 'EJERCICIOS' : 'RUTINAS'}
+        title={pestana === 'prog' ? 'Progresión' : pestana === 'ej' ? 'Ejercicios' : 'Rutinas'}
         actions={
-          <Button icon="plus" onClick={() => setAbierta({})}>
-            Registrar sesión
-          </Button>
+          pestana === 'prog' ? (
+            <>
+              <Button variant="secondary" icon="scale" onClick={() => setPesoAbierto(true)}>
+                Peso
+              </Button>
+              <Button icon="plus" onClick={() => setAbierta({})}>
+                Registrar sesión
+              </Button>
+            </>
+          ) : pestana === 'ej' ? (
+            <Button icon="plus" onClick={() => setEjercicioAbierto({})}>
+              Ejercicio
+            </Button>
+          ) : (
+            <Button icon="plus" onClick={() => setRutinaAbierta({})}>
+              Rutina
+            </Button>
+          )
         }
       />
+      <Tabs
+        value={pestana}
+        onChange={(v) => setPestana(v as Pestana)}
+        items={[
+          { value: 'prog', label: 'Progresión' },
+          { value: 'ej', label: 'Ejercicios' },
+          { value: 'rut', label: 'Rutinas' },
+        ]}
+        style={{ marginBottom: 24 }}
+      />
 
-      {error ? (
+      {pestana === 'ej' ? (
+        <EjerciciosTab onEditar={(e) => setEjercicioAbierto({ ejercicio: e })} onRecuento={setRecuento} />
+      ) : pestana === 'rut' ? (
+        <RutinasTab onEditar={(r) => setRutinaAbierta({ id: r.id })} onRecuento={setRecuento} />
+      ) : error ? (
         <Alert
           tone="danger"
           title="No se ha podido cargar Atlas"
@@ -271,6 +312,9 @@ export function Atlas() {
       )}
 
       {abierta && <FormularioSesion sesionId={abierta.id} onClose={() => setAbierta(null)} />}
+      {pesoAbierto && <FormularioPeso onClose={() => setPesoAbierto(false)} />}
+      {ejercicioAbierto && <FormularioEjercicio ejercicio={ejercicioAbierto.ejercicio} onClose={() => setEjercicioAbierto(null)} />}
+      {rutinaAbierta && <FormularioRutina rutinaId={rutinaAbierta.id} onClose={() => setRutinaAbierta(null)} />}
     </div>
   );
 }

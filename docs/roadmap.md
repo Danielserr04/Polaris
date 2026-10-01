@@ -120,7 +120,7 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Fusión: pestaña Alimentos (catálogo con búsqueda, alta, edición, borrado e importar de Open Food Facts) | **Hecho** |
 | Atlas: pantalla de Progresión (stats, progresión por ejercicio, récords, últimas sesiones y series por semana, solo lectura) | **Hecho** |
 | Atlas: registrar, editar y borrar sesiones (rutina que precarga ejercicios, ejercicio nuevo sobre la marcha) | **Hecho** |
-| Atlas: gestión de ejercicios y rutinas, y apuntar el peso | Pendiente |
+| Atlas: pestañas Ejercicios y Rutinas (alta, edición, borrado, orden de las líneas) y apuntar el peso | **Hecho** |
 
 ## Después
 
