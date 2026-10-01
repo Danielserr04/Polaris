@@ -14,16 +14,18 @@ export const ETIQUETA_MOMENTO: Record<MomentoComida, string> = {
   SNACK: 'Snack',
 };
 
+// El backend omite los campos nulos (default-property-inclusion: non_null): un campo opcional
+// llega como `undefined`, no como `null`. Por eso se comprueba con `!= null`, nunca con `!== null`.
 export interface MacroResumen {
   consumido: number;
-  objetivo: number | null;
-  restante: number | null;
-  porcentaje: number | null;
+  objetivo?: number | null;
+  restante?: number | null;
+  porcentaje?: number | null;
 }
 
 export interface ResumenDiario {
   fecha: string;
-  objetivoVigenteDesde: string | null;
+  objetivoVigenteDesde?: string | null;
   kcal: MacroResumen;
   proteinas: MacroResumen;
   carbohidratos: MacroResumen;
@@ -83,6 +85,19 @@ export interface AlimentoRequest {
   grasas100g: number;
 }
 
+/** Resultado de buscar en Open Food Facts; `alimentoId` es null si aun no esta en tu catalogo. */
+export interface ResultadoCatalogo {
+  fuenteExterna: string;
+  idExterno: string;
+  nombre: string;
+  marca: string | null;
+  kcal100g: number;
+  proteinas100g: number;
+  carbohidratos100g: number;
+  grasas100g: number;
+  alimentoId?: number | null;
+}
+
 export interface ObjetivoRequest {
   kcalDiarias: number;
   proteinasObj: number;
@@ -98,6 +113,7 @@ export const claves = {
   comidas: ['fusion', 'comidas'] as const,
   comida: (id: number) => ['fusion', 'comida', id] as const,
   alimentos: ['fusion', 'alimentos'] as const,
+  catalogo: ['fusion', 'catalogo'] as const,
 };
 
 export function useResumenDia(fecha: string) {
@@ -136,6 +152,15 @@ export function useComida(id: number | undefined) {
     queryFn: () => api<ComidaCompleta>(`${BASE}/comida/${id}`),
     enabled: id !== undefined,
     gcTime: 0,
+  });
+}
+
+/** El catalogo completo de alimentos o filtrado por nombre/marca (texto vacio = todos). */
+export function useAlimentos(q: string) {
+  const texto = q.trim();
+  return useQuery({
+    queryKey: [...claves.alimentos, 'lista', texto] as const,
+    queryFn: () => api<Alimento[]>(`${BASE}/alimento`, { query: { q: texto } }),
   });
 }
 
@@ -202,6 +227,50 @@ export function useCrearAlimento() {
   });
 }
 
+export function useActualizarAlimento(id: number) {
+  const invalidar = useInvalidarFusion();
+  return useMutation({
+    mutationFn: (cuerpo: AlimentoRequest) => api<Alimento>(`${BASE}/alimento/${id}`, { metodo: 'PUT', cuerpo }),
+    // Cambia el catalogo y tambien las kcal de las comidas que lo usan.
+    onSuccess: invalidar,
+  });
+}
+
+/** `alBorrar` se llama nada mas borrar, antes de invalidar (mismo motivo que useBorrarComida). */
+export function useBorrarAlimento(alBorrar?: () => void) {
+  const invalidar = useInvalidarFusion();
+  return useMutation({
+    mutationFn: (id: number) => api<void>(`${BASE}/alimento/${id}`, { metodo: 'DELETE' }),
+    onSuccess: () => {
+      alBorrar?.();
+      return invalidar();
+    },
+  });
+}
+
+/** Busca en Open Food Facts. Solo se pide cuando hay un texto enviado (no se llama a cada tecla). */
+export function useBuscarCatalogo(q: string | null) {
+  return useQuery({
+    queryKey: [...claves.catalogo, q] as const,
+    queryFn: () => api<ResultadoCatalogo[]>(`${BASE}/catalogo/buscar`, { query: { q: q ?? '' } }),
+    enabled: q !== null,
+    staleTime: 60_000,
+    retry: false,
+  });
+}
+
+export function useImportarAlimento() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (idExterno: string) => api<Alimento>(`${BASE}/catalogo/importar`, { metodo: 'POST', cuerpo: { idExterno } }),
+    onSuccess: () =>
+      Promise.all([
+        qc.invalidateQueries({ queryKey: claves.alimentos }),
+        qc.invalidateQueries({ queryKey: claves.catalogo }),
+      ]),
+  });
+}
+
 /** Un objetivo nuevo desde una fecha: el historico no se edita, solo se añaden objetivos. */
 export function useCrearObjetivo() {
   const invalidar = useInvalidarFusion();
@@ -214,6 +283,8 @@ export function useCrearObjetivo() {
 /** Mensaje legible de un fallo de la API (el backend los escribe sin tildes). */
 export function mensajeError(e: unknown): string {
   if (e instanceof ApiError) {
+    if (e.status === 400 && /comida/i.test(e.message)) return 'No se puede borrar: está en alguna comida.';
+    if (e.status === 502) return 'Open Food Facts no responde. Prueba otra vez en un rato.';
     if (e.status === 404 && /alimento/i.test(e.message)) return 'Alguno de los alimentos ya no existe.';
     if (e.status === 404) return 'Esa comida ya no existe.';
     if (e.status === 409) return 'Ya tienes un objetivo que empieza ese día. Elige otra fecha.';

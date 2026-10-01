@@ -1,14 +1,22 @@
 import { useMemo, useState } from 'react';
-import { ETIQUETA_MOMENTO, mensajeError, MOMENTOS, useComidasDia, useComidasRango, useResumenDia, type ComidaCompleta, type MacroResumen, type MomentoComida } from '../api/fusion';
+import { ETIQUETA_MOMENTO, mensajeError, MOMENTOS, useComidasDia, useComidasRango, useResumenDia, type Alimento, type ComidaCompleta, type MacroResumen, type MomentoComida } from '../api/fusion';
 import { PageHeader } from '../components/PageHeader';
-import { Alert, Button, Card, IconButton, LineChart, RingChart, Stat } from '../design-system';
+import { Alert, Button, Card, IconButton, LineChart, RingChart, Stat, Tabs } from '../design-system';
 import { diaLargo, diasEntre, iso, num, sumarDias, deIso } from '../lib/fechas';
+import { AlimentosTab } from './fusion/AlimentosTab';
+import { FormularioAlimento } from './fusion/FormularioAlimento';
 import { FormularioComida } from './fusion/FormularioComida';
+import { ImportarOff } from './fusion/ImportarOff';
 import { FormularioObjetivo } from './fusion/FormularioObjetivo';
 import './fusion/fusion.css';
 
 // Una comida abierta: nueva (con el momento sugerido) o una existente.
 type Abierta = { id?: number; momento?: MomentoComida } | null;
+
+// Un alimento abierto: nuevo (sin alimento) o editando uno del catalogo.
+type AlimentoAbierto = { alimento?: Alimento } | null;
+
+type Pestana = 'hoy' | 'ali';
 
 const MACROS: { clave: 'proteinas' | 'carbohidratos' | 'grasas'; nombre: string; color: string }[] = [
   { clave: 'proteinas', nombre: 'Proteínas', color: 'var(--accent)' },
@@ -33,6 +41,10 @@ export function Fusion() {
   const [fecha, setFecha] = useState(hoyIso);
   const [abierta, setAbierta] = useState<Abierta>(null);
   const [objetivoAbierto, setObjetivoAbierto] = useState(false);
+  const [pestana, setPestana] = useState<Pestana>('hoy');
+  const [alimentoAbierto, setAlimentoAbierto] = useState<AlimentoAbierto>(null);
+  const [importarAbierto, setImportarAbierto] = useState(false);
+  const [recuento, setRecuento] = useState<number | null>(null);
 
   const resumen = useResumenDia(fecha);
   const comidas = useComidasDia(fecha);
@@ -62,26 +74,50 @@ export function Fusion() {
     <div>
       <PageHeader
         eyebrow="Fusión"
-        coord={fechaLarga(fecha).toUpperCase()}
-        title={tituloDia(fecha, hoy)}
+        coord={pestana === 'hoy' ? fechaLarga(fecha).toUpperCase() : recuento !== null ? `${recuento} ${recuento === 1 ? 'ALIMENTO' : 'ALIMENTOS'}` : 'CATÁLOGO'}
+        title={pestana === 'hoy' ? tituloDia(fecha, hoy) : 'Alimentos'}
         actions={
-          <>
-            <span className="fus-dia">
-              <IconButton icon="chevron-left" label="Día anterior" variant="ghost" onClick={() => mover(-1)} />
-              <IconButton icon="chevron-right" label="Día siguiente" variant="ghost" disabled={esHoy} onClick={() => mover(1)} />
-              {!esHoy && (
-                <Button variant="ghost" size="sm" onClick={() => setFecha(hoyIso)}>
-                  Hoy
-                </Button>
-              )}
-            </span>
-            <Button icon="plus" onClick={() => setAbierta({})}>
-              Registrar comida
-            </Button>
-          </>
+          pestana === 'hoy' ? (
+            <>
+              <span className="fus-dia">
+                <IconButton icon="chevron-left" label="Día anterior" variant="ghost" onClick={() => mover(-1)} />
+                <IconButton icon="chevron-right" label="Día siguiente" variant="ghost" disabled={esHoy} onClick={() => mover(1)} />
+                {!esHoy && (
+                  <Button variant="ghost" size="sm" onClick={() => setFecha(hoyIso)}>
+                    Hoy
+                  </Button>
+                )}
+              </span>
+              <Button icon="plus" onClick={() => setAbierta({})}>
+                Registrar comida
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="secondary" icon="search" onClick={() => setImportarAbierto(true)}>
+                Importar
+              </Button>
+              <Button icon="plus" onClick={() => setAlimentoAbierto({})}>
+                Alimento
+              </Button>
+            </>
+          )
         }
       />
+      <Tabs
+        value={pestana}
+        onChange={(v) => setPestana(v as Pestana)}
+        items={[
+          { value: 'hoy', label: 'Hoy' },
+          { value: 'ali', label: 'Alimentos' },
+        ]}
+        style={{ marginBottom: 24 }}
+      />
 
+      {pestana === 'ali' ? (
+        <AlimentosTab onEditar={(a) => setAlimentoAbierto({ alimento: a })} onRecuento={setRecuento} />
+      ) : (
+        <>
       {resumen.isError ? (
         <Alert
           tone="danger"
@@ -109,7 +145,7 @@ export function Fusion() {
                     sublabel={objetivo !== null ? `DE ${num(objetivo)} KCAL` : 'KCAL'}
                   />
                   <div className="stack-16" style={{ flex: 1 }}>
-                    {objetivo !== null && r.kcal.restante !== null ? (
+                    {objetivo !== null && r.kcal.restante != null ? (
                       <Stat label={r.kcal.restante >= 0 ? 'Te quedan' : 'Te has pasado'} value={Math.abs(Math.round(r.kcal.restante))} unit="kcal" size={32} />
                     ) : (
                       <Stat label="Llevas" value={Math.round(r.kcal.consumido)} unit="kcal" size={32} />
@@ -147,10 +183,10 @@ export function Fusion() {
                           thickness={8}
                           color={m.color}
                           label={num(v.consumido)}
-                          sublabel={v.objetivo !== null ? `/ ${num(v.objetivo)} G` : 'G'}
+                          sublabel={v.objetivo != null ? `/ ${num(v.objetivo)} G` : 'G'}
                         />
                         <b>{m.nombre}</b>
-                        <span className="pl-row__num">{v.porcentaje !== null ? `${Math.round(v.porcentaje)} %` : '—'}</span>
+                        <span className="pl-row__num">{v.porcentaje != null ? `${Math.round(v.porcentaje)} %` : '—'}</span>
                       </div>
                     );
                   })}
@@ -217,7 +253,9 @@ export function Fusion() {
 
           <div className="span-6">
             <Card delay={240} eyebrow="Tendencia" title="Últimos 14 días">
-              {rango.isSuccess ? (
+              {rango.isSuccess && tendencia.kcal.every((k) => k === 0) ? (
+                <p className="muted" style={{ margin: 0 }}>Sin comidas registradas en estos 14 días.</p>
+              ) : rango.isSuccess ? (
                 <LineChart
                   height={220}
                   min={0}
@@ -238,7 +276,12 @@ export function Fusion() {
         </div>
       )}
 
+        </>
+      )}
+
       {abierta && <FormularioComida comidaId={abierta.id} momentoInicial={abierta.momento} fecha={fecha} onClose={() => setAbierta(null)} />}
+      {alimentoAbierto && <FormularioAlimento alimento={alimentoAbierto.alimento} onClose={() => setAlimentoAbierto(null)} />}
+      {importarAbierto && <ImportarOff onClose={() => setImportarAbierto(false)} />}
       {objetivoAbierto && <FormularioObjetivo resumen={r} fecha={fecha} onClose={() => setObjetivoAbierto(false)} />}
     </div>
   );

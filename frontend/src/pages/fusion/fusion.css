@@ -24,3 +24,14 @@
 .fus-res em{margin-left:auto;font-style:normal;font-family:var(--font-mono);font-size:11.5px;color:var(--text-3);white-space:nowrap}
 .fus-res i{font-style:normal;color:var(--text-3);font-size:12px}
 @media (max-width:640px){.fus-form__row{grid-template-columns:1fr}.fus-form__row4{grid-template-columns:1fr 1fr}.fus-linea{grid-template-columns:minmax(0,1fr) 80px 32px}.fus-linea__k{display:none}}
+/* Catalogo de alimentos */
+.table__r.table__r--ali{grid-template-columns:minmax(0,1fr) 70px 70px 70px 70px}
+.table__r.fus-ali{width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.table__r.fus-ali:focus-visible{outline-offset:-2px}
+.fus-ali-cab{height:36px;border-top:0}
+.fus-ali-cab .pl-eyebrow:not(:first-child){text-align:right}
+.fus-ali .money{font-size:12.5px}
+.fus-off{display:flex;flex-direction:column;max-height:340px;overflow:auto;border:1px solid var(--border-1);border-radius:4px}
+.fus-off__r{display:flex;align-items:center;gap:12px;padding:10px 12px;border-bottom:1px solid var(--border-1)}.fus-off__r:last-child{border-bottom:0}
+.fus-off__n{flex:1;min-width:0}.fus-off__n b{display:block;font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.fus-off__n span{display:block;font-size:12px;color:var(--text-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:640px){.table__r.table__r--ali{grid-template-columns:minmax(0,1fr) 56px 56px}.table__r--ali>:nth-child(n+4){display:none}}
