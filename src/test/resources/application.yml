@@ -39,6 +39,7 @@ polaris:
     expiracion-segundos: 3600
     emisor: polaris
   url-base: http://localhost:8080
+  frontend-url: http://localhost:5173
 
   # Los tests de dominio mockean el puerto y no llaman a TMDB. Estos valores
   # existen solo para que el adaptador se pueda construir si algun test levanta

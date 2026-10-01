@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { useUsuario } from '../api/auth';
 import { NavBar, StarTrails } from '../design-system';
 import { NAV, type ModuloId } from './modulos';
 
@@ -14,6 +15,7 @@ export function AppShell() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { activo, modulo } = moduloActual(pathname);
+  const { data: usuario } = useUsuario();
 
   return (
     <div className="app" data-module={modulo}>
@@ -29,7 +31,7 @@ export function AppShell() {
           onChange={(id: string) => navigate(NAV.find((n) => n.id === id)?.ruta ?? '/')}
           onBrand={() => navigate('/')}
           onSearch={null}
-          user={{ name: 'Tú', onClick: () => navigate('/perfil') }}
+          user={{ name: usuario?.nombre ?? usuario?.username ?? '·', src: usuario?.avatarUrl, onClick: () => navigate('/perfil') }}
         />
       </div>
       <main className="app__main" key={pathname}>

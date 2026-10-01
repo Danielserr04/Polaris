@@ -57,6 +57,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[028-revision-de-indices-b8]]
 - [[029-logs-y-requestid]]
 - [[030-frontend-react-vite-y-design-system]]
+- [[031-login-google-redirige-al-frontend]]
 
 ## Cómo se mantiene esto
 

@@ -45,8 +45,12 @@ Navegador → /oauth2/authorization/google
               ↓  si no,                     → crea una cuenta solo-Google
             JwtService.generar(usuarioId)
               ↓
-            { "token": "...", "tipo": "Bearer", "expiraEnSegundos": 43200 }
+            302 → {POLARIS_FRONTEND_URL}/auth/callback#token=...&expiraEnSegundos=43200
 ```
+
+El token va en el **fragmento** (`#`), no en la query: el fragmento no viaja al
+servidor, ni queda en logs de acceso ni en el `Referer`. Ver
+[[031-login-google-redirige-al-frontend]].
 
 A partir de cualquiera de los dos logins, cada petición lleva
 `Authorization: Bearer <token>`. `JwtAuthenticationFilter` lo valida y deja el
@@ -109,13 +113,14 @@ porque el parámetro `state` de OAuth2 la necesita. La API en sí es stateless.
 **401 en vez de redirect al login de Google.** Un cliente que llama sin
 token quiere un código de error, no el HTML de Google.
 
-**Y lo mismo cuando el login de Google falla.** Sin `OAuth2LoginFailureHandler`,
-Spring Security redirige a `/login?error`, una página que en una API no existe:
-te quedas mirando un 404 sin saber qué ha pasado. El handler responde un 401 con
-el formato de error de siempre, y **manda al log el código que devuelve Google**
-(`redirect_uri_mismatch`, `access_denied`, `invalid_client`), que es lo único que
-sirve para arreglarlo. Ese código no se devuelve al cliente: describe la
-configuración del servidor.
+**Cuando el login de Google falla, se vuelve al login del frontend.**
+`OAuth2LoginFailureHandler` redirige a `/login?error=cancelado` (el usuario
+canceló en Google) o `/login?error=google` (cualquier otro fallo), donde la
+pantalla enseña un mensaje legible. **El código que devuelve Google**
+(`redirect_uri_mismatch`, `access_denied`, `invalid_client`) **va al log** y es lo
+único que sirve para arreglarlo; no se manda al cliente porque describe la
+configuración del servidor. (Antes respondía un 401 JSON, cuando todavía no había
+frontend al que volver.)
 
 **Las rutas de acción se salen del patrón `/api/<modulo>/<entidad>`.**
 `/api/auth/registro`, `/api/auth/login`, `/api/auth/verificacion` son verbos,
@@ -155,7 +160,7 @@ uso: buscar por `googleId` y, si no existe, buscar por email o crear.
 
 | Método | Ruta | Qué hace |
 |---|---|---|
-| GET | `/oauth2/authorization/google` | Arranca el login con Google. Lo sirve Spring Security |
+| GET | `/oauth2/authorization/google` | Arranca el login con Google. Lo sirve Spring Security. Al terminar redirige al frontend con el token en el fragmento |
 | GET | `/api/auth/usuario` | **Protegido.** Devuelve tu usuario |
 | POST | `/api/auth/registro` | Registro nativo. Manda email de verificación |
 | POST | `/api/auth/login` | Login nativo por username o email |

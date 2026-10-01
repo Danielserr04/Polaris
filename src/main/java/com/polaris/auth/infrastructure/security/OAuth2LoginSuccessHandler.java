@@ -1,22 +1,19 @@
 package com.polaris.auth.infrastructure.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.polaris.auth.application.in.GetOrCreateUsuarioInterface;
 import com.polaris.auth.domain.model.PerfilGoogle;
 import com.polaris.auth.domain.model.Usuario;
 import com.polaris.auth.infrastructure.persistence.dto.out.TokenDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.MediaType;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 /**
  * Punto de union entre el login de Google y el JWT propio.
@@ -24,18 +21,25 @@ import java.nio.charset.StandardCharsets;
  * <p>Google ya ha verificado quien eres; aqui se traduce su respuesta al dominio,
  * se da de alta el usuario si es la primera vez, y se emite el token de Polaris.
  *
- * <p>Devuelve el JSON directamente en el navegador porque todavia no hay frontend
- * al que redirigir. Cuando exista React (despues de B3) esto pasa a ser un
- * redirect con el token. Ver docs/modulos/auth.md.
+ * <p>Termina redirigiendo al frontend (/auth/callback) con el token en el
+ * <b>fragmento</b> de la URL, no en la query: el fragmento no viaja al servidor ni
+ * queda en logs de acceso ni en el Referer. Ver ADR 031.
  */
 @Slf4j
 @Component
-@RequiredArgsConstructor
 public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
 
     private final GetOrCreateUsuarioInterface getOrCreateUsuario;
     private final JwtService jwtService;
-    private final ObjectMapper objectMapper;
+    private final String frontendUrl;
+
+    public OAuth2LoginSuccessHandler(GetOrCreateUsuarioInterface getOrCreateUsuario,
+                                     JwtService jwtService,
+                                     @Value("${polaris.frontend-url}") String frontendUrl) {
+        this.getOrCreateUsuario = getOrCreateUsuario;
+        this.jwtService = jwtService;
+        this.frontendUrl = frontendUrl;
+    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -48,14 +52,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         // Solo el id: el email es un dato personal y el id basta para seguir al usuario.
         log.info("Login correcto de usuario {}", usuario.getId());
 
-        TokenDto body = TokenDto.bearer(
+        TokenDto token = TokenDto.bearer(
                 jwtService.generar(usuario.getId()),
                 jwtService.getExpiracionSegundos());
 
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
-        objectMapper.writeValue(response.getWriter(), body);
+        // Una respuesta con el token no se guarda en ninguna cache.
+        response.setHeader("Cache-Control", "no-store");
+        response.sendRedirect(frontendUrl + "/auth/callback#token=" + token.token()
+                + "&expiraEnSegundos=" + token.expiraEnSegundos());
     }
 
     /**
