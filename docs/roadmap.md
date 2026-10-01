@@ -75,6 +75,8 @@ Tests de los servicios de dominio, OpenAPI completo, logs, revisión de índices
 
 OpenAPI completo hecho: `@Tag`, `@Operation` y `@ApiResponse` en los 22 controllers (82 operaciones), Bearer global con las 4 rutas públicas sin seguridad, y `ErrorResponse` en todos los 4xx/5xx.
 
+Revisión de índices hecha con `EXPLAIN` real sobre datos de volumen ([[028-revision-de-indices-b8]], `V15`: índice de `serie_registro` para los récords, de 846 ms a 1,6 ms).
+
 Tests de los servicios de dominio: ya cubiertos. Testcontainers y tests de integración con MySQL real hechos ([[027-testcontainers-tests-de-integracion]]): `-DexcludedGroups=integracion` los salta y sin Docker se saltan solos.
 
 ## Diseño

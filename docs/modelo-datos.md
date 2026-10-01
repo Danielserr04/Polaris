@@ -256,20 +256,46 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 | peso_kg | DECIMAL(6,2) | |
 | rpe | DECIMAL(3,1) | esfuerzo percibido, opcional |
 
-`serie_registro` es la tabla que más va a crecer y de la que sale toda la progresión. Índice por `(ejercicio_id, sesion_id)`.
+`serie_registro` es la tabla que más va a crecer y de la que sale toda la progresión. Índice por `(ejercicio_id, usuario_id, peso_kg)` (V15; ver [[028-revision-de-indices-b8]]).
 
 ---
 
-## Índices previstos
+## Índices
 
-| Tabla | Índice | Para qué |
-|---|---|---|
-| `titulo` | `(fuente_externa, id_externo)` | evitar duplicados al importar |
-| `entrada` | `(usuario_id, estado)` | el listado filtrado, la consulta más frecuente |
-| `movimiento` | `(usuario_id, fecha)` | vistas por mes |
-| `comida` | `(usuario_id, fecha)` | resumen del día |
-| `comida_linea` | `(alimento_id)` | comprobar si un alimento está en uso antes de borrarlo |
-| `alimento` | `(fuente_externa, id_externo)` único | evitar duplicados al importar |
-| `objetivo_nutricional` | `(usuario_id, vigente_desde)` único | el vigente en una fecha y el histórico |
-| `serie_registro` | `(ejercicio_id, sesion_id)` | progresión por ejercicio |
-| `registro_peso` | `(usuario_id, fecha)` único | un peso por día |
+Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volumen ([[028-revision-de-indices-b8]]). Todo `ref`/`range`/`const` salvo lo indicado como "vigilar" en esa nota. Los nombres son los de las migraciones (`V1` a `V15`); la clave primaria no se lista. Los marcados como FK existen porque MySQL exige un índice por cada clave ajena y de paso sirven a la comprobación de uso antes de borrar.
+
+| Tabla | Índice | Migración | Para qué |
+|---|---|---|---|
+| `usuario` | `uk_usuario_username`, `uk_usuario_email`, `uk_usuario_google_id` (únicos) | V1 | login por usuario o email, entrada con Google |
+| `titulo` | `uk_titulo_fuente_externa` `(fuente_externa, id_externo)` único | V1 | evitar duplicados al importar |
+| `entrada` | `idx_entrada_usuario` `(usuario_id)` | V1 | el listado filtrado (con `estado` o `tipo` filtra después del índice; ver abajo) |
+| `entrada` | `idx_entrada_titulo` `(titulo_id)` | V1 | FK; "esta persona ya tiene este título" y bloquear el borrado de un título en uso |
+| `perfil` | `uk_perfil_usuario` `(usuario_id)` único | V3 | un perfil por usuario y su búsqueda |
+| `registro_peso` | `uk_registro_peso_usuario_fecha` `(usuario_id, fecha)` único | V4 | un peso por día y el listado por rango |
+| `categoria` | `uk_categoria_usuario_nombre_tipo` `(usuario_id, nombre, tipo)` único | V5 | nombre único por tipo y el listado por usuario |
+| `movimiento` | `idx_movimiento_usuario_fecha` `(usuario_id, fecha)` | V6 | vistas por mes y resumen mensual, sin `filesort` |
+| `movimiento` | `idx_movimiento_categoria` `(categoria_id)` | V6 | FK; bloquear el borrado de una categoría en uso |
+| `presupuesto` | `uk_presupuesto_usuario_categoria_periodo` `(usuario_id, categoria_id, periodo)` único | V7 | uno por categoría y periodo y el listado por usuario |
+| `presupuesto` | `idx_presupuesto_categoria` `(categoria_id)` | V7 | FK; bloquear el borrado de una categoría en uso |
+| `alimento` | `uk_alimento_fuente_externa` `(fuente_externa, id_externo)` único | V8 | evitar duplicados al importar |
+| `objetivo_nutricional` | `uk_objetivo_nutricional_usuario_vigente` `(usuario_id, vigente_desde)` único | V9 | el vigente en una fecha y el histórico |
+| `comida` | `idx_comida_usuario_fecha` `(usuario_id, fecha)` | V10 | resumen del día y listado por rango |
+| `comida_linea` | `idx_comida_linea_comida` `(comida_id)` | V10 | FK; las líneas de una comida |
+| `comida_linea` | `idx_comida_linea_alimento` `(alimento_id)` | V10 | FK; comprobar si un alimento está en uso antes de borrarlo |
+| `ejercicio` | `uk_ejercicio_usuario_nombre` `(usuario_id, nombre)` único | V12 | nombre único por usuario y los ejercicios visibles |
+| `ejercicio` | `idx_ejercicio_grupo_muscular` `(grupo_muscular)` | V12 | filtro por grupo (uso marginal: la tabla es pequeña) |
+| `rutina` | `uk_rutina_usuario_nombre` `(usuario_id, nombre)` único | V13 | nombre único por usuario y el listado |
+| `rutina_ejercicio` | `idx_rutina_ejercicio_rutina` `(rutina_id)` | V13 | FK; las líneas de una rutina |
+| `rutina_ejercicio` | `idx_rutina_ejercicio_ejercicio` `(ejercicio_id)` | V13 | FK; bloquear el borrado de un ejercicio en uso |
+| `sesion` | `idx_sesion_usuario_fecha` `(usuario_id, fecha)` | V14 | listado por rango y orden por fecha, sin `filesort` |
+| `sesion` | `idx_sesion_rutina` `(rutina_id)` | V14 | FK; listado por rutina y bloquear el borrado de una rutina con sesiones |
+| `serie_registro` | `idx_serie_registro_sesion` `(sesion_id)` | V14 | FK; las series de una sesión |
+| `serie_registro` | `idx_serie_registro_ejercicio_usuario_peso` `(ejercicio_id, usuario_id, peso_kg)` | **V15** | FK; progresión por ejercicio, bloquear el borrado de un ejercicio con series y el peso máximo de los records (sale del propio índice, sin leer filas). Sustituye a `(ejercicio_id, sesion_id)` de V14 |
+
+Revisado en B8 y **descartado** (medido, sin full scan ni `filesort` relevante con volumen real; ver [[028-revision-de-indices-b8]]):
+
+- `entrada (usuario_id, estado)`, que figuraba aquí como previsto y nunca se creó: ganaría milisegundos sobre 14.000 entradas de un usuario.
+- `movimiento (usuario_id, categoria_id, fecha)` y `comida (usuario_id, momento, fecha)`: mejoran filtros poco habituales (categoría o momento sin acotar fechas) de 10 a 1 ms.
+- Índices sobre `titulo (tipo)` y `alimento (nombre)`: no los usaría ninguna consulta real (cuatro valores; `like '%x%'`).
+
+Sin índice que lo arregle y **vigilar** (detalle y cifras en la nota): la búsqueda de texto de `titulo` y `alimento` (full scan de 30.000–40.000 filas, 30–50 ms), el segundo cálculo de records de Atlas (200 ms con 98.000 series, lineal), y los listados sin paginar. El listado de `entrada` es un N+1 de la capa JPA, no un problema de índices.
