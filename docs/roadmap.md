@@ -116,7 +116,9 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Odisea (lista, filtros, ficha, edición, borrado y alta desde el catálogo externo) | **Hecho** |
 | Kuiper: Resumen y Movimientos (listado con filtros, alta con categoría nueva, edición y borrado) | **Hecho** |
 | Kuiper: pestaña Categorías (crear, editar, borrar, color, icono y presupuesto mensual) | **Hecho** |
-| Fusión, Atlas | Pendiente |
+| Fusión: Hoy (resumen del día, comidas con alta/edición/borrado, alimento nuevo sobre la marcha, objetivo y tendencia) | **Hecho** |
+| Fusión: catálogo de alimentos (listado, edición, borrado, importar de Open Food Facts) | Pendiente |
+| Atlas | Pendiente |
 
 ## Después
 

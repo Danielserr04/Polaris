@@ -159,13 +159,18 @@ export function useActualizarMovimiento(id: number) {
   });
 }
 
-export function useBorrarMovimiento() {
+/**
+ * `alBorrar` se llama nada mas borrar, antes de invalidar: el dialogo de edicion debe cerrarse
+ * antes de que la ficha ya borrada se vuelva a pedir (daria 404). Va en el hook y no en `mutate`
+ * porque ese componente se desmonta durante la recarga y sus callbacks ya no se ejecutan.
+ */
+export function useBorrarMovimiento(alBorrar?: () => void) {
   const qc = useQueryClient();
   const invalidar = useInvalidarKuiper();
   return useMutation({
     mutationFn: (id: number) => api<void>(`${BASE}/movimiento/${id}`, { metodo: 'DELETE' }),
     onSuccess: (_, id) => {
-      // La ficha ya no existe: se quita de la cache para que no se vuelva a pedir (daria 404).
+      alBorrar?.();
       qc.removeQueries({ queryKey: claves.movimiento(id) });
       return invalidar();
     },

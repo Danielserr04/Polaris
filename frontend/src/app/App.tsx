@@ -5,6 +5,7 @@ import { Login } from '../pages/Login';
 import { Inicio } from '../pages/inicio/Inicio';
 import { Odisea } from '../pages/Odisea';
 import { Kuiper } from '../pages/Kuiper';
+import { Fusion } from '../pages/Fusion';
 import { Pendiente } from '../pages/Pendiente';
 import { Perfil } from '../pages/Perfil';
 import { AppShell } from './AppShell';
@@ -19,7 +20,7 @@ export function App() {
           <Route index element={<Inicio />} />
           <Route path="odisea" element={<Odisea />} />
           <Route path="kuiper" element={<Kuiper />} />
-          <Route path="fusion" element={<Pendiente eyebrow="Fusión" title="Hoy" />} />
+          <Route path="fusion" element={<Fusion />} />
           <Route path="atlas" element={<Pendiente eyebrow="Atlas" title="Progresión" />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="*" element={<Pendiente eyebrow="Polaris" title="No encontrada" />} />
