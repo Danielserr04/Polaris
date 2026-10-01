@@ -1,5 +1,7 @@
 package com.polaris.kuiper.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.Parameter;
+
 import java.time.YearMonth;
 
 /**
@@ -7,6 +9,7 @@ import java.time.YearMonth;
  * defecto el mes actual.
  */
 public record ResumenFilterListDto(
+        @Parameter(description = "Mes a resumir, formato yyyy-MM; por defecto el mes actual", example = "2026-09")
         YearMonth periodo
 ) {
 }
