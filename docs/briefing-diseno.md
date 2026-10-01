@@ -1,5 +1,7 @@
 # Briefing de diseño — D0
 
+> **Histórico.** La dirección visual vigente es el design system exportado de Claude Design, guardado en `design/` (ver [[030-frontend-react-vite-y-design-system]]). Esta nota ya no es la referencia.
+
 Texto para pegar en Claude Design (u otra herramienta de diseño). **No tiene
 acceso a este repo ni a las sesiones de Claude Code**, así que esta nota es
 autosuficiente a propósito: repite datos que ya están en [[vision]] y

@@ -31,7 +31,7 @@ Lee `docs/00-indice.md` cuando necesites contexto de un módulo concreto.
 - MySQL 8. Esquema con Flyway y `ddl-auto: validate` desde el cierre de B2 (ver `docs/decisiones/007-esquema-ddl-auto-luego-flyway.md`). Un `V<n>` aplicado no se edita nunca
 - MapStruct para todo el mapeo
 - JPA Specifications para filtros dinámicos
-- React en el frontend (aún sin empezar)
+- Frontend en `frontend/`: Vite + React 18 + TypeScript, react-router y TanStack Query; design system en `design/` (ver `docs/decisiones/030-frontend-react-vite-y-design-system.md`). Las dependencias de npm también se preguntan
 
 ## Estructura raíz
 
@@ -54,10 +54,11 @@ Proyecto en `C:\Dev\Polaris` (Windows).
 docker compose up -d          # MySQL
 .\mvnw.cmd spring-boot:run    # backend
 .\mvnw.cmd test               # tests
+cd frontend; npm install; npm run dev   # frontend en :5173, proxy de /api a :8080
 ```
 
 La vault de Obsidian es la carpeta `docs/`. Se abre esa carpeta, no la raíz del repo.
 
 ## Estado
 
-Backend cerrado: B0 a B8 hechos, salvo probar Open Food Facts contra la API real. Siguiente: frontend (D0/D1 y React). Ver `docs/roadmap.md`.
+Backend cerrado: B0 a B8 hechos, salvo probar Open Food Facts contra la API real. Frontend en marcha: base (shell y design system) hecha; siguen login, Perfil, Odisea, Kuiper, Fusión y Atlas, de uno en uno. Ver `docs/roadmap.md`.

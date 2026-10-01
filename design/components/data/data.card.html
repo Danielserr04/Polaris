@@ -1,0 +1,22 @@
+<!-- @dsCard group="Components" viewport="900x560" name="Data" subtitle="List rows, rating, progress, stat, bar / line / ring charts" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{padding:20px 24px;margin:0}.r{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.c{display:flex;flex-direction:column;gap:16px}.l{font:500 10px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);width:84px;flex:none}</style>
+</head><body><div id="root"></div><script type="text/babel">
+const NS = window.PolarisDesignSystem_b0ab94;
+
+const { ListRow, ListHeader, Rating, ProgressBar, Stat, BarChart, LineChart, RingChart, Card } = NS;
+const rows=[{titulo:'Interstellar',tipo:'PELICULA',anio:2014,duracionMin:169,estado:'TERMINADO',valoracion:10,favorito:true},{titulo:'Breaking Bad',tipo:'SERIE',anio:2008,duracionMin:45,estado:'EN_CURSO',valoracion:9},{titulo:'The Legend of Zelda',tipo:'JUEGO',anio:1986,duracionMin:null,estado:'PENDIENTE',valoracion:null},{titulo:'Dune',tipo:'LIBRO',anio:1965,duracionMin:607,estado:'ABANDONADO',valoracion:6}];
+function App(){const [sel,setSel]=React.useState(1);return <div className="c" data-module="odisea">
+<div style={{border:'1px solid var(--border-1)',borderRadius:6,overflow:'hidden'}}><ListHeader/>{rows.map((r,i)=><ListRow key={i} index={i} {...r} selected={sel===i} onClick={()=>setSel(i)}/>)}</div>
+<div style={{display:'grid',gridTemplateColumns:'1fr 1.3fr 1.3fr auto',gap:24,alignItems:'end'}} data-module="kuiper">
+<div className="c"><Stat label="Gastado" value={1284.5} decimals={2} unit="€" delta="-8 %" deltaTone="up" caption="vs agosto" size={32}/><ProgressBar label="Ocio" value={86} max={120} valueLabel="86 / 120 €"/><Rating value={7}/></div>
+<BarChart height={110} highlight={6} target={60} targetLabel="Media" data={['L','M','X','J','V','S','D'].map((l,i)=>({label:l,value:[42,18,64,30,52,88,74][i]}))}/>
+<div data-module="atlas"><LineChart height={110} labels={['Jul','Ago','Sep']} series={[{name:'1RM',points:[72,73,75,74,77,78,80]},{name:'Obj',points:[82,82,82,82,82,82,82],dashed:true,color:'var(--text-3)'}]}/></div>
+<div data-module="fusion"><RingChart value={112} max={150} size={100} label="112" sublabel="/ 150 G"/></div>
+</div>
+</div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);</script></body></html>

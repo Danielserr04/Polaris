@@ -1,0 +1,43 @@
+/* Polaris colour tokens. Warm night (dark) is the default; light derived via [data-theme="light"].
+   Each module re-tints the whole accent family via [data-module="…"]. */
+:root{
+/* Ink — warm neutral ramp (never blue-grey) */
+--ink-0:#0b0a08;--ink-50:#12110e;--ink-100:#191714;--ink-200:#211f1b;--ink-300:#2c2924;--ink-400:#3b3731;--ink-500:#57514a;--ink-600:#8a8276;--ink-700:#b4ab9d;--ink-800:#dad3c6;--ink-900:#f3eee4;
+/* Polaris teal — the primary brand accent */
+--teal-200:#c3e6de;--teal-300:#9dd6c9;--teal-400:#7cc6b5;--teal-500:#5bb3a0;--teal-600:#43907f;--teal-700:#2b5f55;--teal-800:#1f4a41;--teal-ink:#062019;
+/* Starlight — warm white-gold used only for stars in brand imagery */
+--starlight:#fff4dc;--starlight-warm:#f5d58c;
+/* Module accents — one per module; each tints its whole module */
+--mod-polaris:#5bb3a0;--mod-odisea:#d0799f;--mod-kuiper:#e0b04a;--mod-fusion:#e8845a;--mod-atlas:#7d95e0;--mod-nucleo:#cdbf98;
+/* Odisea entry states — shape-coded too, so colour is never the only signal */
+--state-pendiente:#8a8276;--state-en-curso:#86b6e6;--state-terminado:#86b882;--state-abandonado:#d4675a;
+/* Semantic */
+--success:#86b882;--warning:#e0b04a;--danger:#d4675a;--info:#86b6e6;
+--success-bg:rgba(134,184,130,.12);--warning-bg:rgba(224,176,74,.12);--danger-bg:rgba(212,103,90,.12);--info-bg:rgba(134,182,230,.12);
+/* ---- Semantic aliases ---- */
+--bg-app:var(--ink-50);--bg-sunken:var(--ink-0);
+--surface-1:var(--ink-100);--surface-2:var(--ink-200);--surface-3:var(--ink-300);
+--surface-glass:rgba(25,23,20,.78);
+--surface-hover:rgba(243,238,228,.04);--surface-selected:rgba(243,238,228,.06);
+--border-1:var(--ink-300);--border-2:var(--ink-400);--border-strong:var(--ink-600);
+--text-1:var(--ink-900);--text-2:var(--ink-700);--text-3:var(--ink-600);--text-disabled:var(--ink-500);
+--accent:var(--teal-500);--accent-hover:var(--teal-400);--accent-press:var(--teal-600);--accent-soft:rgba(91,179,160,.12);--accent-deep:var(--teal-800);--text-on-accent:var(--teal-ink);
+--focus-ring:var(--accent);
+--link:var(--accent-hover);--link-hover:var(--teal-300);
+--block-shadow-color:var(--ink-400);
+--scrim:rgba(11,10,8,.72);
+}
+[data-module="polaris"]{--accent:#5bb3a0;--accent-hover:#7cc6b5;--accent-press:#43907f;--accent-soft:rgba(91,179,160,.12);--accent-deep:#1f4a41;--text-on-accent:#062019}
+[data-module="odisea"]{--accent:#d0799f;--accent-hover:#dc93b3;--accent-press:#b35f83;--accent-soft:rgba(208,121,159,.12);--accent-deep:#5a2c42;--text-on-accent:#240f19}
+[data-module="kuiper"]{--accent:#e0b04a;--accent-hover:#ebc46e;--accent-press:#b98b2e;--accent-soft:rgba(224,176,74,.12);--accent-deep:#5c451a;--text-on-accent:#1e1606}
+[data-module="fusion"]{--accent:#e8845a;--accent-hover:#efa07e;--accent-press:#c26840;--accent-soft:rgba(232,132,90,.12);--accent-deep:#5e3020;--text-on-accent:#230f07}
+[data-module="atlas"]{--accent:#7d95e0;--accent-hover:#9aaee8;--accent-press:#5f78c6;--accent-soft:rgba(125,149,224,.12);--accent-deep:#2c3766;--text-on-accent:#0d1226}
+[data-module="nucleo"]{--accent:#cdbf98;--accent-hover:#dcd1b2;--accent-press:#aa9c74;--accent-soft:rgba(205,191,152,.12);--accent-deep:#4f4731;--text-on-accent:#1c180d}
+[data-theme="light"]{
+--bg-app:#f2eee6;--bg-sunken:#e9e3d8;--surface-1:#faf7f1;--surface-2:#f2eee6;--surface-3:#e7e1d5;--surface-glass:rgba(250,247,241,.82);
+--surface-hover:rgba(27,20,7,.04);--surface-selected:rgba(27,20,7,.06);
+--border-1:#e0d9cc;--border-2:#cfc6b6;--border-strong:#8a8276;
+--text-1:#1b1812;--text-2:#57514a;--text-3:#7a7266;--text-disabled:#b4ab9d;
+--accent:#2f8a77;--accent-hover:#26715f;--accent-press:#1f5c4e;--accent-soft:rgba(47,138,119,.12);--accent-deep:#1b1812;--text-on-accent:#ffffff;
+--link:#26715f;--link-hover:#1f5c4e;--block-shadow-color:#1b1812;--scrim:rgba(27,24,18,.4);
+}

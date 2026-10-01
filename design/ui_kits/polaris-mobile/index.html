@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polaris — móvil</title><link rel="icon" href="../../assets/app-icon.svg">
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="../polaris-web/kit.css"><link rel="stylesheet" href="mobile.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../assets/icons/icons.js"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="../polaris-web/data.js"></script>
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/arrow-down-right.svg" data-resource-id="ic-arrow-down-right">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/arrow-right.svg" data-resource-id="ic-arrow-right">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/arrow-up-right.svg" data-resource-id="ic-arrow-up-right">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/book-open.svg" data-resource-id="ic-book-open">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/calendar.svg" data-resource-id="ic-calendar">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/check.svg" data-resource-id="ic-check">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/chevrons-up-down.svg" data-resource-id="ic-chevrons-up-down">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/circle-alert.svg" data-resource-id="ic-circle-alert">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/circle-check.svg" data-resource-id="ic-circle-check">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/clapperboard.svg" data-resource-id="ic-clapperboard">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/compass.svg" data-resource-id="ic-compass">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/dumbbell.svg" data-resource-id="ic-dumbbell">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/flame.svg" data-resource-id="ic-flame">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/gamepad-2.svg" data-resource-id="ic-gamepad-2">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/house.svg" data-resource-id="ic-house">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/image-up.svg" data-resource-id="ic-image-up">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/info.svg" data-resource-id="ic-info">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/key-round.svg" data-resource-id="ic-key-round">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/link-2.svg" data-resource-id="ic-link-2">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/link-2-off.svg" data-resource-id="ic-link-2-off">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/lock.svg" data-resource-id="ic-lock">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/log-out.svg" data-resource-id="ic-log-out">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/mail.svg" data-resource-id="ic-mail">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/mail-warning.svg" data-resource-id="ic-mail-warning">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/minus.svg" data-resource-id="ic-minus">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/orbit.svg" data-resource-id="ic-orbit">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/play.svg" data-resource-id="ic-play">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/plus.svg" data-resource-id="ic-plus">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/repeat.svg" data-resource-id="ic-repeat">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/scale.svg" data-resource-id="ic-scale">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/search.svg" data-resource-id="ic-search">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/send.svg" data-resource-id="ic-send">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/shopping-basket.svg" data-resource-id="ic-shopping-basket">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/sparkles.svg" data-resource-id="ic-sparkles">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/ticket.svg" data-resource-id="ic-ticket">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/train-front.svg" data-resource-id="ic-train-front">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/trophy.svg" data-resource-id="ic-trophy">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/tv.svg" data-resource-id="ic-tv">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/unlink.svg" data-resource-id="ic-unlink">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/user-round.svg" data-resource-id="ic-user-round">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/utensils.svg" data-resource-id="ic-utensils">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/wallet.svg" data-resource-id="ic-wallet">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/x.svg" data-resource-id="ic-x">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/star.svg" data-resource-id="ic-star">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/chevron-left.svg" data-resource-id="ic-chevron-left">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/chevron-right.svg" data-resource-id="ic-chevron-right">
+<style>a{color:var(--accent)}a:hover{color:var(--text-1)}</style>
+</head><body>
+<template id="__bundler_thumbnail"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" data-bg-color="#12110e"><rect width="100" height="100" fill="#12110e"/><path d="M50,30 Q52.4,47.6 70,50 Q52.4,52.4 50,70 Q47.6,52.4 30,50 Q47.6,47.6 50,30Z" fill="#5bb3a0"/></svg></template><div id="root"></div>
+<script type="text/babel" src="ios-frame.jsx"></script>
+<script type="text/babel" src="../polaris-web/StarTrails.jsx"></script>
+<script type="text/babel" src="MShell.jsx"></script>
+<script type="text/babel" src="MHome.jsx"></script>
+<script type="text/babel" src="MOdisea.jsx"></script>
+<script type="text/babel" src="MModules.jsx"></script>
+<script type="text/babel">
+const KEY = 'polaris-mobile-route';
+const SCREENS = [['login', 'Entrar', 'polaris'], ['inicio', 'Inicio', 'polaris'], ['odisea', 'Odisea', 'odisea'], ['kuiper', 'Kuiper', 'kuiper'], ['fusion', 'Fusión', 'fusion'], ['atlas', 'Atlas', 'atlas'], ['perfil', 'Perfil', 'nucleo']];
+function useFit() {
+  const [s, setS] = React.useState(1);
+  React.useEffect(() => { const f = () => setS(Math.min(1, (window.innerHeight - 40) / 874, (window.innerWidth - 40) / 402)); f(); window.addEventListener('resize', f); return () => window.removeEventListener('resize', f); }, []);
+  return s;
+}
+function App() {
+  const { Toast } = DS();
+  const [route, setRoute] = React.useState(() => localStorage.getItem(KEY) || 'login');
+  const [toast, setToast] = React.useState(null);
+  const go = r => { setRoute(r); localStorage.setItem(KEY, r); };
+  const say = t => { setToast(t); clearTimeout(window.__mt); window.__mt = setTimeout(() => setToast(null), 3000); };
+  const scale = useFit();
+  const mod = (SCREENS.find(s => s[0] === route) || SCREENS[1])[2];
+  const screens = { inicio: <MInicio go={go} />, odisea: <MOdisea go={go} toast={say} />, kuiper: <MKuiper go={go} />, fusion: <MFusion go={go} />, atlas: <MAtlas go={go} />, perfil: <MPerfil go={go} logout={() => go('login')} /> };
+  return (
+    <div className="stage">
+      <div className="stage__phone" style={{ transform: 'scale(' + scale + ')', width: 402, height: 874, margin: (874 * (scale - 1)) / 2 + 'px ' + (402 * (scale - 1)) / 2 + 'px' }}>
+        <IOSDevice dark>
+          <div className="m-app" data-module={mod} data-screen-label={route}>
+            {route === 'login' ? <MLogin onLogin={() => go('inicio')} /> : <>
+              <div className="m-sky"><StarTrails pole={[0.5, -0.06]} speed={0.35} density={0.8} /></div>
+              <div className="m-veil" /><div className="m-glow" />
+              <React.Fragment key={route}>{screens[route] || screens.inicio}</React.Fragment>
+              <MTabBar route={route} go={go} />
+              {toast && <div className="m-toast"><Toast tone="success" onClose={() => setToast(null)}>{toast}</Toast></div>}
+            </>}
+          </div>
+        </IOSDevice>
+      </div>
+      <aside className="stage__rail">
+        <span className="pl-eyebrow">Polaris · UI kit móvil</span>
+        <h2>Pantallas</h2>
+        <div className="stage__list">{SCREENS.map(([id, l, m]) => <button key={id} data-module={m} className={route === id ? 'on' : ''} onClick={() => go(id)}><i />{l}</button>)}</div>
+        <p>Barra de módulos flotante abajo; perfil desde el avatar. Mismos tokens, componentes y datos que la versión web.</p>
+        <a href="../../index.html">Ver versión web →</a>
+      </aside>
+    </div>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script></body></html>
