@@ -113,7 +113,8 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Login (usuario/contraseña y Google, [[031-login-google-redirige-al-frontend]]) | **Hecho** |
 | Perfil (datos, email, contraseña, Google, cierre de sesión) | **Hecho** |
 | Inicio (bandas por módulo, con datos reales) | **Hecho** |
-| Odisea, Kuiper, Fusión, Atlas | Pendiente |
+| Odisea (lista, filtros, ficha, edición, borrado y alta desde el catálogo externo) | **Hecho** |
+| Kuiper, Fusión, Atlas | Pendiente |
 
 ## Después
 
