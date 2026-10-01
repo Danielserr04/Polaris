@@ -66,5 +66,7 @@ export async function api<T>(ruta: string, { metodo = 'GET', cuerpo, query, cerr
     throw new ApiError(res.status, await leerError(res));
   }
   if (res.status === 204) return undefined as T;
-  return (await res.json()) as T;
+  // Un 201 sin cuerpo (p. ej. el registro) tampoco es JSON.
+  const texto = await res.text();
+  return (texto ? JSON.parse(texto) : undefined) as T;
 }

@@ -5,6 +5,7 @@ import { ApiError } from '../api/client';
 import { GOOGLE_LOGIN_URL, login } from '../api/auth';
 import { iniciarSesion, useHaySesion } from '../auth/sesion';
 import { Button, Eyebrow, Input, Logo, StarTrails } from '../design-system';
+import { Registro } from './login/Registro';
 
 const MODULOS: [string, string, string][] = [
   ['Odisea', 'Ocio', 'var(--mod-odisea)'],
@@ -52,6 +53,7 @@ export function Login() {
   const [error, setError] = useState<string | null>(ERRORES_GOOGLE[params.get('error') ?? ''] ?? null);
   const [saliendo, setSaliendo] = useState(false);
   const [yendoAGoogle, setYendoAGoogle] = useState(false);
+  const [registrando, setRegistrando] = useState(false);
   const [ahora, setAhora] = useState(() => new Date());
 
   useEffect(() => {
@@ -129,52 +131,65 @@ export function Login() {
           </ul>
         </section>
         <section className="lp__card pl-rise" style={{ animationDelay: '260ms' }}>
-          <div className="lp__cardhead">
-            <h2>Entrar</h2>
-            <span className="pl-eyebrow">Sesión personal</span>
-          </div>
-          <form className="lp__form" onSubmit={enviar}>
-            <Input
-              label="Usuario o email"
-              icon="user-round"
-              value={usuario}
-              onChange={(e) => setUsuario(e.target.value)}
-              autoComplete="username"
-              autoFocus
-            />
-            <Input
-              label="Contraseña"
-              icon="key-round"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                setError(null);
+          {registrando ? (
+            <Registro onVolver={() => setRegistrando(false)} />
+          ) : (
+            <>
+              <div className="lp__cardhead">
+                <h2>Entrar</h2>
+                <span className="pl-eyebrow">Sesión personal</span>
+              </div>
+              <form className="lp__form" onSubmit={enviar}>
+                <Input
+                  label="Usuario o email"
+                  icon="user-round"
+                  value={usuario}
+                  onChange={(e) => setUsuario(e.target.value)}
+                  autoComplete="username"
+                  autoFocus
+                />
+                <Input
+                  label="Contraseña"
+                  icon="key-round"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setError(null);
+                  }}
+                  error={error}
+                  autoComplete="current-password"
+                />
+                <Button type="submit" size="lg" block iconRight="arrow-right" loading={entrar.isPending}>
+                  Entrar
+                </Button>
+              </form>
+            </>
+          )}
+          {!registrando && (
+            <>
+            <div className="lp__or">
+              <span>o</span>
+            </div>
+            <Button
+              variant="secondary"
+              size="lg"
+              block
+              loading={yendoAGoogle}
+              onClick={() => {
+                setYendoAGoogle(true);
+                window.location.assign(GOOGLE_LOGIN_URL);
               }}
-              error={error}
-              autoComplete="current-password"
-            />
-            <Button type="submit" size="lg" block iconRight="arrow-right" loading={entrar.isPending}>
-              Entrar
+            >
+              <GoogleG />
+              Continuar con Google
             </Button>
-          </form>
-          <div className="lp__or">
-            <span>o</span>
-          </div>
-          <Button
-            variant="secondary"
-            size="lg"
-            block
-            loading={yendoAGoogle}
-            onClick={() => {
-              setYendoAGoogle(true);
-              window.location.assign(GOOGLE_LOGIN_URL);
-            }}
-          >
-            <GoogleG />
-            Continuar con Google
-          </Button>
+              <Button variant="ghost" block onClick={() => setRegistrando(true)}>
+                Crear cuenta
+              </Button>
+            </>
+          )}
         </section>
       </main>
       <footer className="lp__foot">

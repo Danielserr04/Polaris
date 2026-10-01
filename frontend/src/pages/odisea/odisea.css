@@ -32,7 +32,7 @@
 /* Formulario de edición */
 .odisea-form__row{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
 .odisea-form__rating{display:flex;align-items:center;gap:8px;min-height:40px}
-.odisea-form .pl-input input[type="date"]{color-scheme:dark}
+.odisea-form .pl-input input[type="date"]{color-scheme:inherit}
 .odisea-textarea{box-sizing:border-box;width:100%;min-height:96px;padding:10px 12px;resize:vertical;background:var(--bg-sunken);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text-1);font-family:var(--font-sans);font-size:14px;line-height:1.5;transition:border-color var(--dur-fast),box-shadow var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
 .odisea-textarea::placeholder{color:var(--text-3)}
 .odisea-textarea:hover{border-color:var(--border-strong)}
