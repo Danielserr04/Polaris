@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from './client';
 
 // Contratos de Atlas (gym). Reflejan los DTO de src/main/java/com/polaris/atlas/.
@@ -72,6 +72,8 @@ export const claves = {
   records: ['atlas', 'records'] as const,
   progresion: ['atlas', 'progresion'] as const,
   pesos: ['atlas', 'pesos'] as const,
+  ejercicios: ['atlas', 'ejercicios'] as const,
+  rutinas: ['atlas', 'rutinas'] as const,
 };
 
 /** Listado ligero de sesiones (sin series), de la mas reciente a la mas antigua. */
@@ -89,7 +91,18 @@ export function useSesiones(desde: string, hasta: string) {
 export function useSesionesCompletas(ids: number[]) {
   return useQuery({
     queryKey: [...claves.sesiones, 'completas', ids] as const,
-    queryFn: () => Promise.all(ids.map((id) => api<SesionCompleta>(`${BASE}/sesion/${id}`))),
+    // Una sesion recien borrada da 404 hasta que el listado se recarga: se descarta, no es un error.
+    queryFn: async () => {
+      const todas = await Promise.all(
+        ids.map((id) =>
+          api<SesionCompleta>(`${BASE}/sesion/${id}`).catch((e: unknown) => {
+            if (e instanceof ApiError && e.status === 404) return null;
+            throw e;
+          }),
+        ),
+      );
+      return todas.filter((s): s is SesionCompleta => s !== null);
+    },
     enabled: ids.length > 0,
   });
 }
@@ -110,5 +123,106 @@ export function usePesos(desde: string, hasta: string) {
   return useQuery({
     queryKey: [...claves.pesos, desde, hasta] as const,
     queryFn: () => api<PesoCorporal[]>(`${BASE}/peso`, { query: { desde, hasta } }),
+  });
+}
+
+export interface Ejercicio {
+  id: number;
+  nombre: string;
+  grupoMuscular: string;
+  equipamiento?: string | null;
+  esPropio: boolean;
+}
+
+export interface EjercicioRequest {
+  nombre: string;
+  grupoMuscular: string;
+  equipamiento?: string | null;
+}
+
+export interface Rutina {
+  id: number;
+  nombre: string;
+  descripcion?: string | null;
+  activa: boolean;
+  numeroEjercicios: number;
+}
+
+export interface RutinaCompleta extends Omit<Rutina, 'numeroEjercicios'> {
+  lineas: { id: number; ejercicioId: number; ejercicioNombre: string; ejercicioGrupoMuscular?: string | null; orden: number; seriesObjetivo: number; repsObjetivo?: string | null }[];
+}
+
+export interface SesionRequest {
+  rutinaId: number | null;
+  fecha: string;
+  duracionMin: number | null;
+  notas: string | null;
+  series: { ejercicioId: number; numeroSerie: number; reps: number; pesoKg: number; rpe: number | null }[];
+}
+
+export function useEjercicios() {
+  return useQuery({ queryKey: [...claves.ejercicios, 'lista'] as const, queryFn: () => api<Ejercicio[]>(`${BASE}/ejercicio`) });
+}
+
+export function useRutinas() {
+  return useQuery({ queryKey: [...claves.rutinas, 'lista'] as const, queryFn: () => api<Rutina[]>(`${BASE}/rutina`) });
+}
+
+/** La rutina con sus lineas; se pide al elegirla en una sesion nueva para precargar los ejercicios. */
+export function pedirRutina(id: number) {
+  return api<RutinaCompleta>(`${BASE}/rutina/${id}`);
+}
+
+/** La sesion completa, con sus series (el listado trae solo el numero de series). */
+export function useSesion(id: number | undefined) {
+  return useQuery({
+    queryKey: [...claves.sesiones, 'ficha', id ?? 0] as const,
+    queryFn: () => api<SesionCompleta>(`${BASE}/sesion/${id}`),
+    enabled: id !== undefined,
+    gcTime: 0,
+  });
+}
+
+/** Lo que cambia una sesion: sus listados, la progresion, los records y el Inicio. */
+function useInvalidarAtlas() {
+  const qc = useQueryClient();
+  return () => Promise.all([qc.invalidateQueries({ queryKey: ['atlas'] }), qc.invalidateQueries({ queryKey: ['inicio'] })]);
+}
+
+export function useCrearSesion() {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: SesionRequest) => api<SesionCompleta>(`${BASE}/sesion`, { metodo: 'POST', cuerpo }),
+    onSuccess: invalidar,
+  });
+}
+
+export function useActualizarSesion(id: number) {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: SesionRequest) => api<SesionCompleta>(`${BASE}/sesion/${id}`, { metodo: 'PUT', cuerpo }),
+    onSuccess: invalidar,
+  });
+}
+
+/** `alBorrar` se llama nada mas borrar, antes de invalidar (mismo motivo que useBorrarComida de Fusion). */
+export function useBorrarSesion(alBorrar?: () => void) {
+  const qc = useQueryClient();
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (id: number) => api<void>(`${BASE}/sesion/${id}`, { metodo: 'DELETE' }),
+    onSuccess: (_, id) => {
+      alBorrar?.();
+      qc.removeQueries({ queryKey: [...claves.sesiones, 'ficha', id] });
+      return invalidar();
+    },
+  });
+}
+
+export function useCrearEjercicio() {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    mutationFn: (cuerpo: EjercicioRequest) => api<Ejercicio>(`${BASE}/ejercicio`, { metodo: 'POST', cuerpo }),
+    onSuccess: invalidar,
   });
 }

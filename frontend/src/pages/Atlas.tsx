@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { mensajeError, useProgresion, usePesos, useRecords, useSesiones, useSesionesCompletas, type SesionCompleta } from '../api/atlas';
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Badge, BarChart, Button, Card, LineChart, Select, Stat } from '../design-system';
+import { FormularioSesion } from './atlas/FormularioSesion';
+import './atlas/atlas.css';
 import { diasEntre, deIso, iso, lunesDe, nombreMes, num, relativa, semanaIso, sumarDias } from '../lib/fechas';
 
 const SEMANAS = 10;
@@ -16,7 +18,11 @@ function delta(n: number, dec: number, unidad = ''): string {
 
 const tono = (n: number) => (n > 0 ? 'up' : n < 0 ? 'down' : 'flat') as 'up' | 'down' | 'flat';
 
+// Una sesion abierta: nueva (sin id) o una existente.
+type Abierta = { id?: number } | null;
+
 export function Atlas() {
+  const [abierta, setAbierta] = useState<Abierta>(null);
   const hoy = useMemo(() => new Date(), []);
   const hoyIso = iso(hoy);
   const lunes = lunesDe(hoy);
@@ -90,7 +96,16 @@ export function Atlas() {
 
   return (
     <div>
-      <PageHeader eyebrow="Atlas" coord={`SEMANA ${semanaIso(hoy)}`} title="Progresión" />
+      <PageHeader
+        eyebrow="Atlas"
+        coord={`SEMANA ${semanaIso(hoy)}`}
+        title="Progresión"
+        actions={
+          <Button icon="plus" onClick={() => setAbierta({})}>
+            Registrar sesión
+          </Button>
+        }
+      />
 
       {error ? (
         <Alert
@@ -220,7 +235,14 @@ export function Atlas() {
               ) : (
                 <div className="table">
                   {ultimas.map((s, i) => (
-                    <div key={s.id} className="table__r table__r--5 pl-rise" style={{ animationDelay: 240 + i * 40 + 'ms' }}>
+                    <button
+                      key={s.id}
+                      type="button"
+                      className="table__r table__r--5 atl-ses pl-rise"
+                      style={{ animationDelay: 240 + i * 40 + 'ms' }}
+                      onClick={() => setAbierta({ id: s.id })}
+                      aria-label={`Editar la sesión del ${relativa(s.fecha, hoy)}`}
+                    >
                       <span className="pl-row__num">{relativa(s.fecha, hoy)}</span>
                       <b>
                         {s.rutinaNombre ?? 'Improvisado'}
@@ -233,7 +255,7 @@ export function Atlas() {
                       <span className="muted">{new Set(s.series.map((x) => x.ejercicioId)).size} ejercicios</span>
                       <span className="muted">{s.series.length} series</span>
                       <span className="money">{num(volumenDe(s))} kg</span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               )}
@@ -247,6 +269,8 @@ export function Atlas() {
           </div>
         </div>
       )}
+
+      {abierta && <FormularioSesion sesionId={abierta.id} onClose={() => setAbierta(null)} />}
     </div>
   );
 }

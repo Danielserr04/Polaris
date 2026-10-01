@@ -1,0 +1,17 @@
+/* Solo lo que Atlas necesita y no esta ya en styles/kit.css */
+.table__r.atl-ses{width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;font:inherit;font-size:13.5px;text-align:left;cursor:pointer}
+.table__r.atl-ses:focus-visible{outline-offset:-2px}
+.atl-form{display:flex;flex-direction:column;gap:14px}
+.atl-form__row{display:grid;grid-template-columns:1fr 1fr 110px;gap:12px}
+.atl-textarea{box-sizing:border-box;width:100%;min-height:64px;padding:10px 12px;resize:vertical;background:var(--bg-sunken);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text-1);font-family:var(--font-sans);font-size:14px;line-height:1.5;transition:border-color var(--dur-fast),box-shadow var(--dur-fast) var(--ease-out),transform var(--dur-fast) var(--ease-out)}
+.atl-textarea::placeholder{color:var(--text-3)}
+.atl-textarea:hover{border-color:var(--border-strong)}
+.atl-textarea:focus{outline:none;border-color:var(--accent);box-shadow:3px 3px 0 0 var(--accent-deep);transform:translate(-1px,-1px)}
+.atl-ej{border:1px solid var(--border-1);border-radius:4px;background:var(--bg-sunken);padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.atl-ej__h{display:flex;align-items:center;gap:10px}.atl-ej__h b{font-weight:600;font-size:14px}.atl-ej__h span{font-size:12px;color:var(--text-3)}.atl-ej__h>:last-child{margin-left:auto}
+.atl-serie{display:grid;grid-template-columns:24px minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 32px;gap:8px;align-items:center}
+.atl-serie__n{font-family:var(--font-mono);font-size:12px;color:var(--text-3);text-align:center}
+.atl-serie--cab{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
+.atl-nuevo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end}
+.atl-total{display:flex;justify-content:space-between;font-size:13px;color:var(--text-3)}.atl-total b{color:var(--text-1);font-family:var(--font-mono);font-weight:500}
+@media (max-width:640px){.atl-form__row{grid-template-columns:1fr}}
