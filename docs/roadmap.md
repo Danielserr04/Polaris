@@ -73,6 +73,8 @@ Resumen del día (`GET /api/fusion/resumen?fecha=`, [[021-resumen-diario-fusion]
 ### B8 — Cierre
 Tests de los servicios de dominio, OpenAPI completo, logs, revisión de índices.
 
+Tests de los servicios de dominio: ya cubiertos. Testcontainers y tests de integración con MySQL real hechos ([[027-testcontainers-tests-de-integracion]]): `-DexcludedGroups=integracion` los salta y sin Docker se saltan solos.
+
 ## Diseño
 
 Va en dos tiempos, a propósito.
