@@ -47,6 +47,14 @@ export function Odisea() {
     return () => clearTimeout(t);
   }, [aviso]);
 
+  // En pantallas estrechas el detalle queda debajo de la lista: al elegir una entrada se baja hasta el.
+  const elegir = (id: number) => {
+    setSel(id);
+    if (window.matchMedia('(max-width:1100px)').matches) {
+      setTimeout(() => document.querySelector('.detail')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    }
+  };
+
   const todas = useMemo(() => entradas.data ?? [], [entradas.data]);
   const anios = useMemo(() => new Map((titulos.data ?? []).map((t) => [t.id, t.anio])), [titulos.data]);
   const enLista = useMemo(() => new Set(todas.map((e) => e.tituloId)), [todas]);
@@ -145,7 +153,7 @@ export function Odisea() {
           {entradas.isPending ? (
             <ListaEsqueleto />
           ) : (
-            <ListaEntradas entradas={lista} anios={anios} seleccionada={seleccionada?.id} onSeleccionar={setSel} vacio={vacio} />
+            <ListaEntradas entradas={lista} anios={anios} seleccionada={seleccionada?.id} onSeleccionar={elegir} vacio={vacio} />
           )}
           {seleccionada && (
             <Ficha

@@ -135,7 +135,7 @@ export function Fusion() {
           <div className="span-5">
             <Card delay={60} eyebrow="Energía" title="Calorías del día">
               {r ? (
-                <div style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+                <div className="fus-kcal" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
                   <RingChart
                     value={r.kcal.consumido}
                     max={objetivo ?? Math.max(r.kcal.consumido, 1)}

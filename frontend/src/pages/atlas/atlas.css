@@ -26,3 +26,4 @@
 .atl-linea__n b{display:block;font-weight:500;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.atl-linea__n span{font-size:12px;color:var(--text-3)}
 .atl-linea__m{display:inline-flex;justify-content:flex-end}
 @media (max-width:640px){.atl-form__row2{grid-template-columns:1fr}.table__r.table__r--ej{grid-template-columns:minmax(0,1fr) 110px}.table__r--ej>:nth-child(3){display:none}}
+@media (max-width:1280px){.grid>.span-4.atl-rec{grid-column:span 12}}

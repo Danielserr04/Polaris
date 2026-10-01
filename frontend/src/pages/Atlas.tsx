@@ -244,7 +244,7 @@ export function Atlas() {
             </Card>
           </div>
 
-          <div className="span-4">
+          <div className="span-4 atl-rec">
             <Card delay={160} eyebrow="Mejores marcas" title="Récords" padding="4px 0 8px">
               {records.isPending ? (
                 <p className="muted" style={{ margin: '14px 18px' }}>Cargando…</p>
