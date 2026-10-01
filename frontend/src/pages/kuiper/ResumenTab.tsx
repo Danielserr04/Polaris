@@ -9,6 +9,7 @@ interface Props {
   periodo: string;
   onVerTodos: () => void;
   onEditar: (m: MovimientoList) => void;
+  onIrACategorias: () => void;
 }
 
 function pct(actual: number, previo: number): { texto: string; sube: boolean } | null {
@@ -18,7 +19,7 @@ function pct(actual: number, previo: number): { texto: string; sube: boolean } |
   return { texto: `${r > 0 ? '+' : r < 0 ? '−' : ''}${Math.abs(r)} %`, sube: p > 0 };
 }
 
-export function ResumenTab({ periodo, onVerTodos, onEditar }: Props) {
+export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: Props) {
   const hoy = useMemo(() => new Date(), []);
   const esActual = periodo === periodoDe(hoy);
   const { desde, hasta, dias } = rangoMes(periodo);
@@ -153,6 +154,14 @@ export function ResumenTab({ periodo, onVerTodos, onEditar }: Props) {
                   </div>
                 );
               })}
+              {conLimite.length === 0 && (
+                <span className="muted" style={{ fontSize: 13 }}>
+                  Aún no tienes presupuestos.{' '}
+                  <Button variant="ghost" size="sm" onClick={onIrACategorias}>
+                    Ponlos en Categorías
+                  </Button>
+                </span>
+              )}
               {sinLimite.length > 0 && (
                 <div className="stack-8">
                   <span className="pl-eyebrow">Sin presupuesto</span>
