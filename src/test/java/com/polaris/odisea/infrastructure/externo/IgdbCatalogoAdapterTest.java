@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.startsWith;
 import static org.springframework.test.web.client.ExpectedCount.once;
@@ -191,6 +192,27 @@ class IgdbCatalogoAdapterTest {
         assertThatThrownBy(() -> adaptador.buscar("zelda", TipoContenido.JUEGO))
                 .isInstanceOf(ExternalServiceException.class)
                 .hasMessageContaining("Twitch");
+    }
+
+    @Test
+    @DisplayName("el secret de Twitch (va en la query) no aparece en ninguna excepcion que acabe en el log")
+    void elSecretNoAparecePorNingunaCadenaDeCausas() {
+        // 401 simulado
+        IgdbCatalogoAdapter rechazado = adaptadorCon("mi-id", "secret-confidencial");
+        servidor.expect(once(), requestTo(startsWith(URL_TOKEN))).andRespond(withUnauthorizedRequest());
+        Throwable porRechazo = catchThrowable(() -> rechazado.buscar("zelda", TipoContenido.JUEGO));
+
+        // Conexion rechazada de verdad: el mensaje de ResourceAccessException lleva la URL
+        IgdbCatalogoAdapter sinServidor = new IgdbCatalogoAdapter(RestClient.builder(), URL_API,
+                "http://127.0.0.1:1/oauth2/token", "mi-id", "secret-confidencial", IMAGEN_BASE);
+        Throwable porConexion = catchThrowable(() -> sinServidor.buscar("zelda", TipoContenido.JUEGO));
+
+        for (Throwable error : List.of(porRechazo, porConexion)) {
+            assertThat(error).isInstanceOf(ExternalServiceException.class);
+            for (Throwable actual = error; actual != null; actual = actual.getCause()) {
+                assertThat(String.valueOf(actual.getMessage())).doesNotContain("secret-confidencial");
+            }
+        }
     }
 
     @Test

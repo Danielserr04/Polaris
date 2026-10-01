@@ -264,6 +264,12 @@ public class GlobalExceptionHandler {
     }
 
     private ResponseEntity<ErrorResponse> build(HttpStatus status, String mensaje, HttpServletRequest request) {
+        if (status.is4xxClientError()) {
+            // Error del cliente: sin stacktrace ni WARN, solo para poder seguir la
+            // peticion por su requestId al depurar. Nunca la query string ni el cuerpo.
+            log.debug("Respuesta {} en {} {}: {}", status.value(), request.getMethod(),
+                    request.getRequestURI(), mensaje);
+        }
         ErrorResponse body = ErrorResponse.of(status.value(), mensaje, request.getRequestURI());
         return ResponseEntity.status(status).body(body);
     }
