@@ -1,5 +1,6 @@
 package com.polaris.atlas.infrastructure.persistence.dto.in;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -18,10 +19,14 @@ import java.util.List;
  * limita a 2000 por sensatez.
  */
 public record SesionRequestDto(
+        @Schema(description = "Id de una rutina tuya; vacio en un entreno libre")
         Long rutinaId,
+        @Schema(description = "Dia del entreno (yyyy-MM-dd); no puede ser futuro", example = "2026-09-30")
         @NotNull @PastOrPresent LocalDate fecha,
+        @Schema(description = "Duracion en minutos, de 1 a 1440; opcional", example = "65")
         @Min(1) @Max(1440) Integer duracionMin,
         @Size(max = 2000) String notas,
+        @Schema(description = "De 1 a 200 series; en el PUT sustituyen a las anteriores")
         @NotNull @Size(min = 1, max = 200) List<@NotNull @Valid SerieRegistroRequestDto> series
 ) {
 }
