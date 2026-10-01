@@ -59,7 +59,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
   const crearCategoria = useCrearCategoria();
   const crear = useCrearMovimiento();
   const actualizar = useActualizarMovimiento(movimiento?.id ?? 0);
-  const borrar = useBorrarMovimiento();
+  const borrar = useBorrarMovimiento(onClose);
 
   const [tipo, setTipo] = useState<TipoMovimiento>(movimiento?.tipo ?? 'GASTO');
   const [importe, setImporte] = useState(movimiento ? String(movimiento.importe).replace('.', ',') : '');
@@ -127,7 +127,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
   const borrarMovimiento = () => {
     if (!movimiento) return;
     setErrorEnvio(null);
-    borrar.mutate(movimiento.id, { onSuccess: onClose, onError: (e) => setErrorEnvio(mensajeError(e)) });
+    borrar.mutate(movimiento.id, { onError: (e) => setErrorEnvio(mensajeError(e)) });
   };
 
   const ver = (error: string | null) => (intentado ? error : null);
