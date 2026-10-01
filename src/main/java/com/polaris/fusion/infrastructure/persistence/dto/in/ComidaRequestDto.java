@@ -1,6 +1,7 @@
 package com.polaris.fusion.infrastructure.persistence.dto.in;
 
 import com.polaris.fusion.domain.model.MomentoComida;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
@@ -15,8 +16,10 @@ import java.util.List;
  * lineas; el PUT reemplaza el conjunto entero.
  */
 public record ComidaRequestDto(
+        @Schema(description = "Dia de la comida (yyyy-MM-dd); no puede ser futuro", example = "2026-09-30")
         @NotNull @PastOrPresent LocalDate fecha,
         @NotNull MomentoComida momento,
+        @Schema(description = "De 1 a 50 lineas; en el PUT sustituyen a las anteriores")
         @NotNull @Size(min = 1, max = 50) List<@NotNull @Valid ComidaLineaRequestDto> lineas
 ) {
 }
