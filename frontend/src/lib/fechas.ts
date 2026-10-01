@@ -25,6 +25,13 @@ export function lunesDe(d: Date): Date {
   return sumarDias(d, -dia);
 }
 
+/** Numero de semana ISO (1-53) de una fecha local. */
+export function semanaIso(d: Date): number {
+  const jueves = sumarDias(d, 3 - ((d.getDay() + 6) % 7)); // el jueves de su semana decide el anio
+  const primero = new Date(jueves.getFullYear(), 0, 1);
+  return Math.floor(diasEntre(primero, jueves) / 7) + 1;
+}
+
 /** Parsea YYYY-MM-DD como fecha local (new Date('2026-10-01') seria UTC). */
 export function deIso(s: string): Date {
   const [a, m, d] = s.split('-').map(Number);
