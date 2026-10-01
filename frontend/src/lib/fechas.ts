@@ -70,3 +70,28 @@ export function eur(n: number, dec = 2): string {
 export function num(n: number, dec = 0): string {
   return eurFmt(n, dec);
 }
+
+// ---- Periodos mensuales (YYYY-MM), el formato que usa Kuiper ----
+
+/** Primer y ultimo dia del mes de un periodo YYYY-MM, como YYYY-MM-DD. */
+export function rangoMes(p: string): { desde: string; hasta: string; dias: number } {
+  const [a, m] = p.split('-').map(Number);
+  const dias = new Date(a, m, 0).getDate();
+  return { desde: `${p}-01`, hasta: `${p}-${dos(dias)}`, dias };
+}
+
+/** "Septiembre 2026" */
+export function etiquetaMes(p: string): string {
+  const [a, m] = p.split('-').map(Number);
+  return `${nombreMes(new Date(a, m - 1, 1))} ${a}`;
+}
+
+export function mesAnterior(p: string): string {
+  const [a, m] = p.split('-').map(Number);
+  return periodo(new Date(a, m - 2, 1));
+}
+
+/** Los ultimos `n` periodos, del actual hacia atras. */
+export function ultimosMeses(hoy: Date, n: number): string[] {
+  return Array.from({ length: n }, (_, i) => periodo(new Date(hoy.getFullYear(), hoy.getMonth() - i, 1)));
+}

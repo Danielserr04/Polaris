@@ -4,6 +4,7 @@ import { AuthCallback } from '../pages/AuthCallback';
 import { Login } from '../pages/Login';
 import { Inicio } from '../pages/inicio/Inicio';
 import { Odisea } from '../pages/Odisea';
+import { Kuiper } from '../pages/Kuiper';
 import { Pendiente } from '../pages/Pendiente';
 import { Perfil } from '../pages/Perfil';
 import { AppShell } from './AppShell';
@@ -17,7 +18,7 @@ export function App() {
         <Route element={<AppShell />}>
           <Route index element={<Inicio />} />
           <Route path="odisea" element={<Odisea />} />
-          <Route path="kuiper" element={<Pendiente eyebrow="Kuiper" title="Gastos" />} />
+          <Route path="kuiper" element={<Kuiper />} />
           <Route path="fusion" element={<Pendiente eyebrow="Fusión" title="Hoy" />} />
           <Route path="atlas" element={<Pendiente eyebrow="Atlas" title="Progresión" />} />
           <Route path="perfil" element={<Perfil />} />
