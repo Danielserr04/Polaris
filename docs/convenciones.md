@@ -108,7 +108,7 @@ Un commit por unidad con sentido. No mezclar refactor y funcionalidad nueva.
 
 - Nada de secretos en el repo. `.env` en `.gitignore` desde el primer commit
 - Claves de APIs y credenciales por variables de entorno
-- `application.yml` con perfiles: `dev` y `prod`
+- `application.yml` con perfiles: `dev` y `prod`. **`spring.profiles.default` es `dev`**: un despliegue debe arrancar con `SPRING_PROFILES_ACTIVE=prod`, o los enlaces de verificación (con su token) se escriben en el log. En `dev` el arranque lo avisa con un `WARN`
 - El esquema es de Flyway y `ddl-auto` está en `validate` desde el cierre de B2. Cada cambio es un `V<n>__descripcion.sql` nuevo; los ya aplicados no se tocan. Ver [[007-esquema-ddl-auto-luego-flyway]]
 
 ## Documentación

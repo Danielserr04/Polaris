@@ -70,5 +70,5 @@ Métrica que manda: **volumen total** (reps × peso). Ver [[026-progresion-y-rec
 | `Rutina` | **Hecha** — CRUD en `/api/atlas/rutina`, filtro `?activa=`; agregado con sus ejercicios. Ver [[024-rutina-agregado-con-lineas]] |
 | Peso corporal | **Hecho** — `GET`/`POST /api/atlas/peso` a través de un puerto propio hacia Núcleo; sin tabla propia. Ver [[022-peso-corporal-desde-fusion-y-atlas]] |
 | `RutinaEjercicio` | **Hecha** — dentro del agregado `Rutina`, sin endpoints propios. Lleva `usuario_id` |
-| `Sesion` | **Hecha** — CRUD en `/api/atlas/sesion`, filtros `?desde=&hasta=&rutinaId=`; agregado con sus series. Ver [[025-sesion-agregado-con-series]] |
+| `Sesion` | **Hecha** — CRUD en `/api/atlas/sesion`, filtros `?desde=&hasta=&rutinaId=`; agregado con sus series. El listado trae `numeroSeries`, `numeroEjercicios` y `volumen`. Ver [[025-sesion-agregado-con-series]] y [[032-listados-de-odisea-y-atlas-sin-consultas-extra]] |
 | `SerieRegistro` | **Hecha** — dentro del agregado `Sesion`, sin endpoints propios. Lleva `usuario_id` |

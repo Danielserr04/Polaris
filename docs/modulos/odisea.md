@@ -37,7 +37,7 @@ DELETE /api/odisea/entrada/{id}
 
 GET    /api/odisea/catalogo/buscar?q=&tipo=    proxy a la API externa
 POST   /api/odisea/catalogo/importar           del catálogo externo a tu lista
-GET    /api/odisea/entrada/estadisticas
+GET    /api/odisea/entrada/estadisticas       sin implementar: nunca se definió qué devuelve (ver [[032-listados-de-odisea-y-atlas-sin-consultas-extra]])
 ```
 
 `importar` cuelga de `catalogo` y no de `entrada`, como se había apuntado

@@ -31,6 +31,10 @@ public class LogEnviarVerificacionAdapter implements EnviarVerificacionPort {
 
     public LogEnviarVerificacionAdapter(@Value("${polaris.url-base}") String urlBase) {
         this.urlBase = urlBase;
+        // spring.profiles.default es dev: si un despliegue arranca sin SPRING_PROFILES_ACTIVE=prod
+        // cae aqui, y los tokens de verificacion acaban en el log. Que se vea al arrancar.
+        log.warn("Perfil dev activo: los enlaces de verificacion de email (con su token) se escriben en el log. "
+                + "En produccion arranca con SPRING_PROFILES_ACTIVE=prod.");
     }
 
     @Override

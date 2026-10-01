@@ -30,3 +30,6 @@ El backend está cerrado (B0 a B8) y no hay ni una línea de frontend. El [[002-
 - `docs/briefing-diseno.md` y `docs/briefing-figma.md` quedan como histórico; la referencia visual es `design/readme.md`.
 - Pendientes que arrastra el export: fuentes en local (hoy se piden a Google Fonts), logo oficial de Google para el login, tema claro (solo existen los tokens) y llevar Kuiper, Fusión y Atlas al sistema de bandas del Inicio.
 - Producción (dónde se sirve el `dist/`, y quién habla con quién) no está decidido; se decide cuando haya que desplegar.
+
+- **Tipografías en local (2026-10-01).** Archivo, Instrument Sans y JetBrains Mono viven en `frontend/public/fonts` (subconjunto latino, WOFF2, licencia OFL en `LICENSES.txt`) y `styles/fonts.css` las declara con `@font-face`. Los ficheros salen de los paquetes `@fontsource` descargados con `npm pack`, **sin añadir ninguna dependencia** a `package.json`. La app ya no pide nada a Google Fonts.
+- **`Dialog` (2026-10-01).** Se monta con un portal en `.app` (o en `body` sin shell), mete el foco dentro al abrir, atrapa el Tab y devuelve el foco a quien lo abrió. Un ancestro con `transform` ya no lo encierra.
