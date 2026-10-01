@@ -11,6 +11,9 @@ export interface Sesion {
   rutinaNombre?: string | null;
   duracionMin?: number | null;
   numeroSeries: number;
+  /** Ejercicios distintos y volumen total (repeticiones x peso, kg) de la sesion. */
+  numeroEjercicios: number;
+  volumen: number;
 }
 
 export interface Serie {
@@ -81,29 +84,6 @@ export function useSesiones(desde: string, hasta: string) {
   return useQuery({
     queryKey: [...claves.sesiones, 'rango', desde, hasta] as const,
     queryFn: () => api<Sesion[]>(`${BASE}/sesion`, { query: { desde, hasta } }),
-  });
-}
-
-/**
- * Las sesiones con sus series. El listado solo trae el numero de series, asi que se pide cada
- * una completa (el llamador acota cuantas) dentro de una sola consulta.
- */
-export function useSesionesCompletas(ids: number[]) {
-  return useQuery({
-    queryKey: [...claves.sesiones, 'completas', ids] as const,
-    // Una sesion recien borrada da 404 hasta que el listado se recarga: se descarta, no es un error.
-    queryFn: async () => {
-      const todas = await Promise.all(
-        ids.map((id) =>
-          api<SesionCompleta>(`${BASE}/sesion/${id}`).catch((e: unknown) => {
-            if (e instanceof ApiError && e.status === 404) return null;
-            throw e;
-          }),
-        ),
-      );
-      return todas.filter((s): s is SesionCompleta => s !== null);
-    },
-    enabled: ids.length > 0,
   });
 }
 

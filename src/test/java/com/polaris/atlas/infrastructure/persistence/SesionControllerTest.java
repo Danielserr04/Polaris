@@ -125,7 +125,7 @@ class SesionControllerTest {
             + "{\"ejercicioId\":3,\"numeroSerie\":1,\"reps\":10,\"pesoKg\":0}]}";
 
     @Test
-    @DisplayName("GET lista: 200, version ligera con rutina, duracion y numeroSeries, sin series ni usuarioId, y los filtros llegan al caso de uso")
+    @DisplayName("GET lista: 200, version ligera con rutina, duracion, numeroSeries, numeroEjercicios y volumen, sin series ni usuarioId, y los filtros llegan al caso de uso")
     void listaConFiltros() throws Exception {
         when(listSesion.list(eq(USUARIO), any(SesionFilter.class))).thenReturn(List.of(sesion()));
 
@@ -139,6 +139,8 @@ class SesionControllerTest {
                 .andExpect(jsonPath("$[0].rutinaNombre").value("Push"))
                 .andExpect(jsonPath("$[0].duracionMin").value(65))
                 .andExpect(jsonPath("$[0].numeroSeries").value(2))
+                .andExpect(jsonPath("$[0].numeroEjercicios").value(2))
+                .andExpect(jsonPath("$[0].volumen").value(660.0))
                 .andExpect(jsonPath("$[0].series").doesNotExist())
                 .andExpect(jsonPath("$[0].usuarioId").doesNotExist());
 

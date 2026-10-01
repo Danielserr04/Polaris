@@ -30,6 +30,10 @@ export interface EntradaList {
   id: number;
   tituloId: number;
   tituloTitulo: string;
+  /** El backend omite los nulos: estos tres llegan como `undefined` si el titulo no los tiene. */
+  tituloOriginal?: string | null;
+  tituloAnio?: number | null;
+  tituloDuracionMin?: number | null;
   tituloImagenUrl: string | null;
   tituloTipo: TipoContenido;
   estado: EstadoEntrada;
@@ -122,15 +126,6 @@ export function useEntradas() {
   return useQuery({
     queryKey: claves.entradas,
     queryFn: () => api<EntradaList[]>(`${BASE}/entrada`),
-  });
-}
-
-/** El catalogo compartido; solo se usa para el año de cada fila, que el listado de entradas no trae. */
-export function useTitulos() {
-  return useQuery({
-    queryKey: claves.titulos,
-    queryFn: () => api<TituloList[]>(`${BASE}/titulo`),
-    staleTime: 60_000,
   });
 }
 

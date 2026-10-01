@@ -49,8 +49,8 @@
   .toolbar{gap:10px}.toolbar__types{margin-right:0;padding-left:0;border-left:0}
   .pl-seg{max-width:100%;overflow-x:auto;scrollbar-width:none}.pl-seg::-webkit-scrollbar{display:none}
   .pl-seg__opt{flex:none}
-  .listbox--sin-duracion{--pl-row-cols:18px minmax(0,1fr) 92px}
-  .listbox--sin-duracion [role="row"]>:nth-child(3),.listbox--sin-duracion [role="row"]>:nth-child(4),.listbox--sin-duracion [role="row"]>:nth-child(7){display:none!important}
+  .listbox{--pl-row-cols:18px minmax(0,1fr) 92px}
+  .listbox [role="row"]>:nth-child(3),.listbox [role="row"]>:nth-child(4),.listbox [role="row"]>:nth-child(5),.listbox [role="row"]>:nth-child(7){display:none!important}
   .listbox>.pl-row:first-child{display:none}
   .detail{position:static;padding:18px;scroll-margin-top:64px}.detail__top{grid-template-columns:96px minmax(0,1fr);gap:14px}.detail__h{font-size:24px}
 

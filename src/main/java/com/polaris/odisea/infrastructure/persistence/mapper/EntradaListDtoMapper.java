@@ -13,6 +13,9 @@ import java.util.List;
 public interface EntradaListDtoMapper {
 
     @Mapping(target = "tituloTitulo", source = "titulo.titulo")
+    @Mapping(target = "tituloOriginal", source = "titulo.tituloOriginal")
+    @Mapping(target = "tituloAnio", source = "titulo.anio")
+    @Mapping(target = "tituloDuracionMin", source = "titulo.duracionMin")
     @Mapping(target = "tituloImagenUrl", source = "titulo.imagenUrl")
     @Mapping(target = "tituloTipo", source = "titulo.tipo")
     EntradaListDto toListDto(Entrada entrada);

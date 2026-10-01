@@ -3,7 +3,6 @@ import {
   ETIQUETA_ESTADO,
   mensajeError,
   useEntradas,
-  useTitulos,
   type EntradaForm,
   type EstadoEntrada,
   type TipoContenido,
@@ -32,7 +31,6 @@ const plano = (s: string) => s.normalize('NFD').replace(/\p{Diacritic}/gu, '').t
 
 export function Odisea() {
   const entradas = useEntradas();
-  const titulos = useTitulos();
 
   const [estado, setEstado] = useState<FiltroEstado>('ALL');
   const [tipo, setTipo] = useState<TipoContenido | null>(null);
@@ -56,7 +54,6 @@ export function Odisea() {
   };
 
   const todas = useMemo(() => entradas.data ?? [], [entradas.data]);
-  const anios = useMemo(() => new Map((titulos.data ?? []).map((t) => [t.id, t.anio])), [titulos.data]);
   const enLista = useMemo(() => new Set(todas.map((e) => e.tituloId)), [todas]);
 
   const lista = useMemo(() => {
@@ -153,7 +150,7 @@ export function Odisea() {
           {entradas.isPending ? (
             <ListaEsqueleto />
           ) : (
-            <ListaEntradas entradas={lista} anios={anios} seleccionada={seleccionada?.id} onSeleccionar={elegir} vacio={vacio} />
+            <ListaEntradas entradas={lista} seleccionada={seleccionada?.id} onSeleccionar={elegir} vacio={vacio} />
           )}
           {seleccionada && (
             <Ficha

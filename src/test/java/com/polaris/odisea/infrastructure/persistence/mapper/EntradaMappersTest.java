@@ -108,10 +108,10 @@ class EntradaMappersTest {
     }
 
     @Test
-    @DisplayName("dominio -> list DTO es la version ligera, sin notas ni fechas")
+    @DisplayName("dominio -> list DTO es la version ligera: sin notas ni fechas, con anio y duracion del titulo")
     void listDto() {
         EntradaListDtoMapper mapper = Mappers.getMapper(EntradaListDtoMapper.class);
-        EntradaListDto esperado = new EntradaListDto(9L, 4L, "Hades", "http://img/hades.jpg", TipoContenido.JUEGO,
+        EntradaListDto esperado = new EntradaListDto(9L, 4L, "Hades", null, 2020, null, "http://img/hades.jpg", TipoContenido.JUEGO,
                 EstadoEntrada.TERMINADO, 9, true, 100);
 
         assertThat(mapper.toListDto(entrada())).isEqualTo(esperado);
