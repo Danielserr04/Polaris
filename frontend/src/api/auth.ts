@@ -23,3 +23,8 @@ export function useUsuario() {
 // van bajo el mismo origen.
 const BACKEND = import.meta.env.VITE_BACKEND_URL ?? (import.meta.env.DEV ? 'http://localhost:8080' : '');
 export const GOOGLE_LOGIN_URL = `${BACKEND}/oauth2/authorization/google`;
+
+/** Registro nativo. Responde 201 sin cuerpo y manda el enlace de verificacion al email. */
+export function registrar(username: string, email: string, password: string): Promise<void> {
+  return api<void>('/api/auth/registro', { metodo: 'POST', cuerpo: { username, email, password } });
+}
