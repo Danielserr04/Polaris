@@ -1,0 +1,173 @@
+import { useEffect, useState, type FormEvent } from 'react';
+import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ApiError } from '../api/client';
+import { GOOGLE_LOGIN_URL, login } from '../api/auth';
+import { iniciarSesion, useHaySesion } from '../auth/sesion';
+import { Button, Eyebrow, Input, Logo, StarTrails } from '../design-system';
+
+const MODULOS: [string, string, string][] = [
+  ['Odisea', 'Ocio', 'var(--mod-odisea)'],
+  ['Kuiper', 'Gastos', 'var(--mod-kuiper)'],
+  ['Fusión', 'Nutrición', 'var(--mod-fusion)'],
+  ['Atlas', 'Gym', 'var(--mod-atlas)'],
+];
+
+// Lo que el backend manda en /login?error= tras un login de Google fallido (ADR 031).
+const ERRORES_GOOGLE: Record<string, string> = {
+  cancelado: 'Has cancelado el acceso con Google.',
+  google: 'No se ha podido completar el acceso con Google.',
+};
+
+// El backend manda estos mensajes sin tildes; aqui se muestran como pide el sistema de diseño.
+function mensajeLogin(e: unknown): string {
+  if (e instanceof ApiError) {
+    if (e.status === 401) return 'Usuario o contraseña incorrectos.';
+    if (e.status === 403) return 'Verifica tu correo antes de iniciar sesión.';
+    return e.message;
+  }
+  return 'No se ha podido conectar con el servidor.';
+}
+
+// Pantalla de entrada. Las estelas aceleran al entrar (efecto warp) antes de pasar al shell.
+export function Login() {
+  const haySesion = useHaySesion();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [params] = useSearchParams();
+  const [usuario, setUsuario] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(ERRORES_GOOGLE[params.get('error') ?? ''] ?? null);
+  const [saliendo, setSaliendo] = useState(false);
+  const [yendoAGoogle, setYendoAGoogle] = useState(false);
+  const [ahora, setAhora] = useState(() => new Date());
+
+  useEffect(() => {
+    const i = setInterval(() => setAhora(new Date()), 1000);
+    return () => clearInterval(i);
+  }, []);
+
+  const entrar = useMutation({
+    mutationFn: () => login(usuario.trim(), password),
+    onSuccess: (t) => {
+      queryClient.clear();
+      setSaliendo(true);
+      setTimeout(() => {
+        iniciarSesion(t.token, t.expiraEnSegundos);
+        navigate('/', { replace: true });
+      }, 900);
+    },
+    onError: (e) => setError(mensajeLogin(e)),
+  });
+
+  if (haySesion && !saliendo) return <Navigate to="/" replace />;
+
+  const enviar = (ev: FormEvent) => {
+    ev.preventDefault();
+    if (!usuario.trim() || !password) {
+      setError('Escribe tu usuario y tu contraseña.');
+      return;
+    }
+    setError(null);
+    entrar.mutate();
+  };
+
+  const hora = ahora.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  const velocidad = saliendo ? 14 : entrar.isPending || yendoAGoogle ? 3 : 1;
+
+  return (
+    <div className="lp" data-module="polaris">
+      <StarTrails
+        anchor={() => {
+          const c = document.querySelector('.lp__card');
+          const h = document.querySelector('.lp__word');
+          if (!c || !h) return null;
+          const cr = c.getBoundingClientRect();
+          const hr = h.getBoundingClientRect();
+          return [(hr.right + cr.left) / 2, Math.max(70, cr.top - 70)];
+        }}
+        speed={velocidad}
+      />
+      <div className="lp__veil" />
+      <header className="lp__top pl-rise">
+        <Logo size={30} />
+        <span className="lp__coord">
+          α UMi <b>·</b> RA 02h 31m 49s <b>·</b> Dec +89° 15′ 51″ <b>·</b> {hora}
+        </span>
+      </header>
+      <main className={'lp__main' + (saliendo ? ' lp__main--out' : '')}>
+        <section className="lp__hero">
+          <div className="pl-rise" style={{ animationDelay: '80ms' }}>
+            <Eyebrow star>Tu norte, cada día</Eyebrow>
+          </div>
+          <h1 className="lp__word pl-rise" style={{ animationDelay: '140ms' }}>
+            Polaris
+          </h1>
+          <p className="lp__lead pl-rise" style={{ animationDelay: '220ms' }}>
+            Lo que ves, lo que gastas, lo que comes y lo que entrenas. En un solo sitio, sin ruido.
+          </p>
+          <ul className="lp__mods">
+            {MODULOS.map(([n, d, c], i) => (
+              <li key={n} className="pl-rise" style={{ animationDelay: 300 + i * 70 + 'ms', ['--c' as string]: c }}>
+                <i />
+                <b>{n}</b>
+                <span>{d}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
+        <section className="lp__card pl-rise" style={{ animationDelay: '260ms' }}>
+          <div className="lp__cardhead">
+            <h2>Entrar</h2>
+            <span className="pl-eyebrow">Sesión personal</span>
+          </div>
+          <form className="lp__form" onSubmit={enviar}>
+            <Input
+              label="Usuario o email"
+              icon="user-round"
+              value={usuario}
+              onChange={(e) => setUsuario(e.target.value)}
+              autoComplete="username"
+              autoFocus
+            />
+            <Input
+              label="Contraseña"
+              icon="key-round"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError(null);
+              }}
+              error={error}
+              autoComplete="current-password"
+            />
+            <Button type="submit" size="lg" block iconRight="arrow-right" loading={entrar.isPending}>
+              Entrar
+            </Button>
+          </form>
+          <div className="lp__or">
+            <span>o</span>
+          </div>
+          <Button
+            variant="secondary"
+            size="lg"
+            block
+            loading={yendoAGoogle}
+            onClick={() => {
+              setYendoAGoogle(true);
+              window.location.assign(GOOGLE_LOGIN_URL);
+            }}
+          >
+            Continuar con Google
+          </Button>
+        </section>
+      </main>
+      <footer className="lp__foot">
+        <span>Uso personal · un solo usuario</span>
+        <span>Odisea · Kuiper · Fusión · Atlas · Núcleo</span>
+      </footer>
+    </div>
+  );
+}

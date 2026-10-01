@@ -105,6 +105,14 @@ Se planifica cuando **B3** esté cerrado y haya una API real contra la que traba
 
 Orden previsto: shell y navegación → Odisea → el resto de módulos → PWA.
 
+Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas, de una en una y contra la API real:
+
+| Pantalla | Estado |
+|---|---|
+| Shell y navegación | **Hecho** |
+| Login (usuario/contraseña y Google, [[031-login-google-redirige-al-frontend]]) | **Hecho** |
+| Perfil, Inicio, Odisea, Kuiper, Fusión, Atlas | Pendiente |
+
 ## Después
 
 - **Hosting.** Se decide al terminar B3, que es cuando hay algo que enseñar.

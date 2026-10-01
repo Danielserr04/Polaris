@@ -74,6 +74,8 @@ polaris:
     emisor: polaris
   # Para construir el enlace de verificacion de email. Sin barra final.
   url-base: ${POLARIS_URL_BASE:http://localhost:8080}
+  # Donde vive el frontend: el login de Google termina redirigiendo aqui. Sin barra final.
+  frontend-url: ${POLARIS_FRONTEND_URL:http://localhost:5173}
   correo:
     # Solo lo usa SmtpEnviarVerificacionAdapter, que es @Profile("prod").
     # En dev el enlace va al log y esto ni se lee.

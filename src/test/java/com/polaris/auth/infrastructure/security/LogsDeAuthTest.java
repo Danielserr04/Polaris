@@ -2,7 +2,6 @@ package com.polaris.auth.infrastructure.security;
 
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.spi.ILoggingEvent;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.polaris.auth.application.in.GetOrCreateUsuarioInterface;
 import com.polaris.auth.domain.model.Usuario;
 import com.polaris.shared.testing.CapturaLogs;
@@ -39,7 +38,7 @@ class LogsDeAuthTest {
         GetOrCreateUsuarioInterface getOrCreate = mock(GetOrCreateUsuarioInterface.class);
         when(getOrCreate.getOrCreate(any())).thenReturn(Usuario.builder().id(42L).email(EMAIL).build());
         JwtService jwt = new JwtService("secreto-de-tests-que-no-vale-para-nada-fuera-de-aqui-0123456789", 3600, "polaris");
-        OAuth2LoginSuccessHandler manejador = new OAuth2LoginSuccessHandler(getOrCreate, jwt, new ObjectMapper());
+        OAuth2LoginSuccessHandler manejador = new OAuth2LoginSuccessHandler(getOrCreate, jwt, "http://localhost:5173");
         OAuth2User principal = mock(OAuth2User.class);
         Authentication autenticacion = mock(Authentication.class);
         when(autenticacion.getPrincipal()).thenReturn(principal);
@@ -54,7 +53,7 @@ class LogsDeAuthTest {
 
     private ILoggingEvent fallarLogin(org.springframework.security.core.AuthenticationException error,
                                       CapturaLogs logs) throws Exception {
-        new OAuth2LoginFailureHandler(new ObjectMapper().findAndRegisterModules()).onAuthenticationFailure(
+        new OAuth2LoginFailureHandler("http://localhost:5173").onAuthenticationFailure(
                 new MockHttpServletRequest("GET", "/login/oauth2/code/google"), new MockHttpServletResponse(), error);
         assertThat(logs.eventos()).hasSize(1);
         return logs.eventos().get(0);

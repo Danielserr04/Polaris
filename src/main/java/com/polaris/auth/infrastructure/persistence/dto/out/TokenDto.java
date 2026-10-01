@@ -3,10 +3,9 @@ package com.polaris.auth.infrastructure.persistence.dto.out;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
- * Lo que se devuelve al terminar el login de Google.
- *
- * <p>Mientras no exista el frontend, este JSON se ve en el navegador y el token
- * se pega en el boton Authorize de Swagger. Ver docs/modulos/auth.md.
+ * El JWT de sesion. Lo devuelve POST /api/auth/login en el cuerpo; el login de
+ * Google lo entrega al frontend en el fragmento de la URL de redireccion
+ * (ver ADR 031).
  */
 public record TokenDto(
         @Schema(description = "JWT propio de Polaris, para la cabecera Authorization: Bearer")
