@@ -1,0 +1,5 @@
+/* Lo que el kit no trae para Perfil: el dialogo de la foto y la confirmacion del email. */
+.pf-avatar{display:flex;gap:18px;align-items:flex-start}.pf-avatar>.pl-field{flex:1;min-width:0}
+.pf-avatar>.pl-avatar{flex:none}
+.pf-confirma{max-width:360px}
+@media (max-width:720px){.pf-google{flex-wrap:wrap}.pf-google>.stack-4{flex:1 1 160px!important;min-width:0}.pf-avatar{flex-direction:column;align-items:stretch}.pf-row{flex-wrap:wrap}.pf-row>.pl-field{flex:1 1 100%!important}.pf-row>.pl-btn{margin-top:0!important}}
