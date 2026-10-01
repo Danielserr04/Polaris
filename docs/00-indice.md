@@ -55,6 +55,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[026-progresion-y-records-por-volumen]]
 - [[027-testcontainers-tests-de-integracion]]
 - [[028-revision-de-indices-b8]]
+- [[029-logs-y-requestid]]
 
 ## Cómo se mantiene esto
 

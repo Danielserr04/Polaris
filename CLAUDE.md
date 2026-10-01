@@ -60,4 +60,4 @@ La vault de Obsidian es la carpeta `docs/`. Se abre esa carpeta, no la raíz del
 
 ## Estado
 
-Fase **B8** (Cierre). B0 a B7 cerrados, salvo probar Open Food Facts contra la API real. Ver `docs/roadmap.md`.
+Backend cerrado: B0 a B8 hechos, salvo probar Open Food Facts contra la API real. Siguiente: frontend (D0/D1 y React). Ver `docs/roadmap.md`.
