@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { mensajeError, type Ejercicio, useProgresion, usePesos, useRecords, useSesiones, useSesionesCompletas, type SesionCompleta } from '../api/atlas';
+import { mensajeError, type Ejercicio, useProgresion, usePesos, useRecords, useSesiones } from '../api/atlas';
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Badge, BarChart, Button, Card, LineChart, Select, Stat, Tabs } from '../design-system';
 import { EjerciciosTab } from './atlas/EjerciciosTab';
@@ -13,8 +13,6 @@ import { diasEntre, deIso, iso, lunesDe, nombreMes, num, relativa, semanaIso, su
 
 const SEMANAS = 10;
 const MESES_CORTOS = ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'];
-
-const volumenDe = (s: SesionCompleta) => s.series.reduce((a, x) => a + x.reps * x.pesoKg, 0);
 
 function delta(n: number, dec: number, unidad = ''): string {
   const signo = n > 0 ? '+' : n < 0 ? '−' : '';
@@ -48,18 +46,10 @@ export function Atlas() {
   const sesiones = useSesiones(desde, hoyIso);
   const lista = sesiones.data;
 
-  // Series y volumen se piden de las sesiones que cuentan para "esta semana", "la anterior"
-  // y las 5 ultimas que se listan (el listado ligero no trae series).
-  const idsDetalle = useMemo(() => {
-    if (!lista) return [];
-    const recientes = lista.filter((s) => s.fecha >= lunesPrevio).length;
-    return lista.slice(0, Math.min(14, Math.max(5, recientes))).map((s) => s.id);
-  }, [lista, lunesPrevio]);
-  const detalle = useSesionesCompletas(idsDetalle);
-
   const records = useRecords();
   const [elegido, setElegido] = useState<number | undefined>();
-  const porDefecto = detalle.data?.[0]?.series[0]?.ejercicioId ?? records.data?.[0]?.ejercicioId;
+  // Por defecto, el ejercicio con el record mas reciente (el que se ha trabajado hace poco).
+  const porDefecto = [...(records.data ?? [])].sort((a, b) => b.fechaPesoMaximo.localeCompare(a.fechaPesoMaximo))[0]?.ejercicioId;
   const ejercicioId = elegido ?? porDefecto;
   const ejercicio = records.data?.find((r) => r.ejercicioId === ejercicioId);
 
@@ -71,17 +61,18 @@ export function Atlas() {
   const sesionesMes = lista?.filter((s) => s.fecha >= iso(inicioMes)).length ?? 0;
   const sesionesMesPrevio = lista?.filter((s) => s.fecha >= iso(inicioMesPrevio) && s.fecha < iso(inicioMes)).length ?? 0;
 
-  const volSemana = (detalle.data ?? []).filter((s) => s.fecha >= lunesIso).reduce((a, s) => a + volumenDe(s), 0);
-  const volPrevia = (detalle.data ?? []).filter((s) => s.fecha >= lunesPrevio && s.fecha < lunesIso).reduce((a, s) => a + volumenDe(s), 0);
+  const volSemana = (lista ?? []).filter((s) => s.fecha >= lunesIso).reduce((a, s) => a + s.volumen, 0);
+  const volPrevia = (lista ?? []).filter((s) => s.fecha >= lunesPrevio && s.fecha < lunesIso).reduce((a, s) => a + s.volumen, 0);
 
-  const seriesSemana = useMemo(() => {
+  // Toneladas por semana (volumen = repeticiones x peso, ADR 026).
+  const toneladasSemana = useMemo(() => {
     const sem = Array.from({ length: SEMANAS }, (_, i) => sumarDias(lunes, -7 * (SEMANAS - 1 - i)));
     const total = sem.map(() => 0);
     for (const s of lista ?? []) {
       const i = SEMANAS - 1 - Math.floor(diasEntre(lunesDe(deIso(s.fecha)), lunes) / 7);
-      if (i >= 0 && i < SEMANAS) total[i] += s.numeroSeries;
+      if (i >= 0 && i < SEMANAS) total[i] += s.volumen;
     }
-    return sem.map((d, i) => ({ label: `S${semanaIso(d)}`, value: total[i] }));
+    return sem.map((d, i) => ({ label: `S${semanaIso(d)}`, value: Math.round(total[i] / 100) / 10 }));
   }, [lista, lunes]);
 
   const puntos = progresion.data ?? [];
@@ -95,7 +86,7 @@ export function Atlas() {
   const peso = pesoActual[pesoActual.length - 1];
   const pesoPrevio = pesoActual[pesoActual.length - 2];
 
-  const ultimas = (detalle.data ?? []).slice(0, 5);
+  const ultimas = (lista ?? []).slice(0, 5);
   const recordsOrden = useMemo(
     () => [...(records.data ?? [])].sort((a, b) => b.fechaPesoMaximo.localeCompare(a.fechaPesoMaximo)).slice(0, 6),
     [records.data],
@@ -269,9 +260,9 @@ export function Atlas() {
 
           <div className="span-7">
             <Card delay={220} eyebrow="Historial" title="Últimas sesiones" padding="8px 0 0">
-              {detalle.isError ? (
+              {sesiones.isError ? (
                 <p className="muted" style={{ margin: '6px 18px 14px' }}>No se han podido cargar las sesiones.</p>
-              ) : detalle.isPending && idsDetalle.length > 0 ? (
+              ) : sesiones.isPending ? (
                 <p className="muted" style={{ margin: '6px 18px 14px' }}>Cargando…</p>
               ) : (
                 <div className="table">
@@ -293,9 +284,9 @@ export function Atlas() {
                           </Badge>
                         )}
                       </b>
-                      <span className="muted">{new Set(s.series.map((x) => x.ejercicioId)).size} ejercicios</span>
-                      <span className="muted">{s.series.length} series</span>
-                      <span className="money">{num(volumenDe(s))} kg</span>
+                      <span className="muted">{s.numeroEjercicios} {s.numeroEjercicios === 1 ? 'ejercicio' : 'ejercicios'}</span>
+                      <span className="muted">{s.numeroSeries} series</span>
+                      <span className="money">{num(s.volumen)} kg</span>
                     </button>
                   ))}
                 </div>
@@ -304,8 +295,8 @@ export function Atlas() {
           </div>
 
           <div className="span-5">
-            <Card delay={280} eyebrow="Actividad" title="Series por semana">
-              <BarChart height={170} data={seriesSemana} highlight={SEMANAS - 1} format={(v) => `${num(v)} series`} />
+            <Card delay={280} eyebrow="Volumen" title="Toneladas por semana">
+              <BarChart height={170} data={toneladasSemana} highlight={SEMANAS - 1} format={(v) => `${num(v, 1)} t`} />
             </Card>
           </div>
         </div>

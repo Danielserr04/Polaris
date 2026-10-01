@@ -6,9 +6,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Un entreno real con sus series: un solo agregado. Modelo puro, sin
@@ -42,5 +45,28 @@ public class Sesion {
 
     public int getNumeroSeries() {
         return series == null ? 0 : series.size();
+    }
+
+    /** Ejercicios distintos de la sesion. */
+    public int getNumeroEjercicios() {
+        return series == null ? 0 : (int) series.stream().map(SerieRegistro::getEjercicioId)
+                .filter(Objects::nonNull).distinct().count();
+    }
+
+    /**
+     * Volumen total: suma de repeticiones por peso de todas las series, con 2 decimales
+     * (HALF_UP). El peso corporal (0 kg) aporta 0, como en la progresion
+     * (docs/decisiones/026-progresion-y-records-por-volumen.md). Nunca se guarda.
+     */
+    public BigDecimal getVolumen() {
+        BigDecimal total = BigDecimal.ZERO;
+        if (series != null) {
+            for (SerieRegistro s : series) {
+                if (s.getReps() != null && s.getPesoKg() != null) {
+                    total = total.add(s.getPesoKg().multiply(BigDecimal.valueOf(s.getReps())));
+                }
+            }
+        }
+        return total.setScale(2, RoundingMode.HALF_UP);
     }
 }

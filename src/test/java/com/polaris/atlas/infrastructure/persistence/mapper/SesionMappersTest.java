@@ -219,6 +219,9 @@ class SesionMappersTest {
         assertThat(dto.rutinaNombre()).isEqualTo("Push");
         assertThat(dto.duracionMin()).isEqualTo(65);
         assertThat(dto.numeroSeries()).isEqualTo(2);
+        assertThat(dto.numeroEjercicios()).isEqualTo(2);
+        // 8 reps x 82.5 kg + 8 reps con el peso corporal (0 kg)
+        assertThat(dto.volumen()).isEqualTo(new BigDecimal("660.00"));
         assertThat(mapper.toListDtoList(List.of(sesion(), sesion()))).hasSize(2);
     }
 
