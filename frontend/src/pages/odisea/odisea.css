@@ -8,11 +8,6 @@
 .listbox{outline-offset:2px}
 .listbox:focus-visible{outline:2px solid var(--focus-ring)}
 
-/* El listado de entradas de la API no trae la duración (vive en la ficha del título), así que la
-   columna de ListRow se oculta en vez de mostrar una hilera de guiones. Quitar cuando la traiga. */
-.listbox--sin-duracion{--pl-row-cols:18px minmax(0,1fr) 108px 52px 92px 116px}
-.listbox--sin-duracion [role="row"]>:nth-child(5){display:none}
-
 /* Esqueletos de carga */
 .sk{background:var(--surface-2);border-radius:3px;animation:odisea-sk 1.4s ease-in-out infinite}
 .sk--line{display:block;height:12px}

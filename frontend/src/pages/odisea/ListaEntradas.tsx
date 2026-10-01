@@ -4,8 +4,6 @@ import { ListHeader, ListRow } from '../../design-system';
 
 interface Props {
   entradas: EntradaList[];
-  /** Año de cada título por tituloId: el listado de entradas no lo trae */
-  anios: ReadonlyMap<number, number | null>;
   seleccionada: number | undefined;
   onSeleccionar: (id: number) => void;
   /** Mensaje cuando no hay filas (filtros sin resultados o lista vacía) */
@@ -16,7 +14,7 @@ interface Props {
  * Lista densa. Es un único elemento enfocable: con el foco dentro, las flechas, Inicio y Fin
  * mueven la selección (y con ella la ficha), igual que un listbox de una sola tabulación.
  */
-export function ListaEntradas({ entradas, anios, seleccionada, onSeleccionar, vacio }: Props) {
+export function ListaEntradas({ entradas, seleccionada, onSeleccionar, vacio }: Props) {
   const caja = useRef<HTMLDivElement>(null);
 
   // Con el teclado la fila elegida puede quedar fuera de la vista.
@@ -40,21 +38,23 @@ export function ListaEntradas({ entradas, anios, seleccionada, onSeleccionar, va
   return (
     <div
       ref={caja}
-      className="listbox listbox--sin-duracion pl-rise"
+      className="listbox pl-rise"
       style={{ animationDelay: '180ms' }}
       role="grid"
       aria-label="Tu lista"
       tabIndex={0}
       onKeyDown={alPulsar}
     >
-      <ListHeader columns={['', 'Título', 'Tipo', 'Año', 'Valoración', 'Estado']} />
+      <ListHeader columns={['', 'Título', 'Tipo', 'Año', 'Duración', 'Valoración', 'Estado']} />
       {entradas.map((e, i) => (
         <ListRow
           key={e.id}
           index={Math.min(i, 14)}
           titulo={e.tituloTitulo}
           tipo={e.tituloTipo}
-          anio={anios.get(e.tituloId)}
+          tituloOriginal={e.tituloOriginal ?? undefined}
+          anio={e.tituloAnio ?? undefined}
+          duracionMin={e.tituloDuracionMin ?? undefined}
           estado={e.estado}
           valoracion={e.valoracion}
           favorito={e.favorito}
