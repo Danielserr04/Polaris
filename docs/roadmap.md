@@ -118,7 +118,10 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Kuiper: pestaña Categorías (crear, editar, borrar, color, icono y presupuesto mensual) | **Hecho** |
 | Fusión: Hoy (resumen del día, comidas con alta/edición/borrado, alimento nuevo sobre la marcha, objetivo y tendencia) | **Hecho** |
 | Fusión: pestaña Alimentos (catálogo con búsqueda, alta, edición, borrado e importar de Open Food Facts) | **Hecho** |
-| Atlas | Pendiente |
+| Atlas: pantalla de Progresión (stats, progresión por ejercicio, récords, últimas sesiones y series por semana, solo lectura) | **Hecho** |
+| Atlas: registrar, editar y borrar sesiones (rutina que precarga ejercicios, ejercicio nuevo sobre la marcha) | **Hecho** |
+| Atlas: pestañas Ejercicios y Rutinas (alta, edición, borrado, orden de las líneas) y apuntar el peso | **Hecho** |
+| Móvil (≤ 760 px): barra de módulos abajo, cabecera compacta, diálogos como hojas inferiores, tablas y anillos que caben, login con scroll | **Hecho** (responsive, sin kit móvil aparte) |
 
 ## Después
 

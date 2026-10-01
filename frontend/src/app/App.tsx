@@ -5,6 +5,7 @@ import { Login } from '../pages/Login';
 import { Inicio } from '../pages/inicio/Inicio';
 import { Odisea } from '../pages/Odisea';
 import { Kuiper } from '../pages/Kuiper';
+import { Atlas } from '../pages/Atlas';
 import { Fusion } from '../pages/Fusion';
 import { Pendiente } from '../pages/Pendiente';
 import { Perfil } from '../pages/Perfil';
@@ -21,7 +22,7 @@ export function App() {
           <Route path="odisea" element={<Odisea />} />
           <Route path="kuiper" element={<Kuiper />} />
           <Route path="fusion" element={<Fusion />} />
-          <Route path="atlas" element={<Pendiente eyebrow="Atlas" title="Progresión" />} />
+          <Route path="atlas" element={<Atlas />} />
           <Route path="perfil" element={<Perfil />} />
           <Route path="*" element={<Pendiente eyebrow="Polaris" title="No encontrada" />} />
         </Route>

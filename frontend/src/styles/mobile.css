@@ -1,0 +1,69 @@
+/* Movil (<= 760 px). Parte del UI kit movil del diseno (design/ui_kits/polaris-mobile/mobile.css):
+   barra de modulos abajo, cabecera compacta y hojas inferiores. Todo lo de abajo va dentro del
+   @media: en escritorio nada de esto se ve. Se carga el ultimo, despues de kit.css. */
+.m-tabs,.app__mtop{display:none}
+
+@media (max-width:760px){
+  /* Shell */
+  .app__nav{display:none}
+  .app__mtop{display:flex;position:fixed;top:0;left:0;right:0;z-index:var(--z-sticky);height:calc(56px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;align-items:center;justify-content:space-between;box-sizing:border-box;background:linear-gradient(180deg,rgba(18,17,14,.92),rgba(18,17,14,0))}
+  .app__mbrand,.m-av{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .m-av{border-radius:50%}
+  .app__main{padding:calc(64px + env(safe-area-inset-top)) 20px calc(120px + env(safe-area-inset-bottom))}
+
+  .m-tabs{display:block;position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:var(--z-overlay);height:64px;padding:6px;box-sizing:border-box;background:var(--surface-glass);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--border-2);border-radius:10px;box-shadow:0 18px 40px -18px rgba(0,0,0,.7),4px 4px 0 0 rgba(0,0,0,.35)}
+  .m-tabs__in{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;height:100%}
+  .m-tabs__ind{position:absolute;top:0;bottom:0;width:calc((100% - 8px)/5);border-radius:6px;background:color-mix(in oklab,var(--accent) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--accent) 35%,transparent);transition:left 480ms var(--ease-spring),background 300ms,box-shadow 300ms}
+  .m-tab{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-width:0;border:0;background:none;border-radius:6px;color:var(--text-2);cursor:pointer;-webkit-tap-highlight-color:transparent;font-family:var(--font-sans);font-size:11.5px;font-weight:500;transition:color var(--dur-base)}
+  .m-tab.on{color:var(--accent)}
+  .m-tab .pl-icon{transition:transform var(--dur-base) var(--ease-spring)}.m-tab:active .pl-icon{transform:translateY(-1px) rotate(-6deg)}
+
+  /* Cabecera de pagina: en columna, titulo mas pequeno, acciones que bajan de linea */
+  .ph{flex-direction:column;align-items:stretch;gap:16px;margin-bottom:20px}
+  .ph__h{font-size:34px;line-height:1.02;text-wrap:balance}
+  .ph__a{flex-wrap:wrap}
+  .ph__t .pl-eyebrow{flex-wrap:wrap;row-gap:4px}
+  .ph__t .pl-eyebrow>span{white-space:nowrap}
+  .ph__t .pl-eyebrow__sep{display:none}
+  .ph__t .pl-eyebrow>span:last-child:not(:first-child):not(:nth-child(2)){flex-basis:100%}
+  .m-app .pl-eyebrow{letter-spacing:.06em}
+
+  /* Pestañas: si no caben, se deslizan */
+  .pl-tabs{overflow-x:auto;scrollbar-width:none;gap:20px}.pl-tabs::-webkit-scrollbar{display:none}
+  .pl-tabs__tab{flex:none}
+
+  /* Dialogos: hoja inferior */
+  .pl-dialog{align-items:flex-end;padding:0}
+  .pl-dialog__panel{max-width:none;max-height:92dvh;display:flex;flex-direction:column;border-radius:14px 14px 0 0;border-bottom:0;box-shadow:0 -20px 60px rgba(0,0,0,.6);animation:m-sheet var(--dur-slow) var(--ease-out) both}
+  .pl-dialog__body{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
+  .pl-dialog__foot{flex:none;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
+  .pl-dialog__panel::before{content:"";display:block;flex:none;width:40px;height:4px;margin:10px auto 0;border-radius:2px;background:var(--border-strong)}
+  @keyframes m-sheet{from{transform:translateY(100%)}to{transform:none}}
+
+  /* Stats y tablas */
+  .pl-stat__foot{flex-wrap:wrap;row-gap:2px;column-gap:8px}.pl-delta{white-space:nowrap}
+  .table__r{gap:10px;padding:0 14px}
+  .table__r.table__r--5{grid-template-columns:52px minmax(0,1fr) auto}.table__r--5>:nth-child(3),.table__r--5>:nth-child(4){display:none}
+
+  /* Odisea: filtros y lista en una columna, detalle debajo */
+  .toolbar{gap:10px}.toolbar__types{margin-right:0;padding-left:0;border-left:0}
+  .pl-seg{max-width:100%;overflow-x:auto;scrollbar-width:none}.pl-seg::-webkit-scrollbar{display:none}
+  .pl-seg__opt{flex:none}
+  .listbox--sin-duracion{--pl-row-cols:18px minmax(0,1fr) 92px}
+  .listbox--sin-duracion [role="row"]>:nth-child(3),.listbox--sin-duracion [role="row"]>:nth-child(4),.listbox--sin-duracion [role="row"]>:nth-child(7){display:none!important}
+  .listbox>.pl-row:first-child{display:none}
+  .detail{position:static;padding:18px;scroll-margin-top:64px}.detail__top{grid-template-columns:96px minmax(0,1fr);gap:14px}.detail__h{font-size:24px}
+
+  /* Fusion: anillos que caben */
+  .fus-kcal{flex-wrap:wrap;justify-content:center;gap:16px!important}
+  .macros{gap:8px}.macro{min-width:0;padding:12px 0}.macro .pl-ring{zoom:.8}
+
+  /* Login: la pagina entera se desplaza (el formulario no se queda cortado) */
+  .lp{overflow-y:auto}.lp__main{flex:none;overflow:visible;padding-bottom:24px}
+
+  /* Red de seguridad: nada ensancha la pagina */
+  .app__main{overflow-x:clip}
+
+  /* Zonas tactiles >= 44 px en lo que se pulsa seguido */
+  .pl-btn{height:44px}.pl-btn--sm{height:36px}
+}
