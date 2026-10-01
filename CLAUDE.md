@@ -61,4 +61,4 @@ La vault de Obsidian es la carpeta `docs/`. Se abre esa carpeta, no la raíz del
 
 ## Estado
 
-Backend cerrado: B0 a B8 hechos, salvo probar Open Food Facts contra la API real. Frontend en marcha: shell, design system, login y Perfil hechos; siguen Inicio, Odisea, Kuiper, Fusión y Atlas, de uno en uno. Ver `docs/roadmap.md`.
+Backend cerrado: B0 a B8 hechos, salvo probar Open Food Facts contra la API real. Frontend en marcha: shell, design system, login, Perfil e Inicio hechos; siguen Odisea, Kuiper, Fusión y Atlas, de uno en uno. Ver `docs/roadmap.md`.
