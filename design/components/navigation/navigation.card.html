@@ -1,0 +1,17 @@
+<!-- @dsCard group="Components" viewport="900x200" name="Navigation" subtitle="Floating island navbar + tabs" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{padding:20px 24px;margin:0}.r{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.c{display:flex;flex-direction:column;gap:16px}.l{font:500 10px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);width:84px;flex:none}</style>
+</head><body><div id="root"></div><script type="text/babel">
+const NS = window.PolarisDesignSystem_b0ab94;
+
+const { NavBar, Tabs } = NS;
+const items=[{id:'inicio',label:'Inicio',icon:'compass',color:'var(--mod-polaris)'},{id:'odisea',label:'Odisea',icon:'clapperboard',color:'var(--mod-odisea)'},{id:'kuiper',label:'Kuiper',icon:'wallet',color:'var(--mod-kuiper)'},{id:'fusion',label:'Fusión',icon:'flame',color:'var(--mod-fusion)'},{id:'atlas',label:'Atlas',icon:'dumbbell',color:'var(--mod-atlas)'}];
+function App(){const [v,setV]=React.useState('odisea');const [t,setT]=React.useState('resumen');return <div className="c" style={{alignItems:'center'}} data-module={v==='inicio'?'polaris':v}>
+<NavBar items={items} value={v} onChange={setV} user={{name:'Daniel'}}/>
+<Tabs style={{width:'100%'}} value={t} onChange={setT} items={[{value:'resumen',label:'Resumen'},{value:'mov',label:'Movimientos'},{value:'cat',label:'Categorías'},{value:'pres',label:'Presupuestos'}]}/>
+</div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);</script></body></html>

@@ -1,0 +1,25 @@
+/* Type: Archivo (expanded, heavy) for display · Instrument Sans for text · JetBrains Mono for data & labels */
+:root{
+--font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+--font-sans:"Instrument Sans","Helvetica Neue",Arial,sans-serif;
+--font-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+--display-stretch:118%; /* @kind font */
+--fs-display-xl:72px;--fs-display-lg:48px;--fs-display-md:34px;--fs-display-sm:24px;
+--fs-title:18px;--fs-body:15px;--fs-body-sm:13px;--fs-caption:12px;--fs-label:11px;
+--lh-tight:.95; /* @kind font */
+--lh-heading:1.1; /* @kind font */
+--lh-body:1.5; /* @kind font */
+--lh-dense:1.3; /* @kind font */
+--fw-light:300; /* @kind font */
+--fw-regular:400; /* @kind font */
+--fw-medium:500; /* @kind font */
+--fw-semibold:600; /* @kind font */
+--fw-bold:700; /* @kind font */
+--fw-black:800; /* @kind font */
+--tracking-display:-.02em; /* @kind font */
+--tracking-label:.1em; /* @kind font */
+--tracking-body:0; /* @kind font */
+--text-heading-font:var(--font-display);
+--text-body-font:var(--font-sans);
+--text-data-font:var(--font-mono);
+}

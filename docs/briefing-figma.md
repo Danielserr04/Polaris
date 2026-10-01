@@ -1,5 +1,7 @@
 # Briefing corto — Figma
 
+> **Histórico.** La dirección visual vigente es el design system exportado de Claude Design, guardado en `design/` (ver [[030-frontend-react-vite-y-design-system]]).
+
 Versión reducida de [[briefing-diseno]] para pegar donde hay límite de
 caracteres. Cambia la dirección: el primer intento salió como un panel de
 control frío y Daniel quiere lo contrario — **cozy, con alma y vivo**.

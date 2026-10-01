@@ -1,0 +1,77 @@
+<!-- @dsCard group="Polaris Web" viewport="1440x900" name="Polaris web app" subtitle="Landing/login → dashboard, Odisea, Kuiper, Fusión, Atlas, Perfil" -->
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Polaris</title><link rel="icon" href="../../assets/app-icon.svg">
+<link rel="stylesheet" href="../../styles.css"><link rel="stylesheet" href="kit.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<script src="data.js"></script>
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/arrow-down-right.svg" data-resource-id="ic-arrow-down-right">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/arrow-right.svg" data-resource-id="ic-arrow-right">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/arrow-up-right.svg" data-resource-id="ic-arrow-up-right">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/book-open.svg" data-resource-id="ic-book-open">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/calendar.svg" data-resource-id="ic-calendar">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/check.svg" data-resource-id="ic-check">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/chevrons-up-down.svg" data-resource-id="ic-chevrons-up-down">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/circle-alert.svg" data-resource-id="ic-circle-alert">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/circle-check.svg" data-resource-id="ic-circle-check">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/clapperboard.svg" data-resource-id="ic-clapperboard">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/compass.svg" data-resource-id="ic-compass">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/dumbbell.svg" data-resource-id="ic-dumbbell">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/flame.svg" data-resource-id="ic-flame">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/gamepad-2.svg" data-resource-id="ic-gamepad-2">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/house.svg" data-resource-id="ic-house">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/image-up.svg" data-resource-id="ic-image-up">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/info.svg" data-resource-id="ic-info">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/key-round.svg" data-resource-id="ic-key-round">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/link-2.svg" data-resource-id="ic-link-2">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/link-2-off.svg" data-resource-id="ic-link-2-off">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/lock.svg" data-resource-id="ic-lock">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/log-out.svg" data-resource-id="ic-log-out">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/mail.svg" data-resource-id="ic-mail">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/mail-warning.svg" data-resource-id="ic-mail-warning">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/minus.svg" data-resource-id="ic-minus">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/orbit.svg" data-resource-id="ic-orbit">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/play.svg" data-resource-id="ic-play">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/plus.svg" data-resource-id="ic-plus">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/repeat.svg" data-resource-id="ic-repeat">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/scale.svg" data-resource-id="ic-scale">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/search.svg" data-resource-id="ic-search">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/send.svg" data-resource-id="ic-send">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/shopping-basket.svg" data-resource-id="ic-shopping-basket">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/sparkles.svg" data-resource-id="ic-sparkles">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/ticket.svg" data-resource-id="ic-ticket">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/train-front.svg" data-resource-id="ic-train-front">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/trophy.svg" data-resource-id="ic-trophy">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/tv.svg" data-resource-id="ic-tv">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/unlink.svg" data-resource-id="ic-unlink">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/user-round.svg" data-resource-id="ic-user-round">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/utensils.svg" data-resource-id="ic-utensils">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/wallet.svg" data-resource-id="ic-wallet">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/x.svg" data-resource-id="ic-x">
+<meta name="ext-resource-dependency" content="https://unpkg.com/lucide-static@0.460.0/icons/star.svg" data-resource-id="ic-star">
+</head><body><div id="root"></div>
+<script type="text/babel" src="StarTrails.jsx"></script>
+<script type="text/babel" src="Landing.jsx"></script>
+<script type="text/babel" src="Shell.jsx"></script>
+<script type="text/babel" src="Dashboard.jsx"></script>
+<script type="text/babel" src="DashboardGrid.jsx"></script>
+<script type="text/babel" src="Odisea.jsx"></script>
+<script type="text/babel" src="Kuiper.jsx"></script>
+<script type="text/babel" src="Fusion.jsx"></script>
+<script type="text/babel" src="Atlas.jsx"></script>
+<script type="text/babel" src="Perfil.jsx"></script>
+<script type="text/babel">
+const KEY = 'polaris-kit-route';
+function App() {
+  const [route, setRoute] = React.useState(() => localStorage.getItem(KEY) || 'landing');
+  const go = r => { setRoute(r); localStorage.setItem(KEY, r); window.scrollTo(0, 0); };
+  window.polarisLogout = () => go('landing');
+  if (route === 'landing') return <Landing onLogin={() => go('inicio')} />;
+  const screens = { inicio: <Dashboard go={go} />, odisea: <Odisea />, kuiper: <Kuiper />, fusion: <Fusion />, atlas: <Atlas />, perfil: <Perfil /> };
+  return <AppShell route={route} go={go}>{screens[route] || screens.inicio}</AppShell>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script></body></html>

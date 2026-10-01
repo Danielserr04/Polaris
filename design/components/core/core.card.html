@@ -1,0 +1,21 @@
+<!-- @dsCard group="Components" viewport="700x520" name="Core" subtitle="Buttons, icon buttons, badges, states, types, card, logo" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<script src="../../_ds_bundle.js"></script>
+<style>body{padding:20px 24px;margin:0}.r{display:flex;flex-wrap:wrap;gap:12px;align-items:center}.c{display:flex;flex-direction:column;gap:16px}.l{font:500 10px/1 var(--font-mono);letter-spacing:.1em;text-transform:uppercase;color:var(--text-3);width:84px;flex:none}</style>
+</head><body><div id="root"></div><script type="text/babel">
+const NS = window.PolarisDesignSystem_b0ab94;
+
+const { Button, IconButton, Badge, StatusBadge, TypeTag, Card, Logo, Avatar, Eyebrow } = NS;
+function App(){return <div className="c">
+<div className="r"><span className="l">Button</span><Button icon="plus">Añadir título</Button><Button variant="secondary">Cancelar</Button><Button variant="ghost" iconRight="arrow-right">Ver todo</Button><Button variant="danger">Desvincular</Button><Button loading>Guardando</Button></div>
+<div className="r"><span className="l">Sizes</span><Button size="sm">Pequeño</Button><Button>Medio</Button><Button size="lg">Grande</Button><Button disabled>Deshabilitado</Button></div>
+<div className="r"><span className="l">Module</span><span data-module="odisea"><Button>Odisea</Button></span><span data-module="kuiper"><Button>Kuiper</Button></span><span data-module="fusion"><Button>Fusión</Button></span><span data-module="atlas"><Button>Atlas</Button></span></div>
+<div className="r"><span className="l">IconButton</span><IconButton icon="search" label="Buscar"/><IconButton icon="star" label="Favorito" pressed/><IconButton icon="sliders-horizontal" label="Filtros" variant="outline"/><IconButton icon="plus" label="Añadir" variant="solid"/><Avatar name="Daniel" size={32}/><Logo size={26}/></div>
+<div className="r"><span className="l">Estado</span><StatusBadge estado="PENDIENTE"/><StatusBadge estado="EN_CURSO"/><StatusBadge estado="TERMINADO"/><StatusBadge estado="ABANDONADO"/></div>
+<div className="r"><span className="l">Tipo · badge</span><TypeTag tipo="PELICULA"/><TypeTag tipo="SERIE"/><TypeTag tipo="JUEGO"/><TypeTag tipo="LIBRO"/><Badge variant="outline">Maqueta</Badge><Badge tone="warning">Sin verificar</Badge><Badge tone="accent" variant="solid">Récord</Badge></div>
+<div className="r" style={{alignItems:'stretch'}}><span className="l">Card</span><div style={{width:260}}><Card eyebrow="Odisea" title="Interstellar" interactive action={<IconButton icon="more-horizontal" label="Más" size="sm"/>}><span style={{fontSize:13,color:'var(--text-2)'}}>2014 · 169 min · Aventura, Drama</span></Card></div><div data-module="kuiper" style={{width:220}}><Card eyebrow={<Eyebrow star coord="SEP 2026">Kuiper</Eyebrow>} title="Hover me" interactive><span style={{fontSize:13,color:'var(--text-2)'}}>Sombra de bloque del módulo</span></Card></div></div>
+</div>}
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);</script></body></html>

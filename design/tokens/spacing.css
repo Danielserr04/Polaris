@@ -1,0 +1,26 @@
+/* Spacing, radii, borders, shadows, motion, layout */
+:root{
+--space-0:0;--space-1:4px;--space-2:8px;--space-3:12px;--space-4:16px;--space-5:20px;--space-6:24px;--space-8:32px;--space-10:40px;--space-12:48px;--space-16:64px;--space-20:80px;
+--radius-0:0;--radius-xs:2px;--radius-sm:4px;--radius-md:6px;--radius-round:999px;
+--border-w:1px; /* @kind spacing */
+--border-w-strong:1.5px; /* @kind spacing */
+--shadow-block-sm:2px 2px 0 0 var(--block-shadow-color);
+--shadow-block:4px 4px 0 0 var(--block-shadow-color);
+--shadow-block-accent:4px 4px 0 0 var(--polar-700);
+--shadow-overlay:0 24px 48px -12px rgba(0,0,0,.55),0 0 0 1px var(--border-2);
+--ease-out:cubic-bezier(.2,.7,.2,1); /* @kind other */
+--ease-in-out:cubic-bezier(.6,0,.3,1); /* @kind other */
+--ease-spring:cubic-bezier(.3,1.4,.5,1); /* @kind other */
+--dur-fast:120ms; /* @kind other */
+--dur-base:200ms; /* @kind other */
+--dur-slow:420ms; /* @kind other */
+--stagger:40ms; /* @kind other */
+--sidebar-w:232px; /* @kind spacing */
+--topbar-h:56px; /* @kind spacing */
+--content-max:1560px; /* @kind spacing */
+--row-h:40px; /* @kind spacing */
+--row-h-dense:34px; /* @kind spacing */
+--z-sticky:10; /* @kind other */
+--z-overlay:50; /* @kind other */
+--z-toast:60; /* @kind other */
+}
