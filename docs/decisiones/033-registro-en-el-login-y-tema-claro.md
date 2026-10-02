@@ -22,6 +22,7 @@ Dos pendientes del frontend que el diseño no resuelve: no hay pantalla de regis
 
 ## Consecuencias
 
-- Un destello oscuro al abrir en claro: el tema se aplica al montar el shell, no antes de pintar.
+- ~~Un destello oscuro al abrir en claro~~ (resuelto 2026-10-02): un script en `index.html` pone `data-theme` antes del primer pintado con la misma regla que `lib/tema.ts`, salvo en `/login` y `/auth/`; el login además fuerza oscuro al montarse (`useTemaOscuro`) por si llega redirigido desde una ruta del shell.
+- En claro también se oscurecen los semánticos (`--success`, `--danger`…) y los estados de Odisea, y las sombras salen de `--sombra-bloque` / `--sombra-difusa`.
 - El claro hay que revisarlo en cada pantalla nueva (colores fijos en oscuro rompen contraste). Los acentos claros salen de una tabla en `colors.css`.
 - Sigue sin haber tests automáticos de frontend; ambos se verificaron con Chromium (registro de punta a punta contra backend real, y las pantallas en claro y oscuro a escritorio y móvil).

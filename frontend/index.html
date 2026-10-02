@@ -6,6 +6,20 @@
     <meta name="theme-color" content="#12110e" />
     <title>Polaris</title>
     <link rel="icon" href="/assets/app-icon.svg" />
+    <style>html{background:#12110e}html[data-theme="light"]{background:#f2eee6}</style>
+    <script>
+      // Tema antes del primer pintado, sin esperar a React (asi no hay destello oscuro al abrir en claro).
+      // Misma regla que src/lib/tema.ts; el login y el callback siempre van en oscuro.
+      (function () {
+        try {
+          if (/^\/(login|auth\/)/.test(location.pathname)) return;
+          var t = localStorage.getItem('polaris.tema');
+          if (t === 'claro' || (t === 'sistema' && matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.dataset.theme = 'light';
+          }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
