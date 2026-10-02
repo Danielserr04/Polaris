@@ -113,9 +113,9 @@ export function imc(pesoKg: number | undefined, alturaCm: number | null | undefi
 }
 
 /** Categorias de la OMS para adultos. */
-export function categoriaImc(v: number): { texto: string; tono: 'up' | 'down' | 'flat' } {
-  if (v < 18.5) return { texto: 'Bajo peso', tono: 'down' };
-  if (v < 25) return { texto: 'Normal', tono: 'flat' };
-  if (v < 30) return { texto: 'Sobrepeso', tono: 'up' };
-  return { texto: 'Obesidad', tono: 'up' };
+export function categoriaImc(v: number): string {
+  if (v < 18.5) return 'Bajo peso';
+  if (v < 25) return 'Normal';
+  if (v < 30) return 'Sobrepeso';
+  return 'Obesidad';
 }

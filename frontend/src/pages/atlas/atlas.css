@@ -53,8 +53,9 @@
 @media (max-width:640px){.atl-cal__dia{min-height:40px;padding:4px}.atl-cal__dia small{display:none}}
 .atl-calc__res{display:flex;align-items:baseline;justify-content:space-between;padding:10px 12px;border:1px solid var(--border-1);border-radius:var(--radius-xs);background:var(--bg-sunken)}
 .atl-calc__res b{font-family:var(--font-mono);font-size:24px;font-weight:600}
-.atl-calc__tabla{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px 16px}
-.atl-calc__f{display:flex;justify-content:space-between;font-size:13px}
+.atl-calc__tabla{display:grid;grid-template-columns:repeat(3,max-content);gap:6px 32px}
+.atl-calc__f{display:grid;grid-template-columns:44px 80px;font-size:13px}
+.atl-calc__f .money{text-align:right}
 .atl-discos{display:flex;align-items:center;gap:4px;min-height:110px;padding:8px 0;border-left:6px solid var(--border-strong);padding-left:6px}
 .atl-disco{display:flex;align-items:center;justify-content:center;min-width:28px;padding:0 4px;border-radius:3px;background:var(--accent);color:var(--text-on-accent);font-family:var(--font-mono);font-size:11px;font-weight:600}
 @media (max-width:640px){.atl-calc__tabla{grid-template-columns:repeat(2,minmax(0,1fr))}}

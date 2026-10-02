@@ -104,10 +104,10 @@ function Discos() {
           <p className="muted" style={{ margin: 0 }}>Solo la barra.</p>
         ) : (
           <>
-            <div className="atl-discos" aria-label={`Por lado: ${calculo.discos.map((d) => num(d, 2)).join(', ')} kg`}>
+            <div className="atl-discos" aria-label={`Por lado: ${calculo.discos.map((d) => num(d, d % 1 ? 2 : 0)).join(', ')} kg`}>
               {calculo.discos.map((d, i) => (
                 <span key={i} className="atl-disco" style={{ height: 34 + d * 2.6 }}>
-                  {num(d, 2)}
+                  {num(d, d % 1 ? 2 : 0)}
                 </span>
               ))}
             </div>

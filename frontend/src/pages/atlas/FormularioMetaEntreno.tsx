@@ -33,6 +33,8 @@ export function FormularioMetaEntreno({ meta, onClose }: Props) {
   const [ejercicioId, setEjercicioId] = useState(meta?.ejercicioId != null ? String(meta.ejercicioId) : '');
   const [objetivo, setObjetivo] = useState(meta ? texto(meta.valorObjetivo) : '');
   const [fechaLimite, setFechaLimite] = useState(meta?.fechaLimite ?? '');
+  // El Select no valida al salir: su error se ve tras intentar guardar.
+  const [intentado, setIntentado] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
@@ -46,6 +48,7 @@ export function FormularioMetaEntreno({ meta, onClose }: Props) {
 
   const guardar = (ev: FormEvent) => {
     ev.preventDefault();
+    setIntentado(true);
     setErrorEnvio(null);
     if (errObjetivo || errEjercicio || errFecha) return;
     const cuerpo = {
@@ -113,7 +116,7 @@ export function FormularioMetaEntreno({ meta, onClose }: Props) {
             label="Ejercicio"
             value={ejercicioId}
             onChange={(e) => setEjercicioId(e.target.value)}
-            error={errEjercicio}
+            error={intentado ? errEjercicio : null}
             options={[{ value: '', label: ejercicios.isPending ? 'Cargando…' : 'Elige un ejercicio' }, ...(ejercicios.data ?? []).map((e) => ({ value: String(e.id), label: e.nombre }))]}
           />
         )}

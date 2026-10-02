@@ -60,8 +60,8 @@ export function CuerpoTab({ onEditar }: Props) {
           value={valorImc ?? 0}
           decimals={1}
           size={34}
-          delta={categoria?.texto}
-          deltaTone={categoria?.tono}
+          delta={categoria ?? undefined}
+          deltaTone="flat"
           caption={altura ? `con ${altura} cm de altura` : 'pon tu altura en el perfil'}
         />
         <Stat
@@ -71,7 +71,7 @@ export function CuerpoTab({ onEditar }: Props) {
           unit="cm"
           size={34}
           delta={ultimaCintura?.cinturaCm && previaCintura?.cinturaCm ? `${ultimaCintura.cinturaCm >= previaCintura.cinturaCm ? '+' : '−'}${num(Math.abs(ultimaCintura.cinturaCm - previaCintura.cinturaCm), 1)} cm` : undefined}
-          deltaTone={ultimaCintura?.cinturaCm && previaCintura?.cinturaCm ? (ultimaCintura.cinturaCm > previaCintura.cinturaCm ? 'up' : ultimaCintura.cinturaCm < previaCintura.cinturaCm ? 'down' : 'flat') : undefined}
+          deltaTone="flat"
           caption={ultimaCintura ? relativa(ultimaCintura.fecha, hoy) : 'sin medidas'}
         />
         <Stat
@@ -102,7 +102,7 @@ export function CuerpoTab({ onEditar }: Props) {
             <LineChart
               height={220}
               labels={[serie[0], serie[serie.length - 1]].map((m) => relativa(m.fecha, hoy))}
-              format={(v) => `${num(v, 1)} cm`}
+              format={(v) => num(v, 1)}
               series={[{ name: `${nombreCampo} (cm)`, points: serie.map((m) => m[campo] as number) }]}
             />
           )}

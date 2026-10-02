@@ -37,6 +37,9 @@ export function MetasTab({ onEditar }: { onEditar: (m: MetaEntreno) => void }) {
 
   const lista = metas.data ?? [];
   const conseguidos = (logros.data ?? []).filter((l) => l.conseguido).length;
+  const sinPlazo = lista.filter((m) => !m.fechaLimite).length;
+  // El logro pendiente al que menos le falta, en proporcion.
+  const siguiente = (logros.data ?? []).filter((l) => !l.conseguido).sort((a, b) => b.progreso / b.objetivo - a.progreso / a.objetivo)[0];
 
   if (metas.isError || logros.isError) {
     return (
@@ -57,8 +60,16 @@ export function MetasTab({ onEditar }: { onEditar: (m: MetaEntreno) => void }) {
   return (
     <div className="grid">
       <div className="span-12 stats pl-rise">
-        <Stat label="Metas" value={lista.length} size={34} caption={`${lista.filter((m) => m.conseguida).length} conseguidas`} />
+        <Stat label="Metas" value={lista.length} size={34} caption={sinPlazo ? `${sinPlazo} sin fecha límite` : undefined} />
+        <Stat label="Conseguidas" value={lista.filter((m) => m.conseguida).length} size={34} caption={`de ${lista.length}`} />
         <Stat label="Logros" value={conseguidos} size={34} caption={`de ${logros.data?.length ?? 0}`} />
+        <Stat
+          label="Siguiente logro"
+          value={siguiente ? Math.floor((siguiente.progreso / siguiente.objetivo) * 100) : 0}
+          unit="%"
+          size={34}
+          caption={siguiente ? siguiente.nombre : 'todos conseguidos'}
+        />
       </div>
 
       <div className="span-12">
