@@ -1,6 +1,6 @@
 /* Campana de recordatorios de la cabecera (CampanaRecordatorios.tsx). */
 .campana{position:relative}
-.campana__n{position:absolute;top:2px;right:2px;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--danger);color:#fff;font:700 10px/16px var(--font-mono);text-align:center;pointer-events:none}
+.campana__n{position:absolute;top:-6px;right:-6px;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--danger);color:#fff;font:700 10px/16px var(--font-mono);text-align:center;pointer-events:none}
 
 .campana__lista{display:flex;flex-direction:column;margin:-4px -8px}
 .campana__item{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 8px}

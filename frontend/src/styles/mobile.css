@@ -9,9 +9,9 @@
   .app__mtop{display:flex;position:fixed;top:0;left:0;right:0;z-index:var(--z-sticky);height:calc(56px + env(safe-area-inset-top));padding:env(safe-area-inset-top) 16px 0;align-items:center;justify-content:space-between;box-sizing:border-box;background:linear-gradient(180deg,color-mix(in oklab,var(--bg-app) 92%,transparent),transparent)}
   .app__mbrand,.m-av{display:inline-flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;padding:0;border:0;background:none;cursor:pointer;-webkit-tap-highlight-color:transparent}
   .m-av{border-radius:6px}
-  .app__macc{display:flex;align-items:center;gap:4px}
-  .m-logros{position:relative;display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;padding:0;border:0;border-radius:6px;background:none;color:var(--text-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
-  .m-logros[aria-current="page"]{color:var(--mod-polaris);background:color-mix(in oklab,var(--mod-polaris) 16%,transparent)}
+  .app__macc{display:flex;align-items:center;gap:0}
+  .m-logros{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin:5px;padding:0;border:0;border-radius:6px;background:var(--bg-sunken);box-shadow:inset 0 0 0 1px var(--border-2);color:var(--text-2);cursor:pointer;-webkit-tap-highlight-color:transparent}
+  .m-logros[aria-current="page"]{color:var(--mod-polaris);background:color-mix(in oklab,var(--mod-polaris) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--mod-polaris) 35%,transparent)}
   .app__main{padding:calc(64px + env(safe-area-inset-top)) 20px calc(120px + env(safe-area-inset-bottom))}
 
   .m-tabs{display:block;position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:var(--z-overlay);height:64px;padding:6px;box-sizing:border-box;background:var(--surface-glass);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--border-2);border-radius:10px;box-shadow:0 18px 40px -18px var(--sombra-difusa),4px 4px 0 0 var(--sombra-bloque)}

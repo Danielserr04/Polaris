@@ -226,19 +226,19 @@
 .pl-nav__search{display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 14px 0 12px;margin-left:6px;border:1px solid var(--border-1);border-radius:6px;background:var(--bg-sunken);color:var(--text-3);font-family:var(--font-sans);font-size:13px;cursor:pointer;min-width:132px;transition:border-color var(--dur-fast)}
 .pl-nav__search:hover{border-color:var(--border-strong);color:var(--text-2)}
 .pl-nav__search span{flex:1;text-align:left}
-.pl-nav__user{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:0;background:none;cursor:pointer;border-radius:6px;transition:transform var(--dur-fast) var(--ease-spring)}
+.pl-nav__user{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin:0 2px 0 -2px;padding:0;border:0;background:none;cursor:pointer;border-radius:6px;transition:transform var(--dur-fast) var(--ease-spring)}
 .pl-nav__user:hover{transform:translateY(-1px)}
 /* Accesos junto al avatar (Polaris: logros) */
-/* Botones de icono de la isla (campana, logros) y avatar: misma caja que las pestañas de modulo
-   (38 px, radio 6, sin borde), para que la barra se lea como una sola pieza. */
-.pl-nav__act{position:relative;display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;padding:0;border:0;border-radius:6px;background:none;color:var(--text-2);cursor:pointer;transition:color var(--dur-base),background var(--dur-base)}
-.pl-nav__act:hover{color:var(--text-1);background:color-mix(in oklab,var(--text-1) 6%,transparent)}
+/* Botones de icono de la isla (campana, logros) y avatar: cuadrados de 34 px con esquinas de 6 px,
+   la misma pieza para los tres, como el logo. */
+.pl-nav__act{position:relative;display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;margin:0 2px;padding:0;border:0;border-radius:6px;background:var(--bg-sunken);box-shadow:inset 0 0 0 1px var(--border-2);color:var(--text-2);cursor:pointer;transition:color var(--dur-base),box-shadow var(--dur-base)}
+.pl-nav__act:hover{color:var(--text-1);box-shadow:inset 0 0 0 1px var(--border-strong)}
 .pl-nav__act .pl-icon{transition:transform var(--dur-base) var(--ease-spring)}
 .pl-nav__act:hover .pl-icon{transform:translateY(-1px) rotate(-6deg)}
 .pl-nav__act[aria-current="page"]{color:var(--mod-polaris);background:color-mix(in oklab,var(--mod-polaris) 16%,transparent);box-shadow:inset 0 0 0 1px color-mix(in oklab,var(--mod-polaris) 35%,transparent)}
 .pl-nav__acts{display:flex;align-items:center;gap:2px;margin-left:4px;padding-left:6px;border-left:1px solid var(--border-1)}
 /* El avatar de la barra no lleva el color del modulo: neutro, como el resto de botones. */
-.pl-nav__user .pl-avatar,.m-av .pl-avatar{width:30px!important;height:30px!important;font-size:12px!important;border-radius:6px;background:var(--bg-sunken);color:var(--text-1);box-shadow:inset 0 0 0 1px var(--border-2)}
+.pl-nav__user .pl-avatar,.m-av .pl-avatar{width:34px!important;height:34px!important;font-size:12px!important;border-radius:6px;background:var(--bg-sunken);color:var(--text-1);box-shadow:inset 0 0 0 1px var(--border-2)}
 
 /* Alert */
 .pl-alert{--tone:var(--info);display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);border:1px solid color-mix(in oklab,var(--tone) 32%,transparent);background:color-mix(in oklab,var(--tone) 8%,transparent)}
