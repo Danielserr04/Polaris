@@ -31,3 +31,16 @@
 .kui-icon[aria-pressed=true]{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
 .kui-field__label{display:block;margin-bottom:8px;font:500 12px/1 var(--font-sans);color:var(--text-2)}
 .kui-pistas{margin:0;font-size:12.5px;color:var(--text-3)}
+/* Alertas de presupuesto (docs/decisiones/035-presupuesto-umbral-de-alerta.md) */
+.kui-barra{display:flex;gap:12px;align-items:center}
+.kui-pct{font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.kui-pct--ok{color:var(--success)}.kui-pct--aviso{color:var(--warning)}.kui-pct--excedido{color:var(--danger)}
+.kui-avisos{display:flex;flex-wrap:wrap;gap:6px 14px;margin:4px 0 0;padding:0;list-style:none;font-size:13px}
+.kui-aviso b{font-weight:500}
+.kui-aviso--excedido{color:var(--danger)}.kui-aviso--aviso{color:var(--warning)}
+.kui-catpres{display:flex;flex-direction:column;align-items:flex-end;gap:2px;line-height:1.2}
+.kui-catpres__anual{font-size:12px;color:var(--text-3)}
+.kui-alerta{display:flex;flex-direction:column;gap:6px}
+.kui-alerta .kui-field__label{margin-bottom:0}
+.kui-alerta input[type=range]{width:100%;accent-color:var(--warning);cursor:pointer}
+.kui-alerta input[type=range]:disabled{cursor:not-allowed;opacity:.5}

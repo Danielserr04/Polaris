@@ -2,20 +2,25 @@ import { useState, type FormEvent } from 'react';
 import {
   mensajeError,
   useActualizarCategoria,
-  useBorrarCategoria,
   useCrearCategoria,
-  useGuardarPresupuesto,
   type Categoria,
+  type GastoCategoria,
   type Presupuesto,
   type TipoMovimiento,
 } from '../../api/kuiper';
+import { ALERTA_POR_DEFECTO, useBorrarCategoriaConPresupuestos, useGuardarPresupuestoConAlerta } from '../../api/kuiperAlertas';
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
 import { Alert, Button, Dialog, Icon, Input, SegmentedControl } from '../../design-system';
+import { eur } from '../../lib/fechas';
+import { BarraPresupuesto } from './BarraPresupuesto';
 
 interface Props {
   /** Sin categoria: alta. Con categoria: edicion (y borrado). */
   categoria?: Categoria;
   presupuesto?: Presupuesto;
+  presupuestoAnual?: Presupuesto;
+  /** Como va este mes, para enseñar el estado del presupuesto mensual */
+  gasto?: GastoCategoria;
   tipoInicial: TipoMovimiento;
   onClose: () => void;
 }
@@ -25,19 +30,24 @@ const COLORES = ['#5bb3a0', '#d0799f', '#e0b04a', '#e8845a', '#7d95e0', '#cdbf98
 const ICONOS = ['wallet', 'house', 'shopping-basket', 'utensils', 'train-front', 'ticket', 'repeat', 'flame', 'dumbbell', 'book-open', 'gamepad-2', 'tv', 'star', 'sparkles'];
 const IMPORTE = /^\d{1,8}([.,]\d{1,2})?$/;
 
-export function FormularioCategoria({ categoria, presupuesto, tipoInicial, onClose }: Props) {
+const comoTexto = (p?: Presupuesto) => (p ? String(p.importeLimite).replace('.', ',') : '');
+
+export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, gasto, tipoInicial, onClose }: Props) {
   useRestaurarFoco();
   const editando = categoria !== undefined;
   const crear = useCrearCategoria();
   const actualizar = useActualizarCategoria(categoria?.id ?? 0);
-  const borrar = useBorrarCategoria();
-  const guardarPresupuesto = useGuardarPresupuesto();
+  const borrar = useBorrarCategoriaConPresupuestos();
+  const guardarPresupuesto = useGuardarPresupuestoConAlerta();
 
   const [tipo, setTipo] = useState<TipoMovimiento>(categoria?.tipo ?? tipoInicial);
   const [nombre, setNombre] = useState(categoria?.nombre ?? '');
   const [color, setColor] = useState<string | null>(categoria?.color ?? null);
   const [icono, setIcono] = useState<string | null>(categoria?.icono ?? null);
-  const [limite, setLimite] = useState(presupuesto ? String(presupuesto.importeLimite).replace('.', ',') : '');
+  const [limite, setLimite] = useState(comoTexto(presupuesto));
+  const [limiteAnual, setLimiteAnual] = useState(comoTexto(presupuestoAnual));
+  // Un solo umbral para los dos periodos: el formulario los guarda siempre iguales.
+  const [alerta, setAlerta] = useState(presupuesto?.porcentajeAlerta ?? presupuestoAnual?.porcentajeAlerta ?? ALERTA_POR_DEFECTO);
   const [intentado, setIntentado] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
@@ -45,8 +55,12 @@ export function FormularioCategoria({ categoria, presupuesto, tipoInicial, onClo
   const conPresupuesto = tipo === 'GASTO';
   const limiteVacio = limite.trim() === '';
   const limiteNum = !limiteVacio && IMPORTE.test(limite.trim()) ? Number(limite.trim().replace(',', '.')) : NaN;
+  const anualVacio = limiteAnual.trim() === '';
+  const anualNum = !anualVacio && IMPORTE.test(limiteAnual.trim()) ? Number(limiteAnual.trim().replace(',', '.')) : NaN;
   const errorNombre = nombre.trim() === '' ? 'Escribe un nombre.' : null;
   const errorLimite = conPresupuesto && !limiteVacio && !(limiteNum > 0) ? 'Escribe un importe mayor que 0, con hasta 2 decimales.' : null;
+  const errorAnual = conPresupuesto && !anualVacio && !(anualNum > 0) ? 'Escribe un importe mayor que 0, con hasta 2 decimales.' : null;
+  const tienePresupuesto = presupuesto !== undefined || presupuestoAnual !== undefined;
   const ocupado = crear.isPending || actualizar.isPending || guardarPresupuesto.isPending || borrar.isPending;
   const ver = (e: string | null) => (intentado ? e : null);
 
@@ -54,15 +68,20 @@ export function FormularioCategoria({ categoria, presupuesto, tipoInicial, onClo
     ev.preventDefault();
     setIntentado(true);
     setErrorEnvio(null);
-    if (errorNombre || errorLimite) return;
+    if (errorNombre || errorLimite || errorAnual) return;
     try {
       const cuerpo = { nombre: nombre.trim(), color, icono, tipo };
       const guardada = editando ? await actualizar.mutateAsync(cuerpo) : await crear.mutateAsync(cuerpo);
       if (conPresupuesto) {
-        const importe = limiteVacio ? null : limiteNum;
-        // Solo se toca el presupuesto si hay algo que hacer: crear, cambiar o quitar.
-        if (importe !== null || presupuesto) {
-          await guardarPresupuesto.mutateAsync({ categoriaId: guardada.id, existente: presupuesto, importe });
+        const periodos = [
+          { periodo: 'MENSUAL' as const, existente: presupuesto, importe: limiteVacio ? null : limiteNum },
+          { periodo: 'ANUAL' as const, existente: presupuestoAnual, importe: anualVacio ? null : anualNum },
+        ];
+        for (const { periodo, existente, importe } of periodos) {
+          // Solo se toca el presupuesto si hay algo que hacer: crear, cambiar o quitar.
+          if (importe !== null || existente) {
+            await guardarPresupuesto.mutateAsync({ categoriaId: guardada.id, periodo, existente, importe, porcentajeAlerta: alerta });
+          }
         }
       }
       onClose();
@@ -75,7 +94,7 @@ export function FormularioCategoria({ categoria, presupuesto, tipoInicial, onClo
     if (!categoria) return;
     setErrorEnvio(null);
     borrar.mutate(
-      { id: categoria.id, presupuestoId: presupuesto?.id },
+      { id: categoria.id, presupuestoIds: [presupuesto?.id, presupuestoAnual?.id].filter((id): id is number => id !== undefined) },
       {
         onSuccess: onClose,
         onError: (e) => {
@@ -95,7 +114,7 @@ export function FormularioCategoria({ categoria, presupuesto, tipoInicial, onClo
         confirmando ? (
           <>
             <span className="muted kui-form__borrar">
-              {presupuesto ? '¿Borrar la categoría y su presupuesto?' : '¿Borrar esta categoría?'}
+              {tienePresupuesto ? '¿Borrar la categoría y su presupuesto?' : '¿Borrar esta categoría?'}
             </span>
             <Button variant="ghost" type="button" autoFocus onClick={() => setConfirmando(false)}>
               No
@@ -181,15 +200,64 @@ export function FormularioCategoria({ categoria, presupuesto, tipoInicial, onClo
           </div>
         </div>
         {conPresupuesto && (
-          <Input
-            label="Presupuesto mensual (€)"
-            inputMode="decimal"
-            placeholder="Sin presupuesto"
-            value={limite}
-            onChange={(e) => setLimite(e.target.value)}
-            error={ver(errorLimite)}
-            hint="Déjalo vacío para no ponerle límite."
-          />
+          <>
+            {presupuesto && gasto && gasto.limiteMensual !== null && (
+              <div>
+                <span className="kui-field__label">Este mes</span>
+                <BarraPresupuesto
+                  nombre={categoria?.nombre ?? ''}
+                  icono={categoria?.icono ?? null}
+                  gastado={gasto.gastado}
+                  limite={gasto.limiteMensual}
+                  porcentaje={gasto.porcentaje}
+                  porcentajeAlerta={gasto.porcentajeAlerta}
+                  estado={gasto.estado}
+                />
+              </div>
+            )}
+            <div className="kui-form__row">
+              <Input
+                label="Presupuesto mensual (€)"
+                inputMode="decimal"
+                placeholder="Sin presupuesto"
+                value={limite}
+                onChange={(e) => setLimite(e.target.value)}
+                error={ver(errorLimite)}
+                hint="Déjalo vacío para no ponerle límite."
+              />
+              <Input
+                label="Presupuesto anual (€)"
+                inputMode="decimal"
+                placeholder="Sin presupuesto"
+                value={limiteAnual}
+                onChange={(e) => setLimiteAnual(e.target.value)}
+                error={ver(errorAnual)}
+                hint="Para gastos de todo el año: viajes, seguros…"
+              />
+            </div>
+            <div className="kui-alerta">
+              <label className="kui-field__label" htmlFor="kui-alerta">
+                Avisar al llegar al <b className="money">{alerta} %</b>
+              </label>
+              <input
+                id="kui-alerta"
+                type="range"
+                min={1}
+                max={100}
+                step={1}
+                value={alerta}
+                disabled={limiteVacio && anualVacio}
+                onChange={(e) => setAlerta(Number(e.target.value))}
+              />
+              <p className="kui-pistas">
+                {limiteNum > 0
+                  ? `Con ${eur(limiteNum, 0)} al mes, avisa a partir de ${eur((limiteNum * alerta) / 100, 0)}.`
+                  : anualNum > 0
+                    ? `Con ${eur(anualNum, 0)} al año, avisa a partir de ${eur((anualNum * alerta) / 100, 0)}.`
+                    : 'Ponle un presupuesto para elegir cuándo avisar.'}
+              </p>
+            </div>
+          </>
         )}
       </form>
     </Dialog>
