@@ -1,19 +1,21 @@
 import { useResumenAnual } from '../../api/kuiperAlertas';
-import { Button, Card } from '../../design-system';
+import { Card } from '../../design-system';
 import { eur } from '../../lib/fechas';
 import { BarraPresupuesto } from './BarraPresupuesto';
 
 interface Props {
   anio: number;
-  onIrACategorias: () => void;
 }
 
 /** Los presupuestos anuales frente a lo gastado en el año. */
-export function PresupuestosAnualesCard({ anio, onIrACategorias }: Props) {
+export function PresupuestosAnualesCard({ anio }: Props) {
   const resumen = useResumenAnual(anio);
   const filas = resumen.data?.presupuestos ?? [];
   const total = filas.reduce((s, f) => s + f.limite, 0);
   const gastado = filas.reduce((s, f) => s + f.gastado, 0);
+
+  // Sin presupuestos anuales no ocupa una tarjeta: lo avisa una linea en "Por categoría".
+  if (resumen.isSuccess && filas.length === 0) return null;
 
   return (
     <Card
@@ -26,13 +28,6 @@ export function PresupuestosAnualesCard({ anio, onIrACategorias }: Props) {
         <span className="muted">No se han podido cargar.</span>
       ) : !resumen.data ? (
         <span className="muted">Cargando…</span>
-      ) : filas.length === 0 ? (
-        <span className="muted" style={{ fontSize: 13 }}>
-          Sin presupuestos anuales.{' '}
-          <Button variant="ghost" size="sm" onClick={onIrACategorias}>
-            Ponlos en Categorías
-          </Button>
-        </span>
       ) : (
         <div className="stack-16">
           {filas.map((f) => (

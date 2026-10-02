@@ -55,10 +55,10 @@
 .pl-card--interactive:hover{transform:translate(-3px,-3px);box-shadow:5px 5px 0 0 var(--accent-deep);border-color:color-mix(in oklab,var(--accent) 55%,transparent)}
 .pl-card--sunken{background:var(--bg-sunken)}
 .pl-card--raised{background:var(--surface-2);border-color:var(--border-2)}
-.pl-card__head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:16px 18px 0}
-.pl-card__titles{display:flex;flex-direction:column;gap:8px;min-width:0}
+.pl-card__head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;padding:14px 16px 0}
+.pl-card__titles{display:flex;flex-direction:column;gap:4px;min-width:0}
 .pl-card__title{margin:0;font-family:var(--font-display);font-stretch:var(--display-stretch);font-size:var(--fs-title);font-weight:700;line-height:var(--lh-heading);letter-spacing:-.01em;color:var(--text-1)}
-.pl-card__body{padding:16px 18px 18px;flex:1;min-width:0}
+.pl-card__body{padding:12px 16px 14px;flex:1;min-width:0}
 .pl-card__foot{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;border-top:1px solid var(--border-1)}
 
 /* Avatar */

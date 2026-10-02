@@ -5,6 +5,8 @@ import { eur, iso, mesAnterior, periodo as periodoDe, rangoMes } from '../../lib
 import { AvisoPresupuestos } from './AvisoPresupuestos';
 import { BarraPresupuesto } from './BarraPresupuesto';
 import { ListaMovimientos } from './ListaMovimientos';
+import { useResumenAnual } from '../../api/kuiperAlertas';
+import { MetasResumenCard } from './MetasResumenCard';
 import { PresupuestosAnualesCard } from './PresupuestosAnualesCard';
 
 interface Props {
@@ -12,6 +14,7 @@ interface Props {
   onVerTodos: () => void;
   onEditar: (m: MovimientoList) => void;
   onIrACategorias: () => void;
+  onIrAMetas: () => void;
 }
 
 function pct(actual: number, previo: number): { texto: string; sube: boolean } | null {
@@ -21,13 +24,15 @@ function pct(actual: number, previo: number): { texto: string; sube: boolean } |
   return { texto: `${r > 0 ? '+' : r < 0 ? '−' : ''}${Math.abs(r)} %`, sube: p > 0 };
 }
 
-export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: Props) {
+export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias, onIrAMetas }: Props) {
   const hoy = useMemo(() => new Date(), []);
   const esActual = periodo === periodoDe(hoy);
   const { desde, hasta, dias } = rangoMes(periodo);
   const previo = mesAnterior(periodo);
 
   const resumen = useResumen(periodo);
+  const anual = useResumenAnual(Number(periodo.slice(0, 4)));
+  const sinAnuales = anual.isSuccess && anual.data.presupuestos.length === 0;
   const resumenPrevio = useResumen(previo);
   const movimientos = useMovimientos({ desde, hasta });
 
@@ -118,17 +123,32 @@ export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: P
       </div>
 
       <div className="span-12 kui-cols">
-        <Card delay={100} eyebrow="Día a día" title="Gasto diario" action={<span className="pl-row__num">media {eur(media)}</span>}>
-          <BarChart
-            height={200}
-            gap={5}
-            highlight={esActual ? diaHoy - 1 : undefined}
-            target={media}
-            targetLabel="Media"
-            data={gastosPorDia}
-            format={(v) => eur(v)}
-          />
-        </Card>
+        <div className="kui-stack">
+          <Card delay={100} eyebrow="Día a día" title="Gasto diario" action={<span className="pl-row__num">media {eur(media)}</span>}>
+            <BarChart
+              height={150}
+              gap={5}
+              highlight={esActual ? diaHoy - 1 : undefined}
+              target={media}
+              targetLabel="Media"
+              data={gastosPorDia}
+              format={(v) => eur(v)}
+            />
+          </Card>
+          <Card
+            delay={220}
+            eyebrow="Últimos"
+            title="Movimientos"
+            action={
+              <Button variant="ghost" size="sm" iconRight="arrow-right" onClick={onVerTodos}>
+                Ver todos
+              </Button>
+            }
+            padding="8px 0 0"
+          >
+            <ListaMovimientos movimientos={ultimos} vacio="Sin movimientos este mes." onEditar={onEditar} />
+          </Card>
+        </div>
 
         <div className="kui-stack">
           <Card delay={160} eyebrow="Presupuestos" title="Por categoría">
@@ -167,27 +187,20 @@ export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: P
                     ))}
                   </div>
                 )}
+                {sinAnuales && (
+                  <span className="muted" style={{ fontSize: 13 }}>
+                    Sin presupuestos anuales.{' '}
+                    <Button variant="ghost" size="sm" onClick={onIrACategorias}>
+                      Ponlos en Categorías
+                    </Button>
+                  </span>
+                )}
               </div>
             )}
           </Card>
-          <PresupuestosAnualesCard anio={Number(periodo.slice(0, 4))} onIrACategorias={onIrACategorias} />
+          <PresupuestosAnualesCard anio={Number(periodo.slice(0, 4))} />
+          <MetasResumenCard onIrAMetas={onIrAMetas} />
         </div>
-      </div>
-
-      <div className="span-12">
-        <Card
-          delay={220}
-          eyebrow="Últimos"
-          title="Movimientos"
-          action={
-            <Button variant="ghost" size="sm" iconRight="arrow-right" onClick={onVerTodos}>
-              Ver todos
-            </Button>
-          }
-          padding="8px 0 0"
-        >
-          <ListaMovimientos movimientos={ultimos} vacio="Sin movimientos este mes." onEditar={onEditar} />
-        </Card>
       </div>
     </div>
   );
