@@ -19,6 +19,8 @@ public record MovimientoListDto(
         String categoriaNombre,
         String categoriaColor,
         String categoriaIcono,
-        String concepto
+        String concepto,
+        Long cuentaId,
+        String cuentaNombre
 ) {
 }

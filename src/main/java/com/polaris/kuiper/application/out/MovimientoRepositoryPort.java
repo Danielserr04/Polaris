@@ -2,10 +2,13 @@ package com.polaris.kuiper.application.out;
 
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
+import com.polaris.kuiper.domain.model.TipoMovimiento;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -58,4 +61,13 @@ public interface MovimientoRepositoryPort {
     int deleteEnPapeleraByCategoriaId(Long categoriaId);
     /** Usuarios con algun movimiento entre las dos fechas, inclusive. Para el resumen mensual del job de avisos. */
     List<Long> findUsuarioIdsConMovimientos(LocalDate desde, LocalDate hasta);
+    /** Para que CuentaService pueda impedir borrar una cuenta con movimientos. */
+    boolean existsByCuentaId(Long cuentaId);
+
+    /**
+     * Total de los movimientos de {@code tipo} de cada cuenta del usuario (SUM
+     * agrupado por cuenta). Los movimientos sin cuenta y las cuentas sin
+     * movimientos de ese tipo no aparecen.
+     */
+    Map<Long, BigDecimal> sumarPorCuenta(Long usuarioId, TipoMovimiento tipo);
 }

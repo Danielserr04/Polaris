@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { mensajeError, useCategorias, useMovimientos, type MovimientoList, type TipoMovimiento } from '../../api/kuiper';
 import { avisar, useBorrarMovimientos, useDuplicarMovimiento } from '../../api/kuiperPapelera';
+import { useCuentas } from '../../api/kuiperCuentas';
 import { Alert, Button, Card, SegmentedControl, Select } from '../../design-system';
 import { rangoMes } from '../../lib/fechas';
 import { ListaMovimientos } from './ListaMovimientos';
@@ -23,11 +24,14 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
   const categorias = useCategorias();
   const borrarVarios = useBorrarMovimientos();
   const duplicar = useDuplicarMovimiento();
+  const [cuenta, setCuenta] = useState('');
+  const cuentas = useCuentas();
   const movimientos = useMovimientos({
     desde,
     hasta,
     tipo: tipo === 'TODOS' ? undefined : tipo,
     categoriaId: categoria ? Number(categoria) : undefined,
+    cuentaId: cuenta ? Number(cuenta) : undefined,
   });
 
   const opciones = useMemo(
@@ -40,11 +44,19 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
     [categorias.data, tipo],
   );
 
+  const opcionesCuenta = useMemo(
+    () => [
+      { value: '', label: 'Todas las cuentas' },
+      ...(cuentas.data ?? []).map((c) => ({ value: String(c.id), label: c.archivada ? `${c.nombre} (archivada)` : c.nombre })),
+    ],
+    [cuentas.data],
+  );
+
   const filas = useMemo(
     () => [...(movimientos.data ?? [])].sort((a, b) => (a.fecha < b.fecha ? 1 : a.fecha > b.fecha ? -1 : b.id - a.id)),
     [movimientos.data],
   );
-  const hayFiltros = tipo !== 'TODOS' || categoria !== '';
+  const hayFiltros = tipo !== 'TODOS' || categoria !== '' || cuenta !== '';
   // Solo cuenta lo seleccionado que sigue a la vista (al cambiar de filtro o de mes no se borra lo oculto).
   const elegidos = seleccion ? filas.filter((m) => seleccion.has(m.id)).map((m) => m.id) : [];
 
@@ -89,6 +101,11 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
         <div className="kui-toolbar__sel">
           <Select size="sm" aria-label="Categoría" value={categoria} onChange={(e) => setCategoria(e.target.value)} options={opciones} />
         </div>
+        {opcionesCuenta.length > 1 && (
+          <div className="kui-toolbar__sel">
+            <Select size="sm" aria-label="Cuenta" value={cuenta} onChange={(e) => setCuenta(e.target.value)} options={opcionesCuenta} />
+          </div>
+        )}
         <span className="kui-selbar__sep" />
         {seleccion === null && filas.length > 0 && (
           <Button size="sm" variant="ghost" icon="check" onClick={() => setSeleccion(new Set())}>

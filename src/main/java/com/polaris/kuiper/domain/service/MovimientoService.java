@@ -8,9 +8,11 @@ import com.polaris.kuiper.application.in.GetMovimientoInterface;
 import com.polaris.kuiper.application.in.ListMovimientoInterface;
 import com.polaris.kuiper.application.in.UpdateMovimientoInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.CuentaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
+import com.polaris.kuiper.domain.model.CuentaNotFoundException;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
 import com.polaris.kuiper.domain.model.MovimientoNotFoundException;
@@ -35,6 +37,9 @@ import java.util.List;
  * <p>Despues de guardar un gasto se comprueba su presupuesto mensual por si
  * hay que avisar (docs/decisiones/040-notificaciones-de-kuiper.md). Esa
  * comprobacion nunca lanza.
+ *
+ * <p>La cuenta es opcional; si viene, tiene que ser del usuario. Ver
+ * docs/decisiones/039-cuentas-y-transferencias.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -49,10 +54,12 @@ public class MovimientoService implements
     private final MovimientoRepositoryPort repository;
     private final CategoriaRepositoryPort categoriaRepository;
     private final ComprobarPresupuestoInterface comprobarPresupuesto;
+    private final CuentaRepositoryPort cuentaRepository;
 
     @Override
     public Movimiento create(Long usuarioId, Movimiento movimiento) {
         validarCategoria(usuarioId, movimiento);
+        validarCuenta(usuarioId, movimiento.getCuentaId());
         movimiento.setId(null);
         movimiento.setUsuarioId(usuarioId);
         return avisarSiEsGasto(repository.save(movimiento));
@@ -72,6 +79,7 @@ public class MovimientoService implements
     public Movimiento update(Long usuarioId, Long id, Movimiento movimiento) {
         Movimiento existente = getPropio(usuarioId, id);
         validarCategoria(usuarioId, movimiento);
+        validarCuenta(usuarioId, movimiento.getCuentaId());
         movimiento.setId(existente.getId());
         movimiento.setUsuarioId(existente.getUsuarioId());
         return avisarSiEsGasto(repository.save(movimiento));
@@ -103,10 +111,11 @@ public class MovimientoService implements
                 .categoriaId(original.getCategoriaId())
                 .concepto(original.getConcepto())
                 .metodoPago(original.getMetodoPago())
+                .cuentaId(original.getCuentaId())
                 .recurrente(false)
                 .build();
         validarCategoria(usuarioId, copia);
-        return repository.save(copia);
+        return avisarSiEsGasto(repository.save(copia));
     }
 
     private Movimiento avisarSiEsGasto(Movimiento guardado) {
@@ -129,6 +138,16 @@ public class MovimientoService implements
         if (categoria.getTipo() != movimiento.getTipo()) {
             throw new ValidationException("El tipo del movimiento no coincide con el de su categoria");
         }
+    }
+
+    /** 404 si la cuenta no existe o es de otro usuario. Sin cuenta no hay nada que comprobar. */
+    private void validarCuenta(Long usuarioId, Long cuentaId) {
+        if (cuentaId == null) {
+            return;
+        }
+        cuentaRepository.findById(cuentaId)
+                .filter(c -> c.getUsuarioId().equals(usuarioId))
+                .orElseThrow(() -> new CuentaNotFoundException(cuentaId));
     }
 
     /**

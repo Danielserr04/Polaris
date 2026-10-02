@@ -46,4 +46,7 @@ public class Movimiento {
     public boolean enPapelera() {
         return borradoEn != null;
     }
+    /** Opcional: nulo es "sin cuenta". Ver docs/decisiones/039-cuentas-y-transferencias.md. */
+    private Long cuentaId;
+    private Cuenta cuenta;
 }

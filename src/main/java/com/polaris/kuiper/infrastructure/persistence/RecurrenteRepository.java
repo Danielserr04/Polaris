@@ -16,4 +16,6 @@ public interface RecurrenteRepository extends JpaRepository<RecurrenteEntity, Lo
     List<RecurrenteEntity> findByActivoTrueAndProximaFechaLessThanEqualOrderByIdAsc(LocalDate hoy);
 
     boolean existsByCategoria_Id(Long categoriaId);
+
+    boolean existsByCuenta_Id(Long cuentaId);
 }

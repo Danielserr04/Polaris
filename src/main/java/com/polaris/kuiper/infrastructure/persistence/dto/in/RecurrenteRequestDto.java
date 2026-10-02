@@ -34,6 +34,8 @@ public record RecurrenteRequestDto(
         @Schema(description = "Numero de plazos; vacio si no termina nunca", example = "12")
         @Min(1) @Max(600) Integer cuotasTotal,
         @Schema(description = "false para pausarlo", defaultValue = "true")
-        Boolean activo
+        Boolean activo,
+        @Schema(description = "Id de una cuenta tuya; opcional. Los movimientos generados la heredan")
+        Long cuentaId
 ) {
 }
