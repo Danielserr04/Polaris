@@ -69,10 +69,10 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[040-notificaciones-de-kuiper]]
 - [[041-receta-agregado-con-ingredientes]]
 - [[042-plan-de-comidas-y-lista-de-la-compra]]
-- [[043-calculo-del-objetivo-desde-el-perfil]]
 - [[043-logros-calculados-y-metas]]
 - [[044-logros-globales-con-fecha-calculada]]
 - [[045-recordatorios]]
+- [[046-calculo-del-objetivo-desde-el-perfil]]
 
 ## Cómo se mantiene esto
 

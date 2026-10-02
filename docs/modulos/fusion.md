@@ -30,7 +30,7 @@ Esquema completo en [[modelo-datos]].
 
 Fusión **lee y escribe el peso corporal de [[nucleo]]**: aparece dentro de este módulo, se puede consultar y añadir desde aquí, pero no tiene tabla propia.
 
-Lo usa para calcular necesidades calóricas, junto con el perfil (altura, edad, sexo, actividad), que lee por un puerto propio sin tabla propia ([[043-calculo-del-objetivo-desde-el-perfil]]). Qué es un "objetivo de peso" y cómo se interpreta la evolución lo decide Fusión, no Núcleo.
+Lo usa para calcular necesidades calóricas, junto con el perfil (altura, edad, sexo, actividad), que lee por un puerto propio sin tabla propia ([[046-calculo-del-objetivo-desde-el-perfil]]). Qué es un "objetivo de peso" y cómo se interpreta la evolución lo decide Fusión, no Núcleo.
 
 ## Endpoints
 
@@ -101,6 +101,6 @@ El listado de `comida` va ordenado por fecha descendente y momento en el orden d
 | Peso corporal | **Hecho** — `GET`/`POST /api/fusion/peso` a través de un puerto propio hacia Núcleo; sin tabla propia. Ver [[022-peso-corporal-desde-fusion-y-atlas]] |
 | `Receta` | **Hecha** — CRUD en `/api/fusion/receta`, con ingredientes y macros por ración. Ver [[041-receta-agregado-con-ingredientes]] |
 | `PlanComida` | **Hecho** — CRUD en `/api/fusion/plan`, activar y lista de la compra. Ver [[042-plan-de-comidas-y-lista-de-la-compra]] |
-| Cálculo del objetivo | **Hecho** — `GET /api/fusion/objetivo/calculo`, Mifflin-St Jeor desde el perfil de Núcleo. Ver [[043-calculo-del-objetivo-desde-el-perfil]] |
+| Cálculo del objetivo | **Hecho** — `GET /api/fusion/objetivo/calculo`, Mifflin-St Jeor desde el perfil de Núcleo. Ver [[046-calculo-del-objetivo-desde-el-perfil]] |
 | Resumen del día | **Hecho** — `GET /api/fusion/resumen?fecha=`. Ver [[021-resumen-diario-fusion]] |
 | Logros | **Hechos** — `GET /api/fusion/logros`: comidas, días y rachas apuntando, objetivo, recetas y planes. Ver [[044-logros-globales-con-fecha-calculada]] |
