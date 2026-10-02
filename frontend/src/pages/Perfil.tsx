@@ -39,7 +39,6 @@ function mensajeError(e: unknown): string {
   if (m.includes('pon una contrasena antes'))
     return 'Pon antes una contraseña: sin ella no te quedaría ninguna forma de entrar.';
   if (m.includes('no esta vinculada')) return 'Esta cuenta no está vinculada con Google.';
-  if (e.status >= 500) return 'Algo ha fallado en el servidor. Inténtalo de nuevo.';
   return e.message;
 }
 
