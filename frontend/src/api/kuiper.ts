@@ -14,7 +14,13 @@ export interface GastoCategoria {
   /** Presupuesto mensual de la categoria, si tiene */
   limiteMensual: number | null;
   restante: number | null;
+  /** gastado / limite * 100 con un decimal; null sin presupuesto */
+  porcentaje: number | null;
+  porcentajeAlerta: number | null;
+  estado: EstadoPresupuesto;
 }
+
+export type EstadoPresupuesto = 'SIN_PRESUPUESTO' | 'OK' | 'AVISO' | 'EXCEDIDO';
 
 export interface ResumenMensual {
   periodo: string;
@@ -22,6 +28,10 @@ export interface ResumenMensual {
   gastos: number;
   balance: number;
   gastoPorCategoria: GastoCategoria[];
+  /** Suma de los presupuestos mensuales */
+  presupuestoTotal: number;
+  categoriasEnAviso: number;
+  categoriasExcedidas: number;
 }
 
 export interface MovimientoList {
@@ -65,6 +75,8 @@ export interface Presupuesto {
   categoriaId: number;
   periodo: 'MENSUAL' | 'ANUAL';
   importeLimite: number;
+  /** % del limite a partir del cual avisa (1 a 100) */
+  porcentajeAlerta: number;
 }
 
 export interface CategoriaRequest {

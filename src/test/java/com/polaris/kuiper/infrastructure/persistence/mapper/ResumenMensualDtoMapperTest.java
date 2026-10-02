@@ -1,6 +1,7 @@
 package com.polaris.kuiper.infrastructure.persistence.mapper;
 
 import com.polaris.kuiper.domain.model.Categoria;
+import com.polaris.kuiper.domain.model.EstadoPresupuesto;
 import com.polaris.kuiper.domain.model.GastoCategoria;
 import com.polaris.kuiper.domain.model.ResumenMensual;
 import com.polaris.kuiper.domain.model.TipoMovimiento;
@@ -34,7 +35,9 @@ class ResumenMensualDtoMapperTest {
                 .balance(new BigDecimal("1420.00"))
                 .gastoPorCategoria(List.of(GastoCategoria.builder().categoria(comida())
                         .gastado(new BigDecimal("80.00")).limiteMensual(new BigDecimal("250.00"))
-                        .restante(new BigDecimal("170.00")).build()))
+                        .restante(new BigDecimal("170.00")).porcentaje(new BigDecimal("32.0"))
+                        .porcentajeAlerta(80).estado(EstadoPresupuesto.OK).build()))
+                .presupuestoTotal(new BigDecimal("250.00")).categoriasEnAviso(1).categoriasExcedidas(2)
                 .build();
 
         ResumenMensualDto dto = mapper.toDto(resumen);
@@ -44,17 +47,24 @@ class ResumenMensualDtoMapperTest {
         assertThat(dto.gastos()).isEqualTo(new BigDecimal("80.00"));
         assertThat(dto.balance()).isEqualTo(new BigDecimal("1420.00"));
         assertThat(dto.gastoPorCategoria()).containsExactly(new GastoCategoriaDto(10L, "Comida", "#FF8800",
-                "utensils", new BigDecimal("80.00"), new BigDecimal("250.00"), new BigDecimal("170.00")));
+                "utensils", new BigDecimal("80.00"), new BigDecimal("250.00"), new BigDecimal("170.00"),
+                new BigDecimal("32.0"), 80, EstadoPresupuesto.OK));
+        assertThat(dto.presupuestoTotal()).isEqualTo(new BigDecimal("250.00"));
+        assertThat(dto.categoriasEnAviso()).isEqualTo(1);
+        assertThat(dto.categoriasExcedidas()).isEqualTo(2);
     }
 
     @Test
     @DisplayName("una fila sin presupuesto conserva limite y restante nulos")
     void filaSinPresupuesto() {
         GastoCategoriaDto dto = mapper.toDto(GastoCategoria.builder().categoria(comida())
-                .gastado(new BigDecimal("12.50")).build());
+                .gastado(new BigDecimal("12.50")).estado(EstadoPresupuesto.SIN_PRESUPUESTO).build());
 
         assertThat(dto.limiteMensual()).isNull();
         assertThat(dto.restante()).isNull();
+        assertThat(dto.porcentaje()).isNull();
+        assertThat(dto.porcentajeAlerta()).isNull();
+        assertThat(dto.estado()).isEqualTo(EstadoPresupuesto.SIN_PRESUPUESTO);
         assertThat(dto.gastado()).isEqualTo(new BigDecimal("12.50"));
     }
 

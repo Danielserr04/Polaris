@@ -17,6 +17,12 @@ public record ResumenMensualDto(
         BigDecimal gastos,
         @Schema(description = "ingresos menos gastos; negativo si se gasto mas de lo ingresado")
         BigDecimal balance,
-        List<GastoCategoriaDto> gastoPorCategoria
+        List<GastoCategoriaDto> gastoPorCategoria,
+        @Schema(description = "Suma de los presupuestos MENSUALES; 0.00 si no hay ninguno")
+        BigDecimal presupuestoTotal,
+        @Schema(description = "Cuantas categorias estan en AVISO")
+        int categoriasEnAviso,
+        @Schema(description = "Cuantas categorias estan EXCEDIDAS")
+        int categoriasExcedidas
 ) {
 }
