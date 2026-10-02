@@ -4,6 +4,7 @@ import com.polaris.kuiper.domain.model.PeriodoPresupuesto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,4 +17,6 @@ public interface PresupuestoRepository extends JpaRepository<PresupuestoEntity, 
                                                                           PeriodoPresupuesto periodo);
 
     boolean existsByCategoria_Id(Long categoriaId);
+
+    List<PresupuestoEntity> findByPeriodoOrderByIdAsc(PeriodoPresupuesto periodo);
 }

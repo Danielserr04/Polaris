@@ -1,5 +1,6 @@
 package com.polaris.kuiper.domain.service;
 
+import com.polaris.kuiper.application.in.ComprobarPresupuestoInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
@@ -47,6 +48,9 @@ class MovimientoServiceTest {
 
     @Mock
     private CategoriaRepositoryPort categoriaRepository;
+
+    @Mock
+    private ComprobarPresupuestoInterface comprobarPresupuesto;
 
     @InjectMocks
     private MovimientoService service;
@@ -306,5 +310,50 @@ class MovimientoServiceTest {
                 .isInstanceOf(MovimientoNotFoundException.class);
 
         verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("create de un gasto comprueba el presupuesto de su categoria con la fecha del movimiento")
+    void createDeGastoCompruebaPresupuesto() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.create(USUARIO, movimiento(null, null, 10L, TipoMovimiento.GASTO));
+
+        verify(comprobarPresupuesto).comprobar(USUARIO, 10L, HOY);
+    }
+
+    @Test
+    @DisplayName("update de un gasto tambien comprueba el presupuesto")
+    void updateDeGastoCompruebaPresupuesto() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.update(USUARIO, 5L, movimiento(null, null, 10L, TipoMovimiento.GASTO));
+
+        verify(comprobarPresupuesto).comprobar(USUARIO, 10L, HOY);
+    }
+
+    @Test
+    @DisplayName("Un ingreso no comprueba presupuestos")
+    void ingresoNoCompruebaPresupuesto() {
+        when(categoriaRepository.findById(20L)).thenReturn(Optional.of(categoria(20L, USUARIO, TipoMovimiento.INGRESO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        service.create(USUARIO, movimiento(null, null, 20L, TipoMovimiento.INGRESO));
+
+        verify(comprobarPresupuesto, never()).comprobar(any(), any(), any());
+    }
+
+    @Test
+    @DisplayName("Si la categoria no es valida no se guarda ni se comprueba nada")
+    void sinGuardadoNoHayComprobacion() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.create(USUARIO, movimiento(null, null, 10L, TipoMovimiento.GASTO)))
+                .isInstanceOf(CategoriaNotFoundException.class);
+
+        verify(comprobarPresupuesto, never()).comprobar(any(), any(), any());
     }
 }

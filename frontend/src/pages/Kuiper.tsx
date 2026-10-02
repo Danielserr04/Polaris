@@ -10,6 +10,7 @@ import { FormularioMovimiento } from './kuiper/FormularioMovimiento';
 import { MetasTab } from './kuiper/MetasTab';
 import { MovimientosTab } from './kuiper/MovimientosTab';
 import { RecurrentesTab } from './kuiper/RecurrentesTab';
+import { NotificacionesKuiper } from './kuiper/NotificacionesKuiper';
 import { ResumenTab } from './kuiper/ResumenTab';
 import './kuiper/kuiper.css';
 
@@ -45,6 +46,7 @@ export function Kuiper() {
                 options={meses.map((m) => ({ value: m, label: etiquetaMes(m) }))}
               />
             </div>
+            <NotificacionesKuiper onIr={(p) => setPestana(p as Pestana)} />
             <Button icon="plus" onClick={() => setAbierto({})}>
               Movimiento
             </Button>

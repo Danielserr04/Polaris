@@ -1,5 +1,6 @@
 package com.polaris.kuiper.domain.service;
 
+import com.polaris.kuiper.application.in.ComprobarPresupuestoInterface;
 import com.polaris.kuiper.application.in.CreateMovimientoInterface;
 import com.polaris.kuiper.application.in.DeleteMovimientoInterface;
 import com.polaris.kuiper.application.in.DuplicarMovimientoInterface;
@@ -13,6 +14,7 @@ import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
 import com.polaris.kuiper.domain.model.MovimientoNotFoundException;
+import com.polaris.kuiper.domain.model.TipoMovimiento;
 import com.polaris.shared.error.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +31,10 @@ import java.util.List;
  * ve los movimientos fuera de ella: uno en la papelera es un 404 aqui. La
  * papelera en si la lleva MovimientoPapeleraService. Ver
  * docs/decisiones/038-movimiento-papelera-y-duplicar.md.
+ *
+ * <p>Despues de guardar un gasto se comprueba su presupuesto mensual por si
+ * hay que avisar (docs/decisiones/040-notificaciones-de-kuiper.md). Esa
+ * comprobacion nunca lanza.
  */
 @Service
 @RequiredArgsConstructor
@@ -42,13 +48,14 @@ public class MovimientoService implements
 
     private final MovimientoRepositoryPort repository;
     private final CategoriaRepositoryPort categoriaRepository;
+    private final ComprobarPresupuestoInterface comprobarPresupuesto;
 
     @Override
     public Movimiento create(Long usuarioId, Movimiento movimiento) {
         validarCategoria(usuarioId, movimiento);
         movimiento.setId(null);
         movimiento.setUsuarioId(usuarioId);
-        return repository.save(movimiento);
+        return avisarSiEsGasto(repository.save(movimiento));
     }
 
     @Override
@@ -67,7 +74,7 @@ public class MovimientoService implements
         validarCategoria(usuarioId, movimiento);
         movimiento.setId(existente.getId());
         movimiento.setUsuarioId(existente.getUsuarioId());
-        return repository.save(movimiento);
+        return avisarSiEsGasto(repository.save(movimiento));
     }
 
     @Override
@@ -100,6 +107,13 @@ public class MovimientoService implements
                 .build();
         validarCategoria(usuarioId, copia);
         return repository.save(copia);
+    }
+
+    private Movimiento avisarSiEsGasto(Movimiento guardado) {
+        if (guardado.getTipo() == TipoMovimiento.GASTO) {
+            comprobarPresupuesto.comprobar(guardado.getUsuarioId(), guardado.getCategoriaId(), guardado.getFecha());
+        }
+        return guardado;
     }
 
     /**

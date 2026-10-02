@@ -3,6 +3,7 @@ package com.polaris.kuiper.application.out;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -55,4 +56,6 @@ public interface MovimientoRepositoryPort {
 
     /** Borra de verdad los movimientos de la papelera de esa categoria, para poder borrarla. */
     int deleteEnPapeleraByCategoriaId(Long categoriaId);
+    /** Usuarios con algun movimiento entre las dos fechas, inclusive. Para el resumen mensual del job de avisos. */
+    List<Long> findUsuarioIdsConMovimientos(LocalDate desde, LocalDate hasta);
 }

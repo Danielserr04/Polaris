@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -52,4 +53,9 @@ public interface MovimientoRepository extends JpaRepository<MovimientoEntity, Lo
     @Modifying
     @Query("delete from MovimientoEntity m where m.categoria.id = :categoriaId and m.borradoEn is not null")
     int deleteEnPapeleraByCategoriaId(@Param("categoriaId") Long categoriaId);
+
+    /** Solo fuera de la papelera: lo borrado no cuenta para el resumen mensual. */
+    @Query("select distinct m.usuarioId from MovimientoEntity m "
+            + "where m.fecha between :desde and :hasta and m.borradoEn is null")
+    List<Long> findUsuarioIdsConMovimientos(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
 }

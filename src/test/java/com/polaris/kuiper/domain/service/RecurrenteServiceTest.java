@@ -1,5 +1,6 @@
 package com.polaris.kuiper.domain.service;
 
+import com.polaris.kuiper.application.in.CrearNotificacionInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
@@ -7,9 +8,11 @@ import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
 import com.polaris.kuiper.domain.model.FrecuenciaRecurrente;
 import com.polaris.kuiper.domain.model.Movimiento;
+import com.polaris.kuiper.domain.model.Notificacion;
 import com.polaris.kuiper.domain.model.Recurrente;
 import com.polaris.kuiper.domain.model.RecurrenteNotFoundException;
 import com.polaris.kuiper.domain.model.TipoMovimiento;
+import com.polaris.kuiper.domain.model.TipoNotificacion;
 import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -52,6 +55,9 @@ class RecurrenteServiceTest {
 
     @Mock
     private MovimientoRepositoryPort movimientoRepository;
+
+    @Mock
+    private CrearNotificacionInterface crearNotificacion;
 
     @InjectMocks
     private RecurrenteService service;
@@ -143,6 +149,28 @@ class RecurrenteServiceTest {
         assertThat(r.getProximaFecha()).isEqualTo(LocalDate.of(2026, 10, 5));
         assertThat(r.getCuotasPagadas()).isEqualTo(3);
         verify(repository).save(r);
+    }
+
+    @Test
+    @DisplayName("generar avisa de cada cargo con una clave por recurrente y fecha, para no repetir")
+    void generarAvisaDeCadaCargo() {
+        Recurrente r = recurrente(FrecuenciaRecurrente.MENSUAL, LocalDate.of(2026, 8, 5));
+        r.setId(4L);
+        when(repository.findPendientes(any())).thenReturn(List.of(r));
+
+        service.generar(LocalDate.of(2026, 9, 10));
+
+        ArgumentCaptor<Notificacion> captor = ArgumentCaptor.forClass(Notificacion.class);
+        verify(crearNotificacion, times(2)).crear(captor.capture());
+        assertThat(captor.getAllValues()).extracting(Notificacion::getClave)
+                .containsExactly("recurrente-4-2026-08-05", "recurrente-4-2026-09-05");
+        assertThat(captor.getAllValues()).allSatisfy(n -> {
+            assertThat(n.getTipo()).isEqualTo(TipoNotificacion.CARGO_RECURRENTE);
+            assertThat(n.getUsuarioId()).isEqualTo(USUARIO);
+            assertThat(n.getTitulo()).isEqualTo("Cargo anotado: Netflix");
+            assertThat(n.getTexto()).contains("gasto").contains("12,99");
+            assertThat(n.getEnlace()).isEqualTo(Notificacion.ENLACE_MOVIMIENTOS);
+        });
     }
 
     @Test

@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -95,5 +96,10 @@ public class MovimientoJpaAdapter implements MovimientoRepositoryPort {
     @Override
     public int deleteEnPapeleraByCategoriaId(Long categoriaId) {
         return repository.deleteEnPapeleraByCategoriaId(categoriaId);
+    }
+
+    @Override
+    public List<Long> findUsuarioIdsConMovimientos(LocalDate desde, LocalDate hasta) {
+        return repository.findUsuarioIdsConMovimientos(desde, hasta);
     }
 }
