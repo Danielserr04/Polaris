@@ -1,9 +1,12 @@
 package com.polaris.kuiper.domain.service;
 
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.CuentaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
+import com.polaris.kuiper.domain.model.Cuenta;
+import com.polaris.kuiper.domain.model.CuentaNotFoundException;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
 import com.polaris.kuiper.domain.model.MovimientoNotFoundException;
@@ -45,6 +48,9 @@ class MovimientoServiceTest {
 
     @Mock
     private CategoriaRepositoryPort categoriaRepository;
+
+    @Mock
+    private CuentaRepositoryPort cuentaRepository;
 
     @InjectMocks
     private MovimientoService service;
@@ -233,5 +239,39 @@ class MovimientoServiceTest {
                 .isInstanceOf(MovimientoNotFoundException.class);
 
         verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("create acepta una cuenta propia y no la busca si no viene")
+    void createConYSinCuenta() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(cuentaRepository.findById(3L)).thenReturn(Optional.of(Cuenta.builder().id(3L).usuarioId(USUARIO).build()));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Movimiento conCuenta = movimiento(null, null, 10L, TipoMovimiento.GASTO);
+        conCuenta.setCuentaId(3L);
+
+        assertThat(service.create(USUARIO, conCuenta).getCuentaId()).isEqualTo(3L);
+        assertThat(service.create(USUARIO, movimiento(null, null, 10L, TipoMovimiento.GASTO)).getCuentaId()).isNull();
+        verify(cuentaRepository).findById(3L);
+    }
+
+    @Test
+    @DisplayName("create y update lanzan CuentaNotFoundException si la cuenta es de otro usuario o no existe")
+    void cuentaAjenaONoExistente() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(cuentaRepository.findById(3L))
+                .thenReturn(Optional.of(Cuenta.builder().id(3L).usuarioId(OTRO_USUARIO).build()));
+        when(cuentaRepository.findById(4L)).thenReturn(Optional.empty());
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        Movimiento ajena = movimiento(null, null, 10L, TipoMovimiento.GASTO);
+        ajena.setCuentaId(3L);
+        Movimiento inexistente = movimiento(null, null, 10L, TipoMovimiento.GASTO);
+        inexistente.setCuentaId(4L);
+
+        assertThatThrownBy(() -> service.create(USUARIO, ajena)).isInstanceOf(CuentaNotFoundException.class);
+        assertThatThrownBy(() -> service.update(USUARIO, 5L, inexistente)).isInstanceOf(CuentaNotFoundException.class);
+        verify(repository, never()).save(any());
     }
 }

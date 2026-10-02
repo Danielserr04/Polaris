@@ -13,5 +13,6 @@ public interface RecurrenteFormDtoMapper {
     @Mapping(target = "categoriaNombre", source = "categoria.nombre")
     @Mapping(target = "categoriaColor", source = "categoria.color")
     @Mapping(target = "categoriaIcono", source = "categoria.icono")
+    @Mapping(target = "cuentaNombre", source = "cuenta.nombre")
     RecurrenteFormDto toFormDto(Recurrente recurrente);
 }

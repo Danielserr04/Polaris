@@ -19,6 +19,8 @@ public record MovimientoFormDto(
         String categoriaIcono,
         String concepto,
         String metodoPago,
-        boolean recurrente
+        boolean recurrente,
+        Long cuentaId,
+        String cuentaNombre
 ) {
 }

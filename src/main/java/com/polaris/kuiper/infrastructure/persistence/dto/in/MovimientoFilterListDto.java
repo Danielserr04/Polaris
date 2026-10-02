@@ -7,7 +7,7 @@ import java.time.LocalDate;
 
 /**
  * Los filtros que llegan por query params, todos opcionales:
- * {@code ?desde=2026-09-01&hasta=2026-09-30&categoriaId=3&tipo=GASTO}.
+ * {@code ?desde=2026-09-01&hasta=2026-09-30&categoriaId=3&tipo=GASTO&cuentaId=2}.
  */
 public record MovimientoFilterListDto(
         @Parameter(description = "Fecha minima, inclusive (yyyy-MM-dd)", example = "2026-09-01")
@@ -17,6 +17,8 @@ public record MovimientoFilterListDto(
         @Parameter(description = "Id de la categoria")
         Long categoriaId,
         @Parameter(description = "Tipo de movimiento: INGRESO o GASTO")
-        TipoMovimiento tipo
+        TipoMovimiento tipo,
+        @Parameter(description = "Id de la cuenta")
+        Long cuentaId
 ) {
 }

@@ -77,4 +77,9 @@ public class RecurrenteEntity {
 
     @Column(nullable = false)
     private boolean activo;
+
+    /** Opcional: nula es "sin cuenta". EAGER por lo mismo que la categoria. */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cuenta_id")
+    private CuentaEntity cuenta;
 }

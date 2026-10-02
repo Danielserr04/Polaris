@@ -13,5 +13,6 @@ public interface MovimientoFormDtoMapper {
     @Mapping(target = "categoriaNombre", source = "categoria.nombre")
     @Mapping(target = "categoriaColor", source = "categoria.color")
     @Mapping(target = "categoriaIcono", source = "categoria.icono")
+    @Mapping(target = "cuentaNombre", source = "cuenta.nombre")
     MovimientoFormDto toFormDto(Movimiento movimiento);
 }

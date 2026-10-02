@@ -11,6 +11,7 @@ import {
   type MovimientoRequest,
   type TipoMovimiento,
 } from '../../api/kuiper';
+import { useCuentas } from '../../api/kuiperCuentas';
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
 import { Alert, Button, Dialog, Input, SegmentedControl, Select, Switch } from '../../design-system';
 import { iso } from '../../lib/fechas';
@@ -56,6 +57,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
   const editando = movimiento !== undefined;
   const hoy = iso(new Date());
   const categorias = useCategorias();
+  const cuentas = useCuentas();
   const crearCategoria = useCrearCategoria();
   const crear = useCrearMovimiento();
   const actualizar = useActualizarMovimiento(movimiento?.id ?? 0);
@@ -69,6 +71,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
   const [concepto, setConcepto] = useState(movimiento?.concepto ?? '');
   const [metodoPago, setMetodoPago] = useState(movimiento?.metodoPago ?? '');
   const [recurrente, setRecurrente] = useState(movimiento?.recurrente ?? false);
+  const [cuentaId, setCuentaId] = useState(movimiento?.cuentaId != null ? String(movimiento.cuentaId) : '');
   const [intentado, setIntentado] = useState(false);
   const [confirmandoBorrado, setConfirmandoBorrado] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
@@ -78,6 +81,13 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
     ...(categoriaId === '' ? [{ value: '', label: 'Elige una categoría' }] : []),
     ...delTipo.map((c) => ({ value: String(c.id), label: c.nombre })),
     { value: NUEVA, label: '＋ Nueva categoría…' },
+  ];
+  // Las archivadas no se ofrecen, salvo la que ya tenga el movimiento que se edita.
+  const opcionesCuenta = [
+    { value: '', label: 'Sin cuenta' },
+    ...(cuentas.data ?? [])
+      .filter((c) => !c.archivada || c.id === movimiento?.cuentaId)
+      .map((c) => ({ value: String(c.id), label: c.nombre })),
   ];
   // Si la categoria elegida es de otro tipo (se cambio Gasto/Ingreso), se descarta.
   const categoriaValida = categoriaId === NUEVA || delTipo.some((c) => String(c.id) === categoriaId);
@@ -115,6 +125,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
         concepto: concepto.trim() || null,
         metodoPago: metodoPago.trim() || null,
         recurrente,
+        cuentaId: cuentaId ? Number(cuentaId) : null,
       };
       if (editando) await actualizar.mutateAsync(cuerpo);
       else await crear.mutateAsync(cuerpo);
@@ -210,6 +221,9 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
             options={opciones}
             hint={ver(errorCategoria) ?? undefined}
           />
+        )}
+        {opcionesCuenta.length > 1 && (
+          <Select label="Cuenta" value={cuentaId} onChange={(e) => setCuentaId(e.target.value)} options={opcionesCuenta} />
         )}
         <Input label="Concepto" placeholder="Opcional" maxLength={255} value={concepto} onChange={(e) => setConcepto(e.target.value)} />
         <div className="kui-form__row">

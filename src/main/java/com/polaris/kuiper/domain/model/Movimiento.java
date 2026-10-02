@@ -36,4 +36,7 @@ public class Movimiento {
     private String concepto;
     private String metodoPago;
     private boolean recurrente;
+    /** Opcional: nulo es "sin cuenta". Ver docs/decisiones/039-cuentas-y-transferencias.md. */
+    private Long cuentaId;
+    private Cuenta cuenta;
 }

@@ -10,9 +10,10 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface MovimientoRequestDtoMapper {
 
-    /** id, usuarioId y categoria los pone el servicio; nunca llegan en el body. */
+    /** id, usuarioId y las fichas de categoria y cuenta los pone el servicio; nunca llegan en el body. */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "usuarioId", ignore = true)
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "cuenta", ignore = true)
     Movimiento toDomain(MovimientoRequestDto dto);
 }
