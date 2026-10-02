@@ -97,6 +97,7 @@ export function FormularioTransferencia({ transferencia, origenInicial, onClose 
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title={editando ? 'Editar transferencia' : 'Nueva transferencia'}
       footer={
         confirmando ? (
@@ -135,14 +136,14 @@ export function FormularioTransferencia({ transferencia, origenInicial, onClose 
             value={origen}
             onChange={(e) => setOrigen(e.target.value)}
             options={opciones('Elige una cuenta', '')}
-            hint={ver(errorOrigen) ?? undefined}
+            error={ver(errorOrigen)}
           />
           <Select
             label="Hacia"
             value={destino}
             onChange={(e) => setDestino(e.target.value)}
             options={opciones('Elige una cuenta', origen)}
-            hint={ver(errorDestino) ?? undefined}
+            error={ver(errorDestino)}
           />
         </div>
         <div className="kui-form__row">
@@ -153,9 +154,9 @@ export function FormularioTransferencia({ transferencia, origenInicial, onClose 
             autoFocus
             value={importe}
             onChange={(e) => setImporte(e.target.value)}
-            error={ver(errorImporte)}
+            error={errorImporte} validarAlSalir
           />
-          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={ver(errorFecha)} />
+          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errorFecha} validarAlSalir />
         </div>
         <Input label="Concepto" placeholder="Opcional" maxLength={255} value={concepto} onChange={(e) => setConcepto(e.target.value)} />
         <p className="kui-pistas">Una transferencia mueve saldo entre tus cuentas: no cuenta como ingreso ni como gasto.</p>

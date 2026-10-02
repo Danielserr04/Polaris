@@ -6,7 +6,7 @@ const ALTO_OPCION = 36;
 
 // Desplegable propio: el <select> nativo pinta la lista con los colores del sistema (fondo blanco,
 // resaltado azul) y no se puede estilar. Mantiene la API: `onChange` recibe { target: { value } }.
-export function Select({ label, hint, options = [], icon, size = 'md', id, style, className, value, onChange, disabled, ...rest }) {
+export function Select({ label, hint, error, options = [], icon, size = 'md', id, style, className, value, onChange, disabled, ...rest }) {
   const ops = options.map(o => (typeof o === 'string' ? { value: o, label: o } : o));
   const autoId = React.useId().replace(/:/g, '');
   const bid = id || 'sel-' + autoId;
@@ -105,7 +105,7 @@ export function Select({ label, hint, options = [], icon, size = 'md', id, style
   return (
     <div className={cx('pl-field', className)} style={style}>
       {label && <label className="pl-field__label" htmlFor={bid}>{label}</label>}
-      <div className={cx('pl-input', 'pl-select', size === 'sm' && 'pl-input--sm', abierto && 'pl-select--abierto')}>
+      <div className={cx('pl-input', 'pl-select', size === 'sm' && 'pl-input--sm', error && 'pl-input--error', abierto && 'pl-select--abierto')}>
         {icon && <Icon name={icon} size={15} />}
         <button
           ref={boton}
@@ -117,6 +117,7 @@ export function Select({ label, hint, options = [], icon, size = 'md', id, style
           aria-expanded={abierto}
           aria-controls={abierto ? lid : undefined}
           aria-activedescendant={abierto && activo >= 0 ? `${lid}-${activo}` : undefined}
+          aria-invalid={error ? true : undefined}
           disabled={disabled}
           onClick={() => (abierto ? cerrar() : abrir())}
           onKeyDown={tecla}
@@ -126,7 +127,7 @@ export function Select({ label, hint, options = [], icon, size = 'md', id, style
         </button>
         <Icon name="chevrons-up-down" size={14} className="pl-select__flecha" />
       </div>
-      {hint && <span className="pl-field__hint">{hint}</span>}
+      {error ? <span className="pl-field__error"><Icon name="circle-alert" size={13} />{error}</span> : hint && <span className="pl-field__hint">{hint}</span>}
       {abierto && pos && destino && createPortal(
         <ul ref={lista} id={lid} role="listbox" aria-labelledby={label ? undefined : bid} className="pl-select__lista"
           style={{ left: pos.left, width: pos.width, top: pos.top, bottom: pos.bottom }} onMouseDown={e => e.preventDefault()}>

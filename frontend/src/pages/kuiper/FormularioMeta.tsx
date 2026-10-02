@@ -34,7 +34,6 @@ export function FormularioMeta({ meta, onClose }: Props) {
   const [fechaLimite, setFechaLimite] = useState(meta?.fechaLimite ?? '');
   const [color, setColor] = useState<string | null>(meta?.color ?? COLORES[0]);
   const [icono, setIcono] = useState<string | null>(meta?.icono ?? 'star');
-  const [intentado, setIntentado] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
@@ -43,11 +42,9 @@ export function FormularioMeta({ meta, onClose }: Props) {
   const errorObjetivo = !(objetivoNum > 0) ? 'Escribe un importe mayor que 0, con hasta 2 decimales.' : null;
   const errorFecha = fechaLimite !== '' && !FECHA.test(fechaLimite) ? 'Fecha no válida.' : null;
   const ocupado = crear.isPending || actualizar.isPending || borrar.isPending;
-  const ver = (e: string | null) => (intentado ? e : null);
 
   const guardar = async (ev: FormEvent) => {
     ev.preventDefault();
-    setIntentado(true);
     setErrorEnvio(null);
     if (errorNombre || errorObjetivo || errorFecha) return;
     const cuerpo = {
@@ -82,6 +79,7 @@ export function FormularioMeta({ meta, onClose }: Props) {
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title={editando ? 'Editar meta' : 'Nueva meta de ahorro'}
       footer={
         confirmando ? (
@@ -120,7 +118,7 @@ export function FormularioMeta({ meta, onClose }: Props) {
           placeholder="Viaje, coche, colchón…"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          error={ver(errorNombre)}
+          error={errorNombre} validarAlSalir
         />
         <div className="kui-form__row">
           <Input
@@ -129,14 +127,14 @@ export function FormularioMeta({ meta, onClose }: Props) {
             placeholder="3000"
             value={objetivo}
             onChange={(e) => setObjetivo(e.target.value)}
-            error={ver(errorObjetivo)}
+            error={errorObjetivo} validarAlSalir
           />
           <Input
             label="Fecha límite"
             type="date"
             value={fechaLimite}
             onChange={(e) => setFechaLimite(e.target.value)}
-            error={ver(errorFecha)}
+            error={errorFecha} validarAlSalir
             hint="Opcional. Con fecha, calcula cuánto apartar al mes."
           />
         </div>

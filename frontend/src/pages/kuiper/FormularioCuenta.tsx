@@ -53,7 +53,6 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
   const [color, setColor] = useState<string | null>(cuenta?.color ?? null);
   const [icono, setIcono] = useState<string | null>(cuenta?.icono ?? null);
   const [archivada, setArchivada] = useState(cuenta?.archivada ?? false);
-  const [intentado, setIntentado] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
@@ -61,11 +60,9 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
   const errorNombre = nombre.trim() === '' ? 'Escribe un nombre.' : null;
   const errorSaldo = Number.isNaN(saldoNum) ? 'Escribe un importe, con hasta 2 decimales (puede ser negativo).' : null;
   const ocupado = crear.isPending || actualizar.isPending || borrar.isPending;
-  const ver = (e: string | null) => (intentado ? e : null);
 
   const guardar = async (ev: FormEvent) => {
     ev.preventDefault();
-    setIntentado(true);
     setErrorEnvio(null);
     if (errorNombre || errorSaldo) return;
     const cuerpo: CuentaRequest = {
@@ -101,6 +98,7 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title={editando ? 'Editar cuenta' : 'Nueva cuenta'}
       footer={
         confirmando ? (
@@ -139,7 +137,7 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
           placeholder="Nómina, Hucha, Cartera…"
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          error={ver(errorNombre)}
+          error={errorNombre} validarAlSalir
         />
         <div className="kui-form__row">
           <Select label="Tipo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoCuenta)} options={TIPOS_CUENTA} />
@@ -151,7 +149,7 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
           placeholder="0,00"
           value={saldo}
           onChange={(e) => setSaldo(e.target.value)}
-          error={ver(errorSaldo)}
+          error={errorSaldo} validarAlSalir
           hint="Lo que había al empezar a apuntar. El saldo actual se calcula con los movimientos y transferencias."
         />
         <div>

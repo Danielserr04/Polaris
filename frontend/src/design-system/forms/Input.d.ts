@@ -14,6 +14,8 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   /** Fixed value: dashed border + lock icon, read-only. Not the same as disabled. */
   locked?: boolean;
   size?: 'sm' | 'md';
+  /** Pass `error` always: it shows once the field was edited and left, or when its form is submitted. */
+  validarAlSalir?: boolean;
 }
 export declare function Input(props: InputProps): JSX.Element;
 export declare function Kbd(props: { children?: React.ReactNode }): JSX.Element;

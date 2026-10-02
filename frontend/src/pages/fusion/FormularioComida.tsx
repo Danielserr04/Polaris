@@ -122,6 +122,7 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       width={560}
       title={editando ? 'Editar comida' : 'Registrar comida'}
       footer={
@@ -160,7 +161,7 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
             onChange={(v) => setMomento(v as MomentoComida)}
             options={MOMENTOS.map((m) => ({ value: m, label: ETIQUETA_MOMENTO[m] }))}
           />
-          <Input aria-label="Fecha" type="date" max={hoy} value={dia} onChange={(e) => setDia(e.target.value)} error={ver(errDia)} />
+          <Input aria-label="Fecha" type="date" max={hoy} value={dia} onChange={(e) => setDia(e.target.value)} error={errDia} validarAlSalir />
         </div>
 
         <BuscadorAlimento onElegir={anadir} />
@@ -182,7 +183,7 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
                     trailing={<span className="muted" style={{ fontSize: 12 }}>g</span>}
                     value={l.cantidad}
                     onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, cantidad: e.target.value } : x)))}
-                    error={ver(errCantidad(l.cantidad))}
+                    error={errCantidad(l.cantidad)} validarAlSalir
                   />
                   <span className="fus-linea__k">{n > 0 ? `${num((l.kcal100g * n) / 100)} kcal` : '—'}</span>
                   <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((_, j) => j !== i))} />
