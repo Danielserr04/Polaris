@@ -1,17 +1,17 @@
 package com.polaris.atlas.domain.model;
 
+import com.polaris.shared.logro.CalculoLogros.FechaImporte;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Totales historicos de entreno de un usuario, calculados en la base. Lo que
- * necesitan los logros.
+ * La historia de entreno de un usuario, agregada en la base, con fechas para
+ * saber cuando se consiguio cada logro. Sin orden garantizado en las listas.
  */
 @Getter
 @Builder
@@ -19,10 +19,10 @@ import java.util.List;
 @AllArgsConstructor
 public class EstadisticasEntreno {
 
-    private long numeroSesiones;
-    private long ejerciciosDistintos;
-    /** Suma de reps por peso de todas las series, en kg. */
-    private BigDecimal volumenTotal;
-    /** Fechas distintas con sesion, sin orden garantizado. */
+    /** La fecha de cada sesion: dos sesiones el mismo dia son dos fechas iguales. */
     private List<LocalDate> fechasSesion;
+    /** El primer dia de cada ejercicio con alguna serie: una fecha por ejercicio distinto. */
+    private List<LocalDate> primerUsoEjercicios;
+    /** Reps por peso de cada sesion con series, en kg. */
+    private List<FechaImporte> volumenPorSesion;
 }

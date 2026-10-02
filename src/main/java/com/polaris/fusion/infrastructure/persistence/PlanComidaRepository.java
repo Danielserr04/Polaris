@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Spring Data. Solo la usa PlanComidaJpaAdapter.
+ * Spring Data. La usan PlanComidaJpaAdapter y EstadisticasLogrosJpaAdapter (logros).
  */
 public interface PlanComidaRepository extends JpaRepository<PlanComidaEntity, Long>,
         JpaSpecificationExecutor<PlanComidaEntity> {
@@ -19,4 +19,6 @@ public interface PlanComidaRepository extends JpaRepository<PlanComidaEntity, Lo
     @Query("update PlanComidaEntity p set p.activo = case when p.id = :id then true else false end "
             + "where p.usuarioId = :usuarioId")
     int activarUnico(@Param("usuarioId") Long usuarioId, @Param("id") Long id);
+
+    long countByUsuarioId(Long usuarioId);
 }

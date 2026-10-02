@@ -10,6 +10,8 @@ export interface NavBarProps {
   onBrand?: () => void;
   /** Pass null to hide the search trigger */
   onSearch?: (() => void) | null;
+  /** Polaris: botones junto al avatar (p. ej. Logros). No esta en el export de design/. */
+  actions?: React.ReactNode;
   user?: { name: string; src?: string; onClick?: () => void };
   style?: React.CSSProperties;
 }

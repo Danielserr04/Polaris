@@ -1,16 +1,8 @@
-import { type Logro, type MetaEntreno, mensajeError, useLogros, useMetas } from '../../api/atlas';
+import { useNavigate } from 'react-router-dom';
+import { type MetaEntreno, mensajeError, useLogros, useMetas } from '../../api/atlas';
 import { Alert, Badge, Button, Card, Icon, ProgressBar, Stat } from '../../design-system';
 import { deIso, diasEntre, num } from '../../lib/fechas';
-import { iconoOr } from '../../lib/iconos';
 import { NOMBRE_TIPO } from './FormularioMetaEntreno';
-
-const UNIDAD: Record<Logro['metrica'], string> = {
-  SESIONES: 'sesiones',
-  EJERCICIOS: 'ejercicios',
-  TONELADAS: 't',
-  PESAJES: 'pesajes',
-  RACHA_SEMANAS: 'semanas',
-};
 
 function valor(m: MetaEntreno, n: number | null | undefined): string {
   if (n == null) return '—';
@@ -32,6 +24,7 @@ function plazo(fecha: string): string {
 
 /** Metas personales y logros de entreno, traidos de FitCore. */
 export function MetasTab({ onEditar }: { onEditar: (m: MetaEntreno) => void }) {
+  const navigate = useNavigate();
   const metas = useMetas();
   const logros = useLogros();
 
@@ -116,29 +109,19 @@ export function MetasTab({ onEditar }: { onEditar: (m: MetaEntreno) => void }) {
       </div>
 
       <div className="span-12">
-        <Card eyebrow="Logros" title="Lo que llevas conseguido" padding="12px 18px 18px">
-          {logros.isPending ? (
-            <p className="muted" style={{ margin: 0 }}>Cargando…</p>
-          ) : (
-            <div className="atl-logros">
-              {logros.data.map((l) => (
-                <div key={l.codigo} className={'atl-logro' + (l.conseguido ? ' atl-logro--si' : '')} title={l.descripcion}>
-                  <span className="atl-logro__icono">
-                    <Icon name={iconoOr(l.icono, 'trophy')} size={18} />
-                  </span>
-                  <div className="atl-logro__txt">
-                    <b>{l.nombre}</b>
-                    <span className="muted">{l.descripcion}</span>
-                    {!l.conseguido && (
-                      <span className="pl-row__num">
-                        {num(l.progreso)} / {num(l.objetivo)} {UNIDAD[l.metrica]}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
+        <Card
+          eyebrow="Logros"
+          title="Tus logros están ahora en su propio apartado"
+          padding="12px 18px 18px"
+          action={
+            <Button size="sm" variant="secondary" onClick={() => navigate('/logros?modulo=atlas')}>
+              <Icon name="trophy" size={14} /> Ver logros
+            </Button>
+          }
+        >
+          <p className="muted" style={{ margin: 0 }}>
+            Los de entreno y los de todo Polaris juntos, con el día en que conseguiste cada uno. Están junto a tu perfil.
+          </p>
         </Card>
       </div>
     </div>

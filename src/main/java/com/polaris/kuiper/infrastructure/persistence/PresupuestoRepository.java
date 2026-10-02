@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Spring Data. Solo la usa PresupuestoJpaAdapter.
+ * Spring Data. La usan PresupuestoJpaAdapter y EstadisticasLogrosJpaAdapter (logros).
  */
 public interface PresupuestoRepository extends JpaRepository<PresupuestoEntity, Long>,
         JpaSpecificationExecutor<PresupuestoEntity> {
@@ -19,4 +19,6 @@ public interface PresupuestoRepository extends JpaRepository<PresupuestoEntity, 
     boolean existsByCategoria_Id(Long categoriaId);
 
     List<PresupuestoEntity> findByPeriodoOrderByIdAsc(PeriodoPresupuesto periodo);
+
+    long countByUsuarioId(Long usuarioId);
 }

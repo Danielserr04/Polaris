@@ -37,6 +37,7 @@ Si aparece la tentación de meter un cálculo aquí, la pregunta es: ¿lo necesi
 | `Perfil` | **Hecha** — `GET`/`PUT /api/nucleo/perfil`, un perfil por usuario. Ver [[009-perfil-unico-por-usuario]] |
 | `RegistroPeso` | **Hecha** — CRUD en `/api/nucleo/registro-peso`, filtro `desde`/`hasta`. Ver [[010-registro-peso-un-peso-por-dia]] |
 | `MedidaCorporal` | **Hecha** — CRUD en `/api/nucleo/medida-corporal`, filtro `desde`/`hasta`, al menos una medida. Ver [[041-medida-corporal-una-por-dia]] |
+| Logros | **Hechos** — `GET /api/nucleo/logros`: pesajes, rachas de pesaje, medidas y perfil completo. Ver [[044-logros-globales-con-fecha-calculada]] |
 
 ## Notas
 

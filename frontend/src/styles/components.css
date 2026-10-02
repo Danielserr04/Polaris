@@ -228,6 +228,10 @@
 .pl-nav__search span{flex:1;text-align:left}
 .pl-nav__user{display:inline-flex;padding:0;border:0;background:none;cursor:pointer;border-radius:var(--radius-sm);transition:transform var(--dur-fast) var(--ease-spring)}
 .pl-nav__user:hover{transform:scale(1.06)}
+/* Accesos junto al avatar (Polaris: logros) */
+.pl-nav__act{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;margin-left:4px;padding:0;border:1px solid var(--border-1);border-radius:50%;background:var(--bg-sunken);color:var(--text-2);cursor:pointer;transition:color var(--dur-fast),border-color var(--dur-fast),transform var(--dur-fast) var(--ease-spring)}
+.pl-nav__act:hover{color:var(--mod-polaris);border-color:var(--mod-polaris);transform:rotate(-8deg)}
+.pl-nav__act[aria-current="page"]{color:var(--mod-polaris);border-color:var(--mod-polaris);background:color-mix(in oklab,var(--mod-polaris) 14%,transparent)}
 
 /* Alert */
 .pl-alert{--tone:var(--info);display:flex;align-items:flex-start;gap:12px;padding:12px 14px;border-radius:var(--radius-sm);border:1px solid color-mix(in oklab,var(--tone) 32%,transparent);background:color-mix(in oklab,var(--tone) 8%,transparent)}

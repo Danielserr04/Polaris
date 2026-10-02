@@ -59,10 +59,3 @@
 .atl-meta__actual{font-size:22px;font-weight:600;color:var(--text-1)}
 .atl-meta__pie{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2)}
 .atl-meta__pie span{display:inline-flex;align-items:center;gap:6px}
-.atl-logros{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
-.atl-logro{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px dashed var(--border-2);border-radius:var(--radius-xs);opacity:.6}
-.atl-logro--si{border-style:solid;border-color:var(--accent);opacity:1}
-.atl-logro__icono{display:inline-flex;align-items:center;justify-content:center;flex:none;width:34px;height:34px;border-radius:50%;background:var(--bg-sunken);color:var(--text-3)}
-.atl-logro--si .atl-logro__icono{background:var(--accent);color:var(--text-on-accent)}
-.atl-logro__txt{display:flex;flex-direction:column;gap:2px;min-width:0;font-size:12.5px}
-.atl-logro__txt b{font-size:13.5px;font-weight:600}

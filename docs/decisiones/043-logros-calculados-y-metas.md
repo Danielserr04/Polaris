@@ -31,3 +31,4 @@ FitCore tenía metas personales (`goals`) y logros (`achievements`, con una tabl
 
 - No hay "conseguido el día X": si se quiere, hace falta otra decisión y una tabla.
 - Los logros de recetas de FitCore no están: las recetas son de [[fusion]].
+- Nota (2026-10-02): los logros pasan a ser de todos los módulos, con la fecha calculada desde los datos y su propio apartado. Los pesajes se van a Núcleo. Ver [[044-logros-globales-con-fecha-calculada]].
