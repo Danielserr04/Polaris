@@ -7,7 +7,8 @@
   --tier-platino-1:#d9f4ff;--tier-platino-2:#7aa9c9;
   display:flex;flex-direction:column;gap:20px;
 }
-.lg-resumen{margin-bottom:4px}
+.lg-resumen{margin-bottom:0}
+.lg-resumen .pl-card__body{justify-content:center}
 .lg-vacio{margin:0;font-size:13px;line-height:1.5}
 
 /* Medalla */
@@ -32,24 +33,28 @@
 .lg-barra{display:block;height:6px;border-radius:999px;background:var(--surface-3);overflow:hidden}
 .lg-barra>span{display:block;height:100%;border-radius:inherit;background:var(--accent);transition:width 700ms var(--ease-spring)}
 
-/* Coleccion */
-.lg-coleccion{display:flex;align-items:center;gap:22px}
-.lg-niveles{flex:1;display:flex;flex-direction:column;gap:9px;margin:0;padding:0;list-style:none;font-size:13.5px}
-.lg-niveles li{display:flex;align-items:center;gap:10px}
-.lg-niveles li>span:nth-child(2){flex:1;color:var(--text-2)}
-.lg-niveles b{font-family:var(--font-mono);font-weight:600}
-.lg-punto{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--t1),var(--t2))}
+/* Coleccion: anillo y cifra grande, niveles debajo en una fila */
+.lg-coleccion{display:flex;align-items:center;gap:18px}
+.lg-coleccion__dato{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;font-size:12.5px}
+.lg-coleccion__num{font-family:var(--font-display);font-stretch:118%;font-weight:800;font-size:30px;line-height:1.05;letter-spacing:-.01em}
+.lg-coleccion__num .muted{font-size:18px}
+.lg-niveles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px;margin:8px 0 0;padding:0;list-style:none;font-size:12.5px}
+.lg-niveles li{display:flex;align-items:center;gap:6px;min-width:0}
+.lg-niveles__nombre{flex:1;color:var(--text-2)}
+.lg-niveles b{font-family:var(--font-mono);font-weight:600;font-size:12px}
+.lg-punto{flex:none;width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--t1),var(--t2))}
 .lg-punto[data-nivel="BRONCE"]{--t1:var(--tier-bronce-1);--t2:var(--tier-bronce-2)}
 .lg-punto[data-nivel="PLATA"]{--t1:var(--tier-plata-1);--t2:var(--tier-plata-2)}
 .lg-punto[data-nivel="ORO"]{--t1:var(--tier-oro-1);--t2:var(--tier-oro-2)}
 .lg-punto[data-nivel="PLATINO"]{--t1:var(--tier-platino-1);--t2:var(--tier-platino-2)}
 
-/* Listas cortas: ultimos y casi */
-.lg-lista{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
-.lg-lista li{display:flex;align-items:center;gap:12px;min-width:0}
-.lg-lista li>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
-.lg-lista li b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.lg-lista__dato{flex:none;font-family:var(--font-mono);font-size:12px;color:var(--text-3)}
+/* Listas cortas: ultimos y casi. Tres filas compactas, una linea de texto cada una */
+.lg-lista{display:flex;flex-direction:column;gap:10px;margin:0;padding:0;list-style:none}
+.lg-lista li{display:flex;align-items:center;gap:10px;min-width:0}
+.lg-lista li>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;font-size:12px}
+.lg-lista li b{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.lg-lista__linea{display:flex;align-items:baseline;justify-content:space-between;gap:8px;min-width:0}
+.lg-lista__dato{flex:none;font-family:var(--font-mono);font-size:11.5px;color:var(--text-3)}
 
 /* Filtros */
 .lg-filtros{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-top:4px}
@@ -83,3 +88,5 @@
   .lg-rejilla{grid-template-columns:1fr}
   .lg-filtros{flex-direction:column;align-items:stretch}
 }
+/* En las listas la medalla es pequena: candado a juego */
+.lg-lista .lg-medalla__candado{width:14px;height:14px;right:-3px;bottom:-3px}
