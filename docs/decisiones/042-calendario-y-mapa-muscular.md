@@ -27,3 +27,5 @@ FitCore tenía un calendario de entrenos, un mapa muscular y calculadoras (1RM, 
 ## Actualización (2026-10-02)
 
 Los polígonos de FitCore se sustituyen por un dibujo propio más fiel (`mapaMuscular.data.ts`): 20 músculos con curvas en lugar de polígonos rectos, separando por ejemplo cuádriceps en vasto lateral, recto femoral y vasto medial, el recto abdominal en bloques, isquios, sóleo, tibial, serrato, redondo y glúteo medio. Se dibuja media figura y se refleja. Al pasar el ratón se ve el nombre del músculo y sus series. Ya no hay código de react-body-highlighter.
+
+Revisión anatómica (2026-10-02): el pectoral pasa a abanico hacia el brazo, bajo el deltoides; el dorsal sube hasta la axila; el glúteo mayor baja en diagonal; el sóleo asoma a los lados de los gemelos. Se añaden esternocleidomastoideo, braquial, sartorio y tensor de la fascia lata, y el antebrazo se parte en braquiorradial y flexores. De frente el tríceps asoma por dentro del brazo, no por fuera. Sigue siendo un esquema, no una lámina médica.
