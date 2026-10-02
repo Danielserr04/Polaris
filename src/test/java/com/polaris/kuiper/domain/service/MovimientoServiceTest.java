@@ -24,6 +24,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -215,13 +217,25 @@ class MovimientoServiceTest {
     }
 
     @Test
-    @DisplayName("delete comprueba propiedad antes de borrar")
+    @DisplayName("delete comprueba propiedad y manda a la papelera, sin borrar de verdad")
     void deleteComprobarPropiedadAntesDeBorrar() {
         when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
 
         service.delete(USUARIO, 5L);
 
-        verify(repository).deleteById(5L);
+        verify(repository).moverAPapelera(eq(USUARIO), eq(List.of(5L)), any());
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("delete de un movimiento que ya esta en la papelera es 404 (findById no lo ve)")
+    void deleteEnPapeleraEs404() {
+        when(repository.findById(5L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.delete(USUARIO, 5L))
+                .isInstanceOf(MovimientoNotFoundException.class);
+
+        verify(repository, never()).moverAPapelera(any(), anyList(), any());
     }
 
     @Test
@@ -233,5 +247,64 @@ class MovimientoServiceTest {
                 .isInstanceOf(MovimientoNotFoundException.class);
 
         verify(repository, never()).deleteById(any());
+        verify(repository, never()).moverAPapelera(any(), anyList(), any());
+    }
+
+    @Test
+    @DisplayName("duplicar copia todo salvo id y fecha, sin la marca recurrente, con la fecha pedida")
+    void duplicarCopiaConLaFechaPedida() {
+        Movimiento original = movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO);
+        original.setConcepto("Cafe");
+        original.setMetodoPago("Tarjeta");
+        original.setRecurrente(true);
+        when(repository.findById(5L)).thenReturn(Optional.of(original));
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Movimiento copia = service.duplicar(USUARIO, 5L, LocalDate.of(2026, 1, 15));
+
+        assertThat(copia.getId()).isNull();
+        assertThat(copia.getUsuarioId()).isEqualTo(USUARIO);
+        assertThat(copia.getFecha()).isEqualTo(LocalDate.of(2026, 1, 15));
+        assertThat(copia.getImporte()).isEqualByComparingTo("12.50");
+        assertThat(copia.getTipo()).isEqualTo(TipoMovimiento.GASTO);
+        assertThat(copia.getCategoriaId()).isEqualTo(10L);
+        assertThat(copia.getConcepto()).isEqualTo("Cafe");
+        assertThat(copia.getMetodoPago()).isEqualTo("Tarjeta");
+        assertThat(copia.isRecurrente()).isFalse();
+        assertThat(copia.getBorradoEn()).isNull();
+        assertThat(copia).isNotSameAs(original);
+    }
+
+    @Test
+    @DisplayName("duplicar sin fecha usa hoy")
+    void duplicarSinFechaUsaHoy() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.save(any(Movimiento.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        assertThat(service.duplicar(USUARIO, 5L, null).getFecha()).isEqualTo(LocalDate.now());
+    }
+
+    @Test
+    @DisplayName("duplicar con fecha futura es 400 y no guarda")
+    void duplicarConFechaFuturaLanza() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.duplicar(USUARIO, 5L, LocalDate.now().plusDays(1)))
+                .isInstanceOf(ValidationException.class);
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("duplicar el movimiento de otro usuario es 404 y no guarda")
+    void duplicarDeOtroUsuarioLanza() {
+        when(repository.findById(5L)).thenReturn(Optional.of(movimiento(5L, OTRO_USUARIO, 10L, TipoMovimiento.GASTO)));
+
+        assertThatThrownBy(() -> service.duplicar(USUARIO, 5L, null))
+                .isInstanceOf(MovimientoNotFoundException.class);
+
+        verify(repository, never()).save(any());
     }
 }

@@ -3,6 +3,7 @@ import { PageHeader } from '../components/PageHeader';
 import { Button, Select, Tabs } from '../design-system';
 import { etiquetaMes, periodo as periodoDe, ultimosMeses } from '../lib/fechas';
 import type { MovimientoList } from '../api/kuiper';
+import { AvisoKuiper } from './kuiper/AvisoKuiper';
 import { CategoriasTab } from './kuiper/CategoriasTab';
 import { FormularioMovimiento } from './kuiper/FormularioMovimiento';
 import { MovimientosTab } from './kuiper/MovimientosTab';
@@ -65,6 +66,7 @@ export function Kuiper() {
         <CategoriasTab />
       )}
       {abierto && <FormularioMovimiento movimientoId={abierto.id} periodo={periodo} onClose={() => setAbierto(null)} />}
+      <AvisoKuiper />
     </div>
   );
 }

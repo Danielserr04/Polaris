@@ -13,6 +13,7 @@ import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -171,14 +173,16 @@ class CategoriaServiceTest {
     }
 
     @Test
-    @DisplayName("delete comprueba propiedad antes de borrar")
+    @DisplayName("delete comprueba propiedad y borra antes los movimientos de la papelera de la categoria")
     void deleteComprobarPropiedadAntesDeBorrar() {
         when(repository.findById(5L)).thenReturn(Optional.of(categoria(5L, USUARIO, "Comida", TipoMovimiento.GASTO)));
         when(movimientoRepository.existsByCategoriaId(5L)).thenReturn(false);
 
         service.delete(USUARIO, 5L);
 
-        verify(repository).deleteById(5L);
+        InOrder orden = inOrder(movimientoRepository, repository);
+        orden.verify(movimientoRepository).deleteEnPapeleraByCategoriaId(5L);
+        orden.verify(repository).deleteById(5L);
     }
 
     @Test
@@ -191,6 +195,7 @@ class CategoriaServiceTest {
                 .isInstanceOf(ValidationException.class);
 
         verify(repository, never()).deleteById(any());
+        verify(movimientoRepository, never()).deleteEnPapeleraByCategoriaId(any());
     }
 
     @Test
