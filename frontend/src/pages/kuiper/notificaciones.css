@@ -1,0 +1,17 @@
+/* Campana de notificaciones de Kuiper (NotificacionesKuiper.tsx). */
+.kui-bell{position:relative;display:inline-flex}
+.kui-bell__n{position:absolute;top:-6px;right:-8px;pointer-events:none}
+.kui-bell__n .pl-badge{height:18px;padding:0 5px;font-size:10px;letter-spacing:0}
+
+.kui-notifs{display:flex;flex-direction:column;margin:-4px -8px;max-height:min(60vh,520px);overflow-y:auto}
+.kui-notif{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:start;padding:10px 8px;border-radius:var(--radius-sm)}
+.kui-notif+.kui-notif{border-top:1px solid var(--border-1)}
+.kui-notif__main{all:unset;cursor:pointer;display:flex;flex-direction:column;gap:2px;min-width:0}
+.kui-notif__main:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+.kui-notif__t{font-size:14px;color:var(--text-1);overflow-wrap:anywhere}
+.kui-notif--nueva .kui-notif__t{font-weight:600}
+.kui-notif__x{font-size:13px;color:var(--text-2);overflow-wrap:anywhere}
+.kui-notif__f{font-family:var(--font-mono);font-size:11px;color:var(--text-3)}
+.kui-notif__ico{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--tone,var(--text-2));background:color-mix(in oklab,var(--tone,var(--text-2)) 14%,transparent);position:relative}
+.kui-notif--nueva .kui-notif__ico::after{content:"";position:absolute;top:-1px;right:-1px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.kui-notif__acc{display:flex;gap:2px}

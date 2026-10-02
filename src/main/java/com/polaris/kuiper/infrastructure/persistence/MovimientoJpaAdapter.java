@@ -10,6 +10,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,7 +44,12 @@ public class MovimientoJpaAdapter implements MovimientoRepositoryPort {
 
     @Override
     public Optional<Movimiento> findById(Long id) {
-        return repository.findById(id).map(mapper::toDomain);
+        return repository.findByIdAndBorradoEnIsNull(id).map(mapper::toDomain);
+    }
+
+    @Override
+    public Optional<Movimiento> findEnPapeleraById(Long id) {
+        return repository.findByIdAndBorradoEnIsNotNull(id).map(mapper::toDomain);
     }
 
     @Override
@@ -53,12 +60,46 @@ public class MovimientoJpaAdapter implements MovimientoRepositoryPort {
     }
 
     @Override
+    public List<Movimiento> findPapelera(Long usuarioId) {
+        return mapper.toDomainList(
+                repository.findByUsuarioIdAndBorradoEnIsNotNullOrderByBorradoEnDescIdDesc(usuarioId));
+    }
+
+    @Override
+    public int moverAPapelera(Long usuarioId, List<Long> ids, LocalDateTime borradoEn) {
+        if (ids.isEmpty()) {
+            return 0;
+        }
+        return repository.moverAPapelera(usuarioId, ids, borradoEn);
+    }
+
+    @Override
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
 
     @Override
+    public int vaciarPapelera(Long usuarioId) {
+        return repository.vaciarPapelera(usuarioId);
+    }
+
+    @Override
+    public int purgarPapelera(LocalDateTime limite) {
+        return repository.purgarPapelera(limite);
+    }
+
+    @Override
     public boolean existsByCategoriaId(Long categoriaId) {
-        return repository.existsByCategoria_Id(categoriaId);
+        return repository.existsByCategoria_IdAndBorradoEnIsNull(categoriaId);
+    }
+
+    @Override
+    public int deleteEnPapeleraByCategoriaId(Long categoriaId) {
+        return repository.deleteEnPapeleraByCategoriaId(categoriaId);
+    }
+
+    @Override
+    public List<Long> findUsuarioIdsConMovimientos(LocalDate desde, LocalDate hasta) {
+        return repository.findUsuarioIdsConMovimientos(desde, hasta);
     }
 }

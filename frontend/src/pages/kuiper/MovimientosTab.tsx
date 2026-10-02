@@ -1,8 +1,10 @@
 import { useMemo, useState } from 'react';
 import { mensajeError, useCategorias, useMovimientos, type MovimientoList, type TipoMovimiento } from '../../api/kuiper';
+import { avisar, useBorrarMovimientos, useDuplicarMovimiento } from '../../api/kuiperPapelera';
 import { Alert, Button, Card, SegmentedControl, Select } from '../../design-system';
 import { rangoMes } from '../../lib/fechas';
 import { ListaMovimientos } from './ListaMovimientos';
+import { PapeleraDialog } from './PapeleraDialog';
 
 interface Props {
   periodo: string;
@@ -15,7 +17,12 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
   const { desde, hasta } = rangoMes(periodo);
   const [tipo, setTipo] = useState<FiltroTipo>('TODOS');
   const [categoria, setCategoria] = useState('');
+  // null = fuera del modo seleccion.
+  const [seleccion, setSeleccion] = useState<Set<number> | null>(null);
+  const [verPapelera, setVerPapelera] = useState(false);
   const categorias = useCategorias();
+  const borrarVarios = useBorrarMovimientos();
+  const duplicar = useDuplicarMovimiento();
   const movimientos = useMovimientos({
     desde,
     hasta,
@@ -38,6 +45,31 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
     [movimientos.data],
   );
   const hayFiltros = tipo !== 'TODOS' || categoria !== '';
+  // Solo cuenta lo seleccionado que sigue a la vista (al cambiar de filtro o de mes no se borra lo oculto).
+  const elegidos = seleccion ? filas.filter((m) => seleccion.has(m.id)).map((m) => m.id) : [];
+
+  const alternar = (id: number) =>
+    setSeleccion((s) => {
+      const n = new Set(s ?? []);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+
+  const borrarElegidos = () =>
+    borrarVarios.mutate(elegidos, {
+      onSuccess: () => setSeleccion(null),
+      onError: (e) => avisar({ texto: mensajeError(e), tono: 'danger' }),
+    });
+
+  const duplicarFila = (m: MovimientoList) =>
+    duplicar.mutate(
+      { id: m.id },
+      {
+        onSuccess: () => avisar({ texto: `«${m.concepto || m.categoriaNombre}» duplicado con fecha de hoy.`, tono: 'success' }),
+        onError: (e) => avisar({ texto: mensajeError(e), tono: 'danger' }),
+      },
+    );
 
   return (
     <>
@@ -57,7 +89,38 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
         <div className="kui-toolbar__sel">
           <Select size="sm" aria-label="Categoría" value={categoria} onChange={(e) => setCategoria(e.target.value)} options={opciones} />
         </div>
+        <span className="kui-selbar__sep" />
+        {seleccion === null && filas.length > 0 && (
+          <Button size="sm" variant="ghost" icon="check" onClick={() => setSeleccion(new Set())}>
+            Seleccionar
+          </Button>
+        )}
+        <Button size="sm" variant="ghost" icon="trash-2" onClick={() => setVerPapelera(true)}>
+          Papelera
+        </Button>
       </div>
+
+      {seleccion !== null && (
+        <div className="kui-selbar" role="toolbar" aria-label="Selección">
+          <span>
+            {elegidos.length === 0 ? 'Pulsa los movimientos que quieras borrar' : `${elegidos.length} seleccionado${elegidos.length === 1 ? '' : 's'}`}
+          </span>
+          <Button
+            size="sm"
+            variant="ghost"
+            onClick={() => setSeleccion(elegidos.length === filas.length ? new Set() : new Set(filas.map((m) => m.id)))}
+          >
+            {elegidos.length === filas.length && filas.length > 0 ? 'Ninguno' : 'Todos'}
+          </Button>
+          <span className="kui-selbar__sep" />
+          <Button size="sm" variant="ghost" onClick={() => setSeleccion(null)}>
+            Cancelar
+          </Button>
+          <Button size="sm" variant="danger" icon="trash-2" disabled={elegidos.length === 0} loading={borrarVarios.isPending} onClick={borrarElegidos}>
+            Mandar a la papelera
+          </Button>
+        </div>
+      )}
 
       {movimientos.isError ? (
         <Alert
@@ -79,9 +142,13 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
             movimientos={filas}
             vacio={hayFiltros ? 'Nada con estos filtros.' : 'Sin movimientos este mes.'}
             onEditar={onEditar}
+            seleccion={seleccion ?? undefined}
+            onAlternar={alternar}
+            onDuplicar={duplicarFila}
           />
         </Card>
       )}
+      {verPapelera && <PapeleraDialog onClose={() => setVerPapelera(false)} />}
     </>
   );
 }

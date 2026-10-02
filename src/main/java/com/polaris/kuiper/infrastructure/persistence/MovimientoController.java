@@ -2,10 +2,12 @@ package com.polaris.kuiper.infrastructure.persistence;
 
 import com.polaris.kuiper.application.in.CreateMovimientoInterface;
 import com.polaris.kuiper.application.in.DeleteMovimientoInterface;
+import com.polaris.kuiper.application.in.DuplicarMovimientoInterface;
 import com.polaris.kuiper.application.in.GetMovimientoInterface;
 import com.polaris.kuiper.application.in.ListMovimientoInterface;
 import com.polaris.kuiper.application.in.UpdateMovimientoInterface;
 import com.polaris.kuiper.domain.model.Movimiento;
+import com.polaris.kuiper.infrastructure.persistence.dto.in.MovimientoDuplicarRequestDto;
 import com.polaris.kuiper.infrastructure.persistence.dto.in.MovimientoFilterListDto;
 import com.polaris.kuiper.infrastructure.persistence.dto.in.MovimientoRequestDto;
 import com.polaris.kuiper.infrastructure.persistence.dto.out.MovimientoFormDto;
@@ -52,6 +54,7 @@ public class MovimientoController {
     private final ListMovimientoInterface listMovimiento;
     private final UpdateMovimientoInterface updateMovimiento;
     private final DeleteMovimientoInterface deleteMovimiento;
+    private final DuplicarMovimientoInterface duplicarMovimiento;
     private final MovimientoRequestDtoMapper requestDtoMapper;
     private final MovimientoFilterMapper filterMapper;
     private final MovimientoFormDtoMapper formDtoMapper;
@@ -105,13 +108,29 @@ public class MovimientoController {
     }
 
     @Parameter(name = "id", description = "Id del movimiento", in = ParameterIn.PATH)
-    @Operation(summary = "Borra un movimiento",
-            description = "No afecta a la categoria.")
-    @ApiResponse(responseCode = "204", description = "Movimiento borrado")
+    @Operation(summary = "Manda un movimiento a la papelera",
+            description = "Deja de salir en listados y resumenes; se puede restaurar durante 30 dias. "
+                    + "No afecta a la categoria.")
+    @ApiResponse(responseCode = "204", description = "Movimiento en la papelera")
     @ApiResponse(responseCode = "404", description = "No existe, o pertenece a otro usuario")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         deleteMovimiento.delete(usuarioActual.id(), id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Parameter(name = "id", description = "Id del movimiento", in = ParameterIn.PATH)
+    @Operation(summary = "Duplica un movimiento",
+            description = "Copia importe, tipo, categoria, concepto y metodo de pago con la fecha del cuerpo, "
+                    + "u hoy si no viene. La copia no se marca como recurrente.")
+    @ApiResponse(responseCode = "201", description = "La copia")
+    @ApiResponse(responseCode = "400", description = "La fecha es futura o no tiene formato yyyy-MM-dd")
+    @ApiResponse(responseCode = "404", description = "No existe, esta en la papelera o pertenece a otro usuario")
+    @PostMapping("/{id}/duplicar")
+    public ResponseEntity<MovimientoFormDto> duplicar(@PathVariable Long id,
+                                                       @Valid @RequestBody(required = false)
+                                                       MovimientoDuplicarRequestDto dto) {
+        Movimiento copia = duplicarMovimiento.duplicar(usuarioActual.id(), id, dto == null ? null : dto.fecha());
+        return ResponseEntity.status(HttpStatus.CREATED).body(formDtoMapper.toFormDto(copia));
     }
 }

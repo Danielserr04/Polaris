@@ -25,4 +25,10 @@ public class ResumenMensual {
     private BigDecimal balance;
     /** Mayor gasto primero. Incluye categorias con presupuesto mensual aunque no hayan gastado nada. */
     private List<GastoCategoria> gastoPorCategoria;
+    /** Suma de los limites MENSUALES; 0.00 si no hay ninguno. */
+    private BigDecimal presupuestoTotal;
+    /** Categorias en AVISO (llegan al umbral sin pasarse). */
+    private int categoriasEnAviso;
+    /** Categorias EXCEDIDAS (gastado mayor que el limite). */
+    private int categoriasExcedidas;
 }

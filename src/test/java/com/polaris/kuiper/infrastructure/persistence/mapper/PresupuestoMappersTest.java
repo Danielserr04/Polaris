@@ -43,7 +43,7 @@ class PresupuestoMappersTest {
 
     private static Presupuesto presupuesto() {
         return Presupuesto.builder().id(7L).usuarioId(1L).categoriaId(10L).categoria(categoria())
-                .periodo(PeriodoPresupuesto.MENSUAL).importeLimite(new BigDecimal("250.00")).build();
+                .periodo(PeriodoPresupuesto.MENSUAL).importeLimite(new BigDecimal("250.00")).porcentajeAlerta(80).build();
     }
 
     @Test
@@ -52,7 +52,7 @@ class PresupuestoMappersTest {
         CategoriaEntity categoriaEntity = CategoriaEntity.builder().id(10L).usuarioId(1L).nombre("Comida")
                 .color("#FF8800").icono("utensils").tipo(TipoMovimiento.GASTO).build();
         PresupuestoEntity entity = PresupuestoEntity.builder().id(7L).usuarioId(1L).categoria(categoriaEntity)
-                .periodo(PeriodoPresupuesto.MENSUAL).importeLimite(new BigDecimal("250.00")).build();
+                .periodo(PeriodoPresupuesto.MENSUAL).importeLimite(new BigDecimal("250.00")).porcentajeAlerta(80).build();
 
         Presupuesto dominio = entityMapper.toDomain(entity);
 
@@ -69,13 +69,14 @@ class PresupuestoMappersTest {
         assertThat(entity.getUsuarioId()).isEqualTo(1L);
         assertThat(entity.getPeriodo()).isEqualTo(PeriodoPresupuesto.MENSUAL);
         assertThat(entity.getImporteLimite()).isEqualTo(new BigDecimal("250.00"));
+        assertThat(entity.getPorcentajeAlerta()).isEqualTo(80);
     }
 
     @Test
     @DisplayName("request -> dominio no rellena id, usuarioId ni categoria: los pone el servicio")
     void requestNoTrae() {
         Presupuesto dominio = Mappers.getMapper(PresupuestoRequestDtoMapper.class).toDomain(
-                new PresupuestoRequestDto(10L, PeriodoPresupuesto.ANUAL, new BigDecimal("3000.00")));
+                new PresupuestoRequestDto(10L, PeriodoPresupuesto.ANUAL, new BigDecimal("3000.00"), 90));
 
         assertThat(dominio.getId()).isNull();
         assertThat(dominio.getUsuarioId()).isNull();
@@ -83,15 +84,25 @@ class PresupuestoMappersTest {
         assertThat(dominio.getCategoriaId()).isEqualTo(10L);
         assertThat(dominio.getPeriodo()).isEqualTo(PeriodoPresupuesto.ANUAL);
         assertThat(dominio.getImporteLimite()).isEqualTo(new BigDecimal("3000.00"));
+        assertThat(dominio.getPorcentajeAlerta()).isEqualTo(90);
     }
 
     @Test
-    @DisplayName("dominio -> form DTO y list DTO aplanan nombre, color e icono de la categoria")
+    @DisplayName("request sin porcentajeAlerta lo deja nulo: el valor por defecto lo pone el servicio")
+    void requestSinAlerta() {
+        Presupuesto dominio = Mappers.getMapper(PresupuestoRequestDtoMapper.class).toDomain(
+                new PresupuestoRequestDto(10L, PeriodoPresupuesto.MENSUAL, new BigDecimal("300.00"), null));
+
+        assertThat(dominio.getPorcentajeAlerta()).isNull();
+    }
+
+    @Test
+    @DisplayName("dominio -> form DTO y list DTO aplanan nombre, color e icono de la categoria y llevan el umbral")
     void dtosDeSalida() {
         PresupuestoFormDto form = new PresupuestoFormDto(7L, 10L, "Comida", "#FF8800", "utensils",
-                PeriodoPresupuesto.MENSUAL, new BigDecimal("250.00"));
+                PeriodoPresupuesto.MENSUAL, new BigDecimal("250.00"), 80);
         PresupuestoListDto lista = new PresupuestoListDto(7L, 10L, "Comida", "#FF8800", "utensils",
-                PeriodoPresupuesto.MENSUAL, new BigDecimal("250.00"));
+                PeriodoPresupuesto.MENSUAL, new BigDecimal("250.00"), 80);
         PresupuestoListDtoMapper listMapper = Mappers.getMapper(PresupuestoListDtoMapper.class);
 
         assertThat(Mappers.getMapper(PresupuestoFormDtoMapper.class).toFormDto(presupuesto())).isEqualTo(form);
