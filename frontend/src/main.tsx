@@ -5,6 +5,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { App } from './app/App';
 import { getToken, suscribir } from './auth/sesion';
 import { avisar } from './lib/avisos';
+import { registrarServiceWorker } from './lib/push';
 import './styles/index.css';
 
 declare module '@tanstack/react-query' {
@@ -27,6 +28,8 @@ const queryClient = new QueryClient({
 suscribir(() => {
   if (!getToken()) queryClient.clear();
 });
+
+registrarServiceWorker();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

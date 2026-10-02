@@ -15,6 +15,7 @@ import { cerrarSesion } from '../auth/sesion';
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Avatar, Badge, Button, Card, Dialog, Icon, Input, SegmentedControl, Toast, Tooltip } from '../design-system';
 import { guardarTema, useTemaElegido, type Tema } from '../lib/tema';
+import { NotificacionesCard } from './perfil/NotificacionesCard';
 import './perfil.css';
 
 // ---------------------------------------------------------------- textos de error
@@ -144,6 +145,7 @@ function PerfilContenido({ usuario: u }: { usuario: UsuarioDto }) {
         <PasswordCard u={u} avisar={mostrar} />
         <GoogleCard u={u} avisar={mostrar} />
         <AparienciaCard />
+        <NotificacionesCard avisar={mostrar} />
       </div>
       {aviso && (
         <Toast fixed tone={aviso.tono} onClose={cerrar}>

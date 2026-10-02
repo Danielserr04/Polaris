@@ -37,7 +37,7 @@ class ArranqueIntegracionTest extends IntegracionBase {
     }
 
     @Test
-    @DisplayName("Flyway ha aplicado V1..V24 y V30..V31 (sin V20 ni V25..V29) sin fallos y en orden")
+    @DisplayName("Flyway ha aplicado V1..V24, V30..V31 y V35..V36 (sin V20, V25..V29 ni V32..V34) sin fallos y en orden")
     void flywayAplicaTodasLasMigraciones() {
         List<String> versiones = jdbc.queryForList(
                 "select version from flyway_schema_history where success = 1 and version is not null "
@@ -45,7 +45,7 @@ class ArranqueIntegracionTest extends IntegracionBase {
 
         assertThat(versiones).containsExactly(
                 "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "21", "22",
-                "23", "24", "30", "31");
+                "23", "24", "30", "31", "35", "36");
         assertThat(jdbc.queryForObject(
                 "select count(*) from flyway_schema_history where success = 0", Integer.class)).isZero();
     }

@@ -81,6 +81,17 @@ polaris:
     # En dev el enlace va al log y esto ni se lee.
     remitente: ${POLARIS_CORREO_REMITENTE:no-reply@polaris.local}
 
+  # Avisos al movil (Web Push) de los recordatorios. Ver
+  # docs/decisiones/044-recordatorios.md. Las claves VAPID son opcionales: sin
+  # ellas el backend genera un par la primera vez y lo guarda en push_vapid.
+  # Para generarlas aparte vale cualquier herramienta de VAPID (P-256, base64url).
+  push:
+    vapid-publica: ${POLARIS_VAPID_PUBLICA:}
+    vapid-privada: ${POLARIS_VAPID_PRIVADA:}
+    # Contacto que va en la firma: los servicios de push (Apple sobre todo) lo
+    # exigen como mailto: o https://.
+    contacto: ${POLARIS_PUSH_CONTACTO:mailto:polaris@example.com}
+
   # Catalogo externo de peliculas y series (B3).
   tmdb:
     url-base: https://api.themoviedb.org/3
