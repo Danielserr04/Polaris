@@ -53,6 +53,19 @@ Ver [[009-perfil-unico-por-usuario]].
 
 Consumido por [[fusion]] y por [[atlas]]. El dato vive aquí una sola vez. Ver [[010-registro-peso-un-peso-por-dia]].
 
+**`medida_corporal`**
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | |
+| fecha | date | único por usuario+fecha; no puede ser futura |
+| cuello_cm, pecho_cm, cintura_cm, cadera_cm | DECIMAL(4,1) | opcionales, mayores que 0 |
+| brazo_izq_cm, brazo_dcho_cm, muslo_izq_cm, muslo_dcho_cm | DECIMAL(4,1) | opcionales, mayores que 0 |
+| notas | text | |
+
+Al menos una medida por registro. Ver [[041-medida-corporal-una-por-dia]].
+
 ---
 
 ## odisea — ver [[odisea]]
@@ -272,6 +285,7 @@ Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volume
 | `entrada` | `idx_entrada_titulo` `(titulo_id)` | V1 | FK; "esta persona ya tiene este título" y bloquear el borrado de un título en uso |
 | `perfil` | `uk_perfil_usuario` `(usuario_id)` único | V3 | un perfil por usuario y su búsqueda |
 | `registro_peso` | `uk_registro_peso_usuario_fecha` `(usuario_id, fecha)` único | V4 | un peso por día y el listado por rango |
+| `medida_corporal` | `uk_medida_corporal_usuario_fecha` `(usuario_id, fecha)` único | V23 | una medición por día y el listado por rango |
 | `categoria` | `uk_categoria_usuario_nombre_tipo` `(usuario_id, nombre, tipo)` único | V5 | nombre único por tipo y el listado por usuario |
 | `movimiento` | `idx_movimiento_usuario_fecha` `(usuario_id, fecha)` | V6 | vistas por mes y resumen mensual, sin `filesort` |
 | `movimiento` | `idx_movimiento_categoria` `(categoria_id)` | V6 | FK; bloquear el borrado de una categoría en uso |
