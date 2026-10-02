@@ -7,6 +7,8 @@ import com.polaris.fusion.application.in.ListAlimentoInterface;
 import com.polaris.fusion.application.in.UpdateAlimentoInterface;
 import com.polaris.fusion.application.out.AlimentoRepositoryPort;
 import com.polaris.fusion.application.out.ComidaLineaRepositoryPort;
+import com.polaris.fusion.application.out.PlanComidaLineaRepositoryPort;
+import com.polaris.fusion.application.out.RecetaIngredienteRepositoryPort;
 import com.polaris.fusion.domain.model.Alimento;
 import com.polaris.fusion.domain.model.AlimentoFilter;
 import com.polaris.fusion.domain.model.AlimentoNotFoundException;
@@ -23,7 +25,8 @@ import java.util.List;
  *
  * <p>Un alimento usado en alguna linea de comida, de cualquier usuario, no se
  * borra: 400, como TituloService con sus entradas. Ver
- * docs/decisiones/017-comida-agregado-con-lineas-macros-al-vuelo.md.
+ * docs/decisiones/017-comida-agregado-con-lineas-macros-al-vuelo.md. Lo mismo
+ * si esta en alguna receta o plan de comidas (ADR 050 y 051).
  */
 @Service
 @RequiredArgsConstructor
@@ -36,6 +39,8 @@ public class AlimentoService implements
 
     private final AlimentoRepositoryPort repository;
     private final ComidaLineaRepositoryPort comidaLineaRepository;
+    private final RecetaIngredienteRepositoryPort recetaIngredienteRepository;
+    private final PlanComidaLineaRepositoryPort planComidaLineaRepository;
 
     /** Siempre MANUAL y sin idExterno: un alimento creado a mano no puede hacerse pasar por uno externo. */
     @Override
@@ -73,6 +78,12 @@ public class AlimentoService implements
 
         if (comidaLineaRepository.existsByAlimentoId(id)) {
             throw new ValidationException("No se puede borrar un alimento que esta en alguna comida");
+        }
+        if (recetaIngredienteRepository.existsByAlimentoId(id)) {
+            throw new ValidationException("No se puede borrar un alimento que esta en alguna receta");
+        }
+        if (planComidaLineaRepository.existsByAlimentoId(id)) {
+            throw new ValidationException("No se puede borrar un alimento que esta en algun plan de comidas");
         }
 
         repository.deleteById(id);

@@ -2,6 +2,8 @@ package com.polaris.fusion.domain.service;
 
 import com.polaris.fusion.application.out.AlimentoRepositoryPort;
 import com.polaris.fusion.application.out.ComidaLineaRepositoryPort;
+import com.polaris.fusion.application.out.PlanComidaLineaRepositoryPort;
+import com.polaris.fusion.application.out.RecetaIngredienteRepositoryPort;
 import com.polaris.fusion.domain.model.Alimento;
 import com.polaris.fusion.domain.model.AlimentoFilter;
 import com.polaris.fusion.domain.model.AlimentoNotFoundException;
@@ -39,6 +41,12 @@ class AlimentoServiceTest {
 
     @Mock
     private ComidaLineaRepositoryPort comidaLineaRepository;
+
+    @Mock
+    private RecetaIngredienteRepositoryPort recetaIngredienteRepository;
+
+    @Mock
+    private PlanComidaLineaRepositoryPort planComidaLineaRepository;
 
     @InjectMocks
     private AlimentoService service;
@@ -152,5 +160,31 @@ class AlimentoServiceTest {
 
         verify(repository, never()).deleteById(any());
         verify(comidaLineaRepository, never()).existsByAlimentoId(any());
+    }
+
+    @Test
+    @DisplayName("delete lanza ValidationException y no borra si el alimento esta en alguna receta")
+    void deleteLanzaSiEstaEnUnaReceta() {
+        when(repository.findById(5L)).thenReturn(Optional.of(alimento(5L, "Arroz")));
+        when(recetaIngredienteRepository.existsByAlimentoId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(5L))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("receta");
+
+        verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("delete lanza ValidationException y no borra si el alimento esta en algun plan")
+    void deleteLanzaSiEstaEnUnPlan() {
+        when(repository.findById(5L)).thenReturn(Optional.of(alimento(5L, "Arroz")));
+        when(planComidaLineaRepository.existsByAlimentoId(5L)).thenReturn(true);
+
+        assertThatThrownBy(() -> service.delete(5L))
+                .isInstanceOf(ValidationException.class)
+                .hasMessageContaining("plan");
+
+        verify(repository, never()).deleteById(any());
     }
 }
