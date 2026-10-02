@@ -32,7 +32,7 @@
 .atl-med__cab{height:32px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3)}
 .atl-mapa{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
 .atl-mapa__fig{margin:0;text-align:center}
-.atl-mapa__fig svg{width:130px;height:auto;display:block}
+.atl-mapa__fig svg{width:150px;height:auto;display:block}
 .atl-mapa__hueso{fill:var(--bg-sunken);stroke:var(--surface-1);stroke-width:1.6;stroke-linejoin:round}
 /* Las juntas del puzle: el trazo es del color de la tarjeta, como la separacion entre piezas. */
 .atl-mapa__musculo{fill:var(--surface-3);stroke:var(--surface-1);stroke-width:1.6;stroke-linejoin:round;transition:fill-opacity var(--dur-fast)}
