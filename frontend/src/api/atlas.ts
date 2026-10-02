@@ -78,6 +78,7 @@ export const claves = {
   ejercicios: ['atlas', 'ejercicios'] as const,
   rutinas: ['atlas', 'rutinas'] as const,
   trabajoMuscular: ['atlas', 'trabajo-muscular'] as const,
+  metas: ['atlas', 'metas'] as const,
 };
 
 /** Listado ligero de sesiones (sin series), de la mas reciente a la mas antigua. */
@@ -314,5 +315,77 @@ export function useApuntarPeso() {
     meta: { aviso: 'Peso apuntado' },
     mutationFn: (cuerpo: PesoRequest) => api<PesoCorporal>(`${BASE}/peso`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
+  });
+}
+
+// ---- Logros y metas (docs/decisiones/043-logros-calculados-y-metas.md) ----
+
+export interface Logro {
+  codigo: string;
+  nombre: string;
+  descripcion: string;
+  icono: string;
+  metrica: 'SESIONES' | 'EJERCICIOS' | 'TONELADAS' | 'PESAJES' | 'RACHA_SEMANAS';
+  objetivo: number;
+  progreso: number;
+  conseguido: boolean;
+}
+
+export function useLogros() {
+  return useQuery({ queryKey: [...claves.metas, 'logros'] as const, queryFn: () => api<Logro[]>(`${BASE}/logros`) });
+}
+
+export type TipoMeta = 'PESO_CORPORAL' | 'MARCA_EJERCICIO' | 'SESIONES_SEMANA';
+
+export interface MetaEntreno {
+  id: number;
+  tipo: TipoMeta;
+  ejercicioId?: number | null;
+  ejercicioNombre?: string | null;
+  valorObjetivo: number;
+  valorActual?: number | null;
+  progresoPct: number;
+  conseguida: boolean;
+  fechaLimite?: string | null;
+}
+
+export interface MetaRequest {
+  tipo: TipoMeta;
+  ejercicioId: number | null;
+  valorObjetivo: number;
+  fechaLimite: string | null;
+}
+
+export function useMetas() {
+  return useQuery({ queryKey: [...claves.metas, 'lista'] as const, queryFn: () => api<MetaEntreno[]>(`${BASE}/meta`) });
+}
+
+export function useCrearMeta() {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    meta: { aviso: 'Meta creada' },
+    mutationFn: (cuerpo: MetaRequest) => api<MetaEntreno>(`${BASE}/meta`, { metodo: 'POST', cuerpo }),
+    onSuccess: invalidar,
+  });
+}
+
+export function useActualizarMeta(id: number) {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    meta: { aviso: 'Meta guardada' },
+    mutationFn: (cuerpo: MetaRequest) => api<MetaEntreno>(`${BASE}/meta/${id}`, { metodo: 'PUT', cuerpo }),
+    onSuccess: invalidar,
+  });
+}
+
+export function useBorrarMeta(alBorrar?: () => void) {
+  const invalidar = useInvalidarAtlas();
+  return useMutation({
+    meta: { aviso: 'Meta borrada' },
+    mutationFn: (id: number) => api<void>(`${BASE}/meta/${id}`, { metodo: 'DELETE' }),
+    onSuccess: () => {
+      alBorrar?.();
+      return invalidar();
+    },
   });
 }
