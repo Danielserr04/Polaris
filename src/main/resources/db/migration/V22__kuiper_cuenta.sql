@@ -1,6 +1,9 @@
 -- Kuiper, cuentas y transferencias. Traidas de lumen-app.
 -- Ver docs/decisiones/039-cuentas-y-transferencias.md.
 --
+-- Es V22 y no V20: se fusiono despues de V21 (notificaciones) y Flyway rechaza
+-- una version menor que la ultima aplicada. V20 queda sin usar.
+--
 -- cuenta: nombre unico por usuario (con utf8mb4_unicode_ci, "ING" = "ing").
 -- saldo_inicial DECIMAL(12,2) con signo: una tarjeta puede empezar en negativo.
 -- El saldo actual NO se guarda: CuentaService lo calcula con SUM sobre

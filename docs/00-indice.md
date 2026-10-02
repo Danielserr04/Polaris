@@ -60,6 +60,13 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[031-login-google-redirige-al-frontend]]
 - [[032-listados-de-odisea-y-atlas-sin-consultas-extra]]
 - [[033-registro-en-el-login-y-tema-claro]]
+- [[034-recurrente-genera-movimientos]]
+- [[035-presupuesto-umbral-de-alerta]]
+- [[036-meta-ahorro-con-aportaciones]]
+- [[037-analisis-calculado-en-servicio]]
+- [[038-movimiento-papelera-y-duplicar]]
+- [[039-cuentas-y-transferencias]]
+- [[040-notificaciones-de-kuiper]]
 
 ## Cómo se mantiene esto
 

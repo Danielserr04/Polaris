@@ -2,13 +2,13 @@ import { useState } from 'react';
 import { mensajeError } from '../../api/kuiper';
 import {
   DIAS_EN_PAPELERA,
-  avisar,
   useBorrarDefinitivo,
   usePapelera,
   useRestaurarMovimientos,
   useVaciarPapelera,
   type MovimientoPapelera,
 } from '../../api/kuiperPapelera';
+import { avisar } from '../../lib/avisos';
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
 import { Alert, Button, Dialog, IconButton } from '../../design-system';
 import { diasEntre, eur, relativa } from '../../lib/fechas';
@@ -41,7 +41,7 @@ export function PapeleraDialog({ onClose }: Props) {
   const alRestaurar = (m: MovimientoPapelera) => {
     setError(null);
     restaurar.mutate([m.id], {
-      onSuccess: () => avisar({ texto: 'Movimiento restaurado.', tono: 'success' }),
+      onSuccess: () => avisar('Movimiento restaurado.'),
       onError: (e) => setError(mensajeError(e)),
     });
   };

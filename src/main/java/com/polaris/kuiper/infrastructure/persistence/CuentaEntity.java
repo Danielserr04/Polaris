@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 
 /**
  * Mapeo JPA. Las anotaciones de persistencia viven aqui y solo aqui.
- * El unique (usuario_id, nombre) vive en V20__kuiper_cuenta.sql.
+ * El unique (usuario_id, nombre) vive en V22__kuiper_cuenta.sql.
  *
  * <p>Sin saldo actual: se calcula en CuentaService, nunca se guarda.
  * saldoInicial en BigDecimal / DECIMAL(12,2), con signo.
