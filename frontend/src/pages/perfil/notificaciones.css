@@ -1,0 +1,26 @@
+/* Tarjeta de Notificaciones del Perfil (NotificacionesCard.tsx). */
+.pf-push{display:flex;gap:12px;align-items:center;padding:12px;border:1px solid var(--border-1);border-radius:var(--radius-sm);background:var(--bg-sunken)}
+.pf-push__ico,.pf-rec__ico{width:32px;height:32px;flex:none;border-radius:50%;display:grid;place-items:center;color:var(--accent);background:color-mix(in oklab,var(--accent) 14%,transparent)}
+.pf-push__acc{display:flex;gap:6px;flex:none}
+
+.pf-recs{display:flex;flex-direction:column}
+.pf-rec{display:grid;grid-template-columns:32px 1fr auto;gap:4px 12px;align-items:center;padding:12px 0}
+.pf-rec+.pf-rec{border-top:1px solid var(--border-1)}
+.pf-rec__txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.pf-rec__txt .muted{font-size:13px}
+.pf-rec--off .pf-rec__ico{color:var(--text-3);background:color-mix(in oklab,var(--text-3) 12%,transparent)}
+.pf-rec__cfg{grid-column:2/-1;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:6px}
+.pf-rec__hora{width:120px}
+
+.pf-dias{display:flex;gap:4px}
+.pf-dia{width:32px;height:32px;padding:0;border:1.5px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg-sunken);color:var(--text-2);font:600 12px/1 var(--font-mono);cursor:pointer;transition:all var(--dur-base) var(--ease-out)}
+.pf-dia:hover{border-color:var(--accent)}
+.pf-dia:focus-visible{outline:2px solid var(--focus-ring);outline-offset:2px}
+.pf-dia[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--text-on-accent)}
+
+@media (max-width:720px){
+  .pf-push{flex-wrap:wrap}
+  .pf-push__acc{width:100%;justify-content:flex-end}
+  .pf-rec__cfg{grid-column:1/-1}
+  .pf-dia{width:36px;height:36px}
+}
