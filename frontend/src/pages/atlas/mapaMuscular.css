@@ -2,9 +2,8 @@
 .atl-mapa{display:flex;justify-content:center;gap:24px;flex-wrap:wrap}
 .atl-mapa__fig{margin:0;text-align:center}
 .atl-mapa__fig svg{width:150px;height:auto;display:block}
-.atl-mapa__hueso{fill:var(--bg-sunken);stroke:var(--surface-1);stroke-width:1.6;stroke-linejoin:round}
-/* Las juntas del puzle: el trazo es del color de la tarjeta, como la separacion entre piezas. */
-.atl-mapa__musculo{fill:var(--surface-3);stroke:var(--surface-1);stroke-width:1.6;stroke-linejoin:round;transition:fill-opacity var(--dur-fast)}
+.atl-mapa__silueta{fill:var(--bg-sunken);stroke:var(--border-2);stroke-width:.8}
+.atl-mapa__musculo{fill:var(--surface-3);stroke:var(--border-2);stroke-width:.5;transition:fill-opacity var(--dur-fast)}
 .atl-mapa__fig figcaption{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--text-3);margin-top:6px}
 /* Version pequeña, para la tarjeta de Atlas del Inicio. */
-.atl-mapa--compacto{gap:4px;flex-wrap:nowrap}.atl-mapa--compacto .atl-mapa__fig svg{width:46px}.atl-mapa--compacto .atl-mapa__musculo,.atl-mapa--compacto .atl-mapa__hueso{stroke-width:2.8}
+.atl-mapa--compacto{gap:4px;flex-wrap:nowrap}.atl-mapa--compacto .atl-mapa__fig svg{width:46px}.atl-mapa--compacto .atl-mapa__silueta{stroke-width:2}
