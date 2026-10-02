@@ -51,17 +51,21 @@ export function AppShell() {
           onChange={(id: string) => navigate(NAV.find((n) => n.id === id)?.ruta ?? '/')}
           onBrand={() => navigate('/')}
           onSearch={null}
-          actions={botonLogros('pl-nav__act', 17)}
+          actions={
+            <>
+              <CampanaRecordatorios className="pl-nav__act" size={17} />
+              {botonLogros('pl-nav__act', 17)}
+            </>
+          }
           user={{ name: usuario?.nombre ?? usuario?.username ?? '·', src: usuario?.avatarUrl, onClick: () => navigate('/perfil') }}
         />
-        <CampanaRecordatorios className="campana--nav" />
       </div>
       <div className="app__mtop">
         <button type="button" className="app__mbrand" onClick={() => navigate('/')} aria-label="Polaris — inicio">
           <Logo variant="mark" size={24} />
         </button>
         <div className="app__macc">
-          <CampanaRecordatorios />
+          <CampanaRecordatorios className="m-logros" size={20} />
           {botonLogros('m-logros', 20)}
           <button type="button" className="m-av" onClick={() => navigate('/perfil')} aria-label="Perfil">
             <Avatar name={usuario?.nombre ?? usuario?.username ?? '·'} src={usuario?.avatarUrl} size={34} />

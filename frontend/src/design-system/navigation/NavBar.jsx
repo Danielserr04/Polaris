@@ -19,7 +19,7 @@ export function NavBar({ items = [], value, onChange, onBrand, onSearch, actions
         ))}
       </div>
       {onSearch !== null && <button className="pl-nav__search" onClick={onSearch}><Icon name="search" size={14} /><span>Buscar</span></button>}
-      {actions}
+      {actions && <div className="pl-nav__acts">{actions}</div>}
       {user && <button className="pl-nav__user" onClick={user.onClick} aria-label="Perfil"><Avatar name={user.name} src={user.src} size={34} /></button>}
     </nav>
   );
