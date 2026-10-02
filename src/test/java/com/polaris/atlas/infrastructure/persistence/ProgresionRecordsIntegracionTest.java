@@ -2,6 +2,8 @@ package com.polaris.atlas.infrastructure.persistence;
 
 import com.polaris.atlas.application.in.GetProgresionInterface;
 import com.polaris.atlas.application.in.GetTrabajoMuscularInterface;
+import com.polaris.atlas.application.out.EstadisticasEntrenoPort;
+import com.polaris.atlas.domain.model.EstadisticasEntreno;
 import com.polaris.atlas.application.in.ListRecordsInterface;
 import com.polaris.atlas.domain.model.EjercicioNotFoundException;
 import com.polaris.atlas.domain.model.ProgresionFilter;
@@ -54,6 +56,8 @@ class ProgresionRecordsIntegracionTest extends IntegracionBase {
     private ListRecordsInterface records;
     @Autowired
     private GetTrabajoMuscularInterface trabajoMuscular;
+    @Autowired
+    private EstadisticasEntrenoPort estadisticas;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -141,6 +145,30 @@ class ProgresionRecordsIntegracionTest extends IntegracionBase {
         assertThat(grupos).extracting(TrabajoMuscular::getGrupoMuscular).containsExactly("Pecho", "Espalda");
         assertTrabajo(grupos.get(0), 3, 2, "1580.00");
         assertTrabajo(grupos.get(1), 1, 1, "0.00");
+    }
+
+    @Test
+    @DisplayName("Estadisticas para los logros: sesiones, ejercicios distintos, volumen total y dias distintos, solo de A")
+    void estadisticasEntreno() {
+        EstadisticasEntreno e = estadisticas.find(A);
+
+        assertThat(e.getNumeroSesiones()).isEqualTo(6);
+        assertThat(e.getEjerciciosDistintos()).isEqualTo(3);
+        // 4800 de press banca + 500 de sentadilla + 0 de dominadas.
+        assertThat(e.getVolumenTotal()).isEqualByComparingTo("5300");
+        // s2 y s4 caen el mismo dia.
+        assertThat(e.getFechasSesion()).hasSize(5);
+    }
+
+    @Test
+    @DisplayName("Estadisticas de un usuario sin entrenos: todo a cero, sin nulos")
+    void estadisticasVacias() {
+        EstadisticasEntreno e = estadisticas.find(9199L);
+
+        assertThat(e.getNumeroSesiones()).isZero();
+        assertThat(e.getEjerciciosDistintos()).isZero();
+        assertThat(e.getVolumenTotal()).isEqualByComparingTo("0");
+        assertThat(e.getFechasSesion()).isEmpty();
     }
 
     private static void assertTrabajo(TrabajoMuscular t, int series, int sesiones, String volumen) {
