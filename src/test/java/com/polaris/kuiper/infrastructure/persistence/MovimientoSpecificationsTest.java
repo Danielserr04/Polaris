@@ -41,4 +41,13 @@ class MovimientoSpecificationsTest {
         assertThat(describir(MovimientoSpecifications.from(1L, filtro))).isEqualTo(
                 "and(and(and(equal(usuarioId, 1), isNull(borradoEn)), equal(categoria.id, 10)), equal(tipo, INGRESO))");
     }
+
+    @Test
+    @DisplayName("la cuenta se filtra por su id")
+    void cuenta() {
+        MovimientoFilter filtro = MovimientoFilter.builder().cuentaId(3L).build();
+
+        assertThat(describir(MovimientoSpecifications.from(1L, filtro))).isEqualTo(
+                "and(equal(usuarioId, 1), equal(cuenta.id, 3))");
+    }
 }

@@ -2,6 +2,7 @@ package com.polaris.kuiper.infrastructure.persistence;
 
 import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
+import com.polaris.kuiper.domain.model.CuentaNotFoundException;
 import com.polaris.kuiper.domain.model.Recurrente;
 import com.polaris.kuiper.domain.model.RecurrenteFilter;
 import com.polaris.kuiper.infrastructure.persistence.mapper.RecurrenteEntityMapper;
@@ -23,6 +24,7 @@ public class RecurrenteJpaAdapter implements RecurrenteRepositoryPort {
 
     private final RecurrenteRepository repository;
     private final CategoriaRepository categoriaRepository;
+    private final CuentaRepository cuentaRepository;
     private final RecurrenteEntityMapper mapper;
 
     /** findById, no getReferenceById, por lo mismo que en MovimientoJpaAdapter. */
@@ -33,6 +35,10 @@ public class RecurrenteJpaAdapter implements RecurrenteRepositoryPort {
 
         RecurrenteEntity entity = mapper.toEntity(recurrente);
         entity.setCategoria(categoria);
+        if (recurrente.getCuentaId() != null) {
+            entity.setCuenta(cuentaRepository.findById(recurrente.getCuentaId())
+                    .orElseThrow(() -> new CuentaNotFoundException(recurrente.getCuentaId())));
+        }
 
         return mapper.toDomain(repository.save(entity));
     }
@@ -62,5 +68,10 @@ public class RecurrenteJpaAdapter implements RecurrenteRepositoryPort {
     @Override
     public boolean existsByCategoriaId(Long categoriaId) {
         return repository.existsByCategoria_Id(categoriaId);
+    }
+
+    @Override
+    public boolean existsByCuentaId(Long cuentaId) {
+        return repository.existsByCuenta_Id(cuentaId);
     }
 }

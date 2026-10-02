@@ -21,4 +21,5 @@ public class MovimientoFilter {
     private LocalDate hasta;
     private Long categoriaId;
     private TipoMovimiento tipo;
+    private Long cuentaId;
 }

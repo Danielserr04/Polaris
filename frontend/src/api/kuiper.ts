@@ -44,6 +44,9 @@ export interface MovimientoList {
   categoriaColor: string | null;
   categoriaIcono: string | null;
   concepto: string | null;
+  /** Nula: movimiento sin cuenta. Ver api/kuiperCuentas.ts. */
+  cuentaId: number | null;
+  cuentaNombre: string | null;
 }
 
 export interface MovimientoForm extends MovimientoList {
@@ -60,6 +63,8 @@ export interface MovimientoRequest {
   concepto: string | null;
   metodoPago: string | null;
   recurrente: boolean;
+  /** Opcional: sin cuenta si es null. */
+  cuentaId: number | null;
 }
 
 export interface Categoria {
@@ -91,6 +96,7 @@ export interface FiltroMovimientos {
   hasta: string;
   tipo?: TipoMovimiento;
   categoriaId?: number;
+  cuentaId?: number;
 }
 
 const BASE = '/api/kuiper';
@@ -265,6 +271,7 @@ export function mensajeError(e: unknown): string {
   }
   if (e instanceof ApiError) {
     if (e.status === 404 && /categoria/i.test(e.message)) return 'Esa categoría ya no existe.';
+    if (e.status === 404 && /cuenta/i.test(e.message)) return 'Esa cuenta ya no existe.';
     if (e.status === 400 && /tipo/i.test(e.message)) return 'El tipo del movimiento no coincide con el de la categoría.';
     if (e.status === 404) return 'Ese movimiento ya no existe.';
     if (e.status === 409) return 'Ya tienes una categoría con ese nombre.';

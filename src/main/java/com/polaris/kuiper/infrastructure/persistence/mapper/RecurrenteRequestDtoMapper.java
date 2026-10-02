@@ -10,10 +10,11 @@ import org.mapstruct.ReportingPolicy;
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface RecurrenteRequestDtoMapper {
 
-    /** id, usuarioId, categoria, proximaFecha y cuotasPagadas los pone el servicio. Sin activo, true. */
+    /** id, usuarioId, categoria, cuenta, proximaFecha y cuotasPagadas los pone el servicio. Sin activo, true. */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "usuarioId", ignore = true)
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "cuenta", ignore = true)
     @Mapping(target = "proximaFecha", ignore = true)
     @Mapping(target = "cuotasPagadas", ignore = true)
     @Mapping(target = "activo", source = "activo", defaultValue = "true")

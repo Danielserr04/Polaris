@@ -19,7 +19,7 @@ public final class MovimientoSpecifications {
 
     public static Specification<MovimientoEntity> from(Long usuarioId, MovimientoFilter filter) {
         return Specification.allOf(porUsuario(usuarioId), fueraDePapelera(), desde(filter), hasta(filter),
-                porCategoria(filter), porTipo(filter));
+                porCategoria(filter), porTipo(filter), porCuenta(filter));
     }
 
     private static Specification<MovimientoEntity> porUsuario(Long usuarioId) {
@@ -56,5 +56,12 @@ public final class MovimientoSpecifications {
             return null;
         }
         return (root, query, cb) -> cb.equal(root.get("tipo"), filter.getTipo());
+    }
+
+    private static Specification<MovimientoEntity> porCuenta(MovimientoFilter filter) {
+        if (filter == null || filter.getCuentaId() == null) {
+            return null;
+        }
+        return (root, query, cb) -> cb.equal(root.get("cuenta").get("id"), filter.getCuentaId());
     }
 }

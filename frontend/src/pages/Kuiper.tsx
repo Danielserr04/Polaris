@@ -6,6 +6,7 @@ import type { MovimientoList } from '../api/kuiper';
 import { AnalisisTab } from './kuiper/AnalisisTab';
 import { AvisoKuiper } from './kuiper/AvisoKuiper';
 import { CategoriasTab } from './kuiper/CategoriasTab';
+import { CuentasTab } from './kuiper/CuentasTab';
 import { FormularioMovimiento } from './kuiper/FormularioMovimiento';
 import { MetasTab } from './kuiper/MetasTab';
 import { MovimientosTab } from './kuiper/MovimientosTab';
@@ -14,7 +15,7 @@ import { NotificacionesKuiper } from './kuiper/NotificacionesKuiper';
 import { ResumenTab } from './kuiper/ResumenTab';
 import './kuiper/kuiper.css';
 
-type Pestana = 'resumen' | 'mov' | 'cat' | 'rec' | 'metas' | 'analisis';
+type Pestana = 'resumen' | 'mov' | 'cat' | 'rec' | 'metas' | 'analisis' | 'cuentas';
 
 // Un movimiento abierto: nuevo (sin id) o editando uno existente.
 type Abierto = { id?: number } | null;
@@ -63,6 +64,7 @@ export function Kuiper() {
           { value: 'rec', label: 'Recurrentes' },
           { value: 'metas', label: 'Metas' },
           { value: 'analisis', label: 'Análisis' },
+          { value: 'cuentas', label: 'Cuentas' },
         ]}
         style={{ marginBottom: 24 }}
       />
@@ -77,6 +79,8 @@ export function Kuiper() {
           <MetasTab />
         ) : pestana === 'analisis' ? (
           <AnalisisTab periodo={periodo} />
+        ) : pestana === 'cuentas' ? (
+          <CuentasTab periodo={periodo} />
         ) : (
           <CategoriasTab />
         )}

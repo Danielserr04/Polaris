@@ -13,15 +13,17 @@ import java.util.List;
  * traduzca a la Categoria de dominio anidada dentro de Movimiento, ademas del
  * categoriaId plano.
  */
-@Mapper(componentModel = "spring", uses = CategoriaEntityMapper.class,
+@Mapper(componentModel = "spring", uses = {CategoriaEntityMapper.class, CuentaEntityMapper.class},
         unmappedTargetPolicy = ReportingPolicy.ERROR)
 public interface MovimientoEntityMapper {
 
     @Mapping(target = "categoriaId", source = "categoria.id")
+    @Mapping(target = "cuentaId", source = "cuenta.id")
     Movimiento toDomain(MovimientoEntity entity);
 
-    /** categoria se ignora aqui: MovimientoJpaAdapter la pone a mano con la Entity completa. */
+    /** categoria y cuenta se ignoran aqui: MovimientoJpaAdapter las pone a mano con las Entity completas. */
     @Mapping(target = "categoria", ignore = true)
+    @Mapping(target = "cuenta", ignore = true)
     MovimientoEntity toEntity(Movimiento domain);
 
     List<Movimiento> toDomainList(List<MovimientoEntity> entities);

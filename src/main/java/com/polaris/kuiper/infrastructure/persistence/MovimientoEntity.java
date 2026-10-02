@@ -74,4 +74,8 @@ public class MovimientoEntity {
     /** Nulo fuera de la papelera. */
     @Column(name = "borrado_en")
     private LocalDateTime borradoEn;
+    /** Opcional: nula es "sin cuenta". EAGER por lo mismo que la categoria. */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "cuenta_id")
+    private CuentaEntity cuenta;
 }

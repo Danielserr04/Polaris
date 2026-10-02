@@ -27,4 +27,7 @@ public interface RecurrenteRepositoryPort {
 
     /** Para que CategoriaService pueda impedir borrar o cambiar de tipo una categoria en uso. */
     boolean existsByCategoriaId(Long categoriaId);
+
+    /** Para que CuentaService pueda impedir borrar una cuenta con recurrentes. */
+    boolean existsByCuentaId(Long cuentaId);
 }
