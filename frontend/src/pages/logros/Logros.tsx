@@ -112,7 +112,7 @@ export function Logros() {
       logros
         .filter((l) => l.conseguido && l.fechaConseguido)
         .sort((a, b) => (b.fechaConseguido! < a.fechaConseguido! ? -1 : b.fechaConseguido! > a.fechaConseguido! ? 1 : 0))
-        .slice(0, 4),
+        .slice(0, 3),
     [logros],
   );
   // Los pendientes a los que menos les falta, en proporcion; con algo de progreso.
@@ -165,34 +165,41 @@ export function Logros() {
         <>
           <div className="grid lg-resumen">
             <div className="span-4">
-              <Card eyebrow="Colección" delay={0}>
+              <Card eyebrow="Colección" delay={0} padding="10px 16px 14px">
                 <div className="lg-coleccion">
-                  <RingChart value={conseguidos.length} max={Math.max(1, logros.length)} size={120} thickness={10} color="var(--mod-polaris)" sublabel={`${conseguidos.length} de ${logros.length}`} />
-                  <ul className="lg-niveles">
-                    {porNivel.map((n) => (
-                      <li key={n.nivel}>
-                        <span className="lg-punto" data-nivel={n.nivel} />
-                        <span>{NOMBRE_NIVEL[n.nivel]}</span>
-                        <b>
-                          {n.tengo}
-                          <span className="muted"> / {n.total}</span>
-                        </b>
-                      </li>
-                    ))}
-                  </ul>
+                  <RingChart value={conseguidos.length} max={Math.max(1, logros.length)} size={92} thickness={8} color="var(--mod-polaris)" />
+                  <div className="lg-coleccion__dato">
+                    <span className="lg-coleccion__num">
+                      {conseguidos.length}
+                      <span className="muted"> / {logros.length}</span>
+                    </span>
+                    <span className="muted">logros conseguidos</span>
+                    <ul className="lg-niveles">
+                      {porNivel.map((n) => (
+                        <li key={n.nivel} title={NOMBRE_NIVEL[n.nivel]}>
+                          <span className="lg-punto" data-nivel={n.nivel} />
+                          <span className="lg-niveles__nombre">{NOMBRE_NIVEL[n.nivel]}</span>
+                          <b>
+                            {n.tengo}
+                            <span className="muted">/{n.total}</span>
+                          </b>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
                 </div>
               </Card>
             </div>
 
             <div className="span-4">
-              <Card eyebrow="Últimos conseguidos" delay={60}>
+              <Card eyebrow="Últimos conseguidos" delay={60} padding="10px 16px 14px">
                 {ultimos.length === 0 ? (
                   <p className="muted lg-vacio">Aún no tienes ninguno con fecha. El primero está más cerca de lo que crees.</p>
                 ) : (
                   <ul className="lg-lista">
                     {ultimos.map((l) => (
                       <li key={l.modulo + l.codigo} data-module={l.modulo}>
-                        <Medalla logro={l} size={34} />
+                        <Medalla logro={l} size={30} />
                         <div>
                           <b>{l.nombre}</b>
                           <span className="muted">{seccionDe(l.modulo).nombre}</span>
@@ -206,21 +213,25 @@ export function Logros() {
             </div>
 
             <div className="span-4">
-              <Card eyebrow="Casi lo tienes" delay={120}>
+              <Card eyebrow="Casi lo tienes" delay={120} padding="10px 16px 14px">
                 {casi.length === 0 ? (
                   <p className="muted lg-vacio">Empieza a apuntar en cualquier módulo y aquí verás lo que tienes a tiro.</p>
                 ) : (
                   <ul className="lg-lista">
                     {casi.map((l) => (
                       <li key={l.modulo + l.codigo} data-module={l.modulo}>
-                        <Medalla logro={l} size={34} />
+                        <Medalla logro={l} size={30} />
                         <div>
-                          <b>{l.nombre}</b>
+                          <span className="lg-lista__linea">
+                            <b>{l.nombre}</b>
+                            <span className="lg-lista__dato">
+                              {num(l.progreso)}/{num(l.objetivo)} {l.unidad}
+                            </span>
+                          </span>
                           <span className="lg-barra">
                             <span style={{ width: `${pct(l) * 100}%` }} />
                           </span>
                         </div>
-                        <span className="lg-lista__dato">{Math.floor(pct(l) * 100)} %</span>
                       </li>
                     ))}
                   </ul>
