@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 /**
  * Cuentas de Mifflin-St Jeor con numeros comprobados a mano, y que sin datos
  * del perfil el error dice que falta. Ver
- * docs/decisiones/043-calculo-del-objetivo-desde-el-perfil.md.
+ * docs/decisiones/046-calculo-del-objetivo-desde-el-perfil.md.
  */
 @ExtendWith(MockitoExtension.class)
 class CalculoObjetivoServiceTest {

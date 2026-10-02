@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Propone kcal y macros a partir del perfil y el ultimo peso, sin guardar
- * nada. Ver docs/decisiones/043-calculo-del-objetivo-desde-el-perfil.md.
+ * nada. Ver docs/decisiones/046-calculo-del-objetivo-desde-el-perfil.md.
  *
  * <ul>
  *   <li>Gasto basal, Mifflin-St Jeor: 10 * peso + 6.25 * altura - 5 * edad, +5 hombre / -161 mujer.</li>

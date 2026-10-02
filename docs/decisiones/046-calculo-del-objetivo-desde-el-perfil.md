@@ -1,4 +1,4 @@
-# 043 — Calcular el objetivo nutricional a partir del perfil, sin guardarlo
+# 046 — Calcular el objetivo nutricional a partir del perfil, sin guardarlo
 
 Estado: aceptada · 2026-10-02
 
@@ -24,3 +24,5 @@ Estado: aceptada · 2026-10-02
 
 - Cambiar la fórmula o los porcentajes no exige migración.
 - El "hoy" de la edad y del último peso es el del servidor.
+
+> Antes era la 043, que chocaba con [[043-logros-calculados-y-metas]].
