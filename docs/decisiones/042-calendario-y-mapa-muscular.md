@@ -23,3 +23,7 @@ FitCore tenía un calendario de entrenos, un mapa muscular y calculadoras (1RM, 
 
 - Un grupo escrito de forma rara ("tren superior") no se pinta en el mapa, pero sí sale en la lista de grupos debajo.
 - La pestaña Cuerpo de Atlas llama a `/api/nucleo/...` directamente, como ya hace Inicio con el peso.
+
+## Actualización (2026-10-02)
+
+Los polígonos de FitCore se sustituyen por un dibujo propio más fiel (`mapaMuscular.data.ts`): 20 músculos con curvas en lugar de polígonos rectos, separando por ejemplo cuádriceps en vasto lateral, recto femoral y vasto medial, el recto abdominal en bloques, isquios, sóleo, tibial, serrato, redondo y glúteo medio. Se dibuja media figura y se refleja. Al pasar el ratón se ve el nombre del músculo y sus series. Ya no hay código de react-body-highlighter.

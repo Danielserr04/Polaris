@@ -1,60 +1,105 @@
 import type { TrabajoMuscular } from '../../api/atlas';
-import { BACK_MUSCLES, FRONT_MUSCLES, type PoligonosMusculo } from './mapaMuscular.data';
+import {
+  ESPALDA, FRENTE, HUESOS_ESPALDA, HUESOS_FRENTE, NOMBRE_MUSCULO, SILUETA, type FormaMusculo, type Musculo,
+} from './mapaMuscular.data';
 
 // El grupo muscular de un ejercicio es texto libre ("Pecho", "Espalda alta", "Cuádriceps"...):
 // se reconoce por palabras clave y se reparte entre los musculos del dibujo.
-const CLAVES: [RegExp, string[]][] = [
-  [/pecho|pectoral/, ['CHEST']],
-  [/hombro|deltoid/, ['FRONT_DELTOIDS', 'BACK_DELTOIDS']],
-  [/bicep/, ['BICEPS']],
-  [/tricep/, ['TRICEPS']],
-  [/antebrazo/, ['FOREARM']],
-  [/(^|[^e])brazo/, ['BICEPS', 'TRICEPS']],
-  [/abdom|abs\b|core|oblicuo/, ['ABS', 'OBLIQUES']],
-  [/lumbar/, ['LOWER_BACK']],
-  [/trapecio/, ['TRAPEZIUS']],
-  [/espalda|dorsal/, ['UPPER_BACK', 'LOWER_BACK', 'TRAPEZIUS']],
-  [/cuadricep/, ['QUADRICEPS']],
-  [/isquio|femoral/, ['HAMSTRING']],
-  [/glute/, ['GLUTEAL']],
-  [/gemelo|pantorrilla|soleo/, ['CALVES', 'LEFT_SOLEUS', 'RIGHT_SOLEUS']],
-  [/aductor|abductor/, ['ABDUCTORS', 'ABDUCTOR']],
-  [/pierna|tren inferior/, ['QUADRICEPS', 'HAMSTRING', 'GLUTEAL', 'CALVES']],
-  [/cuerpo completo|full ?body/, ['CHEST', 'FRONT_DELTOIDS', 'BACK_DELTOIDS', 'UPPER_BACK', 'QUADRICEPS', 'HAMSTRING', 'GLUTEAL', 'ABS']],
+const CLAVES: [RegExp, Musculo[]][] = [
+  [/pecho|pectoral/, ['pectoral']],
+  [/hombro|deltoid/, ['deltoides']],
+  [/bicep/, ['biceps']],
+  [/tricep/, ['triceps']],
+  [/antebrazo/, ['antebrazo']],
+  [/(^|[^e])brazo/, ['biceps', 'triceps']],
+  [/abdom|abs\b|core/, ['abdominales', 'oblicuos']],
+  [/oblicuo/, ['oblicuos']],
+  [/serrato/, ['serrato']],
+  [/lumbar/, ['lumbar']],
+  [/trapecio/, ['trapecio']],
+  [/redondo|infraespin|manguito/, ['redondo']],
+  [/dorsal/, ['dorsal']],
+  [/espalda alta/, ['trapecio', 'redondo', 'dorsal']],
+  [/espalda(?! alta)/, ['dorsal', 'trapecio', 'redondo', 'lumbar']],
+  [/cuadricep/, ['cuadriceps']],
+  [/isquio|femoral/, ['isquios']],
+  [/glute/, ['gluteo', 'gluteoMedio']],
+  [/abductor/, ['gluteoMedio']],
+  [/(^|[^b])aductor/, ['aductores']],
+  [/gemelo|pantorrilla/, ['gemelos', 'soleo']],
+  [/soleo/, ['soleo']],
+  [/tibial/, ['tibial']],
+  [/pierna|tren inferior/, ['cuadriceps', 'isquios', 'gluteo', 'gemelos']],
+  [/cuerpo completo|full ?body/, ['pectoral', 'deltoides', 'dorsal', 'trapecio', 'cuadriceps', 'isquios', 'gluteo', 'abdominales']],
 ];
-const NEUTROS = new Set(['HEAD', 'NECK', 'KNEES']);
 
 const normalizar = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
 
 /** Musculos del dibujo que corresponden a un grupo escrito a mano; vacio si no se reconoce. */
-export function musculosDe(grupo: string): string[] {
+export function musculosDe(grupo: string): Musculo[] {
   const g = normalizar(grupo);
   const encontrados = CLAVES.filter(([re]) => re.test(g)).flatMap(([, m]) => m);
   return [...new Set(encontrados)];
 }
 
 /** Series por musculo del dibujo: cada grupo suma sus series a todos sus musculos. */
-export function seriesPorMusculo(trabajo: TrabajoMuscular[]): Map<string, number> {
-  const series = new Map<string, number>();
+export function seriesPorMusculo(trabajo: TrabajoMuscular[]): Map<Musculo, number> {
+  const series = new Map<Musculo, number>();
   for (const t of trabajo) {
     for (const m of musculosDe(t.grupoMuscular)) series.set(m, (series.get(m) ?? 0) + t.numeroSeries);
   }
   return series;
 }
 
-function Figura({ musculos, series, maximo, titulo }: { musculos: PoligonosMusculo[]; series: Map<string, number>; maximo: number; titulo: string }) {
+type Punto = [number, number];
+
+const pares = (p: number[]): Punto[] => {
+  const r: Punto[] = [];
+  for (let i = 0; i < p.length; i += 2) r.push([p[i], p[i + 1]]);
+  return r;
+};
+const espejo = (pts: Punto[]): Punto[] => pts.map(([x, y]): Punto => [200 - x, y]).reverse();
+const n1 = (n: number) => Math.round(n * 10) / 10;
+
+/** Curva cerrada que pasa por los puntos (Catmull-Rom pasada a Bezier cubica). */
+function curva(pts: Punto[]): string {
+  const n = pts.length;
+  let d = `M${n1(pts[0][0])} ${n1(pts[0][1])}`;
+  for (let i = 0; i < n; i++) {
+    const [p0, p1, p2, p3] = [pts[(i - 1 + n) % n], pts[i], pts[(i + 1) % n], pts[(i + 2) % n]];
+    d += `C${n1(p1[0] + (p2[0] - p0[0]) / 6)} ${n1(p1[1] + (p2[1] - p0[1]) / 6)} `
+      + `${n1(p2[0] - (p3[0] - p1[0]) / 6)} ${n1(p2[1] - (p3[1] - p1[1]) / 6)} ${n1(p2[0])} ${n1(p2[1])}`;
+  }
+  return `${d}Z`;
+}
+
+// Los trazos no dependen de los datos: se calculan una vez al cargar el modulo.
+const mitadSilueta = pares(SILUETA);
+const TRAZO_SILUETA = curva([...mitadSilueta, ...espejo(mitadSilueta).slice(1, -1)]);
+const ambosLados = (puntos: number[]) => [curva(pares(puntos)), curva(espejo(pares(puntos)))];
+const trazos = (formas: FormaMusculo[]) => formas.map((f) => ({ musculo: f.musculo, d: ambosLados(f.puntos) }));
+const VISTAS = {
+  frente: { musculos: trazos(FRENTE), huesos: HUESOS_FRENTE.flatMap(ambosLados) },
+  espalda: { musculos: trazos(ESPALDA), huesos: HUESOS_ESPALDA.flatMap(ambosLados) },
+};
+
+function Figura({ vista, series, maximo, titulo }: { vista: keyof typeof VISTAS; series: Map<Musculo, number>; maximo: number; titulo: string }) {
+  const { musculos, huesos } = VISTAS[vista];
   return (
     <figure className="atl-mapa__fig">
-      <svg viewBox="0 0 100 222" role="img" aria-label={titulo}>
-        {musculos.map((m) => {
-          const n = series.get(m.muscle) ?? 0;
+      <svg viewBox="0 0 200 440" role="img" aria-label={titulo}>
+        <path d={TRAZO_SILUETA} className="atl-mapa__silueta" />
+        {huesos.map((d, i) => <path key={i} d={d} className="atl-mapa__hueso" />)}
+        {musculos.map((m, i) => {
+          const n = series.get(m.musculo) ?? 0;
           // Opacidad entre 0,25 y 1 segun las series respecto al musculo mas trabajado.
           const estilo = n > 0 ? { fill: 'var(--accent)', fillOpacity: 0.25 + 0.75 * (n / maximo) } : undefined;
-          return m.svgPoints.map((p, i) => (
-            <polygon key={`${m.muscle}-${i}`} points={p} className={NEUTROS.has(m.muscle) ? 'atl-mapa__hueso' : undefined} style={estilo}>
-              {n > 0 && <title>{`${n} series`}</title>}
-            </polygon>
-          ));
+          return (
+            <g key={`${m.musculo}-${i}`} className="atl-mapa__musculo" style={estilo}>
+              <title>{n > 0 ? `${NOMBRE_MUSCULO[m.musculo]}: ${n} series` : NOMBRE_MUSCULO[m.musculo]}</title>
+              {m.d.map((d) => <path key={d} d={d} />)}
+            </g>
+          );
         })}
       </svg>
       <figcaption>{titulo}</figcaption>
@@ -68,8 +113,8 @@ export function MapaMuscular({ trabajo }: { trabajo: TrabajoMuscular[] }) {
   const maximo = Math.max(1, ...series.values());
   return (
     <div className="atl-mapa">
-      <Figura musculos={FRONT_MUSCLES} series={series} maximo={maximo} titulo="Frente" />
-      <Figura musculos={BACK_MUSCLES} series={series} maximo={maximo} titulo="Espalda" />
+      <Figura vista="frente" series={series} maximo={maximo} titulo="Frente" />
+      <Figura vista="espalda" series={series} maximo={maximo} titulo="Espalda" />
     </div>
   );
 }
