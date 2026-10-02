@@ -11,7 +11,7 @@ import java.util.Optional;
  * gastos ni sesiones: lo implementa el modulo dueno del dato en su
  * infrastructure/nucleo (Fusion las comidas, Kuiper los gastos y los
  * presupuestos, Atlas el entreno), consumiendo sus propios casos de uso.
- * Ver docs/decisiones/044-recordatorios.md.
+ * Ver docs/decisiones/045-recordatorios.md.
  */
 public interface ComprobarRecordatorioPort {
 

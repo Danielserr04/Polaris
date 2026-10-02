@@ -128,7 +128,7 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Registro de cuentas dentro del login ([[033-registro-en-el-login-y-tema-claro]]) | **Hecho** |
 | Tema claro opcional (Perfil → Apariencia), oscuro sigue siendo el de la marca | **Hecho** |
 | Pulido: tipografías en local, logo de Google en el login, avatar con iniciales si la imagen falla, `Dialog` con portal y foco | **Hecho** |
-| Recordatorios (comidas, gastos, entreno, presupuesto): campana en la cabecera, Perfil → Notificaciones y avisos al móvil con Web Push; PWA mínima instalable ([[044-recordatorios]]) | **Hecho** (falta probarlo en un móvil con HTTPS) |
+| Recordatorios (comidas, gastos, entreno, presupuesto): campana en la cabecera, Perfil → Notificaciones y avisos al móvil con Web Push; PWA mínima instalable ([[045-recordatorios]]) | **Hecho** (falta probarlo en un móvil con HTTPS) |
 | Móvil (≤ 760 px): barra de módulos abajo, cabecera compacta, diálogos como hojas inferiores, tablas y anillos que caben, login con scroll | **Hecho** (responsive, sin kit móvil aparte) |
 
 ## Después

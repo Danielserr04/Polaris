@@ -15,7 +15,7 @@ import java.util.Optional;
 /**
  * Recordatorio de gastos: pendiente mientras no haya ningun gasto apuntado
  * ese dia (los de la papelera no cuentan). Kuiper responde a Nucleo con sus
- * propios casos de uso. Ver docs/decisiones/044-recordatorios.md.
+ * propios casos de uso. Ver docs/decisiones/045-recordatorios.md.
  */
 @Component
 @RequiredArgsConstructor

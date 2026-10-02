@@ -31,7 +31,7 @@ import java.util.Base64;
  * (RFC 8291, aes128gcm) y firma VAPID (RFC 8292, JWT ES256). Todo con claves
  * P-256: las publicas en formato sin comprimir (65 bytes, 0x04 || x || y) y
  * las privadas como el escalar d (32 bytes), siempre en base64url sin relleno.
- * Ver docs/decisiones/044-recordatorios.md.
+ * Ver docs/decisiones/045-recordatorios.md.
  */
 public final class WebPushCifrado {
 

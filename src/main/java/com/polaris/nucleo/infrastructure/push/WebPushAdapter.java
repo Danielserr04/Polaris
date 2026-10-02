@@ -25,7 +25,7 @@ import java.util.Map;
  * (Google, Apple, Mozilla...). Gratis y sin cuentas: basta con la firma VAPID.
  * Un 404 o 410 significa que el dispositivo ya no existe (desinstalo la app,
  * quito el permiso): se borra su suscripcion. Ver
- * docs/decisiones/044-recordatorios.md.
+ * docs/decisiones/045-recordatorios.md.
  */
 @Slf4j
 @Component

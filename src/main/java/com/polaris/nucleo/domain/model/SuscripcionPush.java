@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
  *
  * <p>endpoint es la URL del servicio de push del fabricante (Google, Apple,
  * Mozilla) para ese dispositivo; p256dh y auth son sus claves para cifrar el
- * mensaje, en base64url. Ver docs/decisiones/044-recordatorios.md.
+ * mensaje, en base64url. Ver docs/decisiones/045-recordatorios.md.
  */
 @Getter
 @Setter

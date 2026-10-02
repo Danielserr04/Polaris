@@ -19,7 +19,7 @@ import java.util.Optional;
  * Recordatorio de presupuestos: pendiente mientras alguna categoria del mes
  * este en aviso o pasada del limite. El estado lo calcula el resumen mensual
  * de Kuiper (docs/decisiones/035-presupuesto-umbral-de-alerta.md); aqui solo
- * se escribe. Ver docs/decisiones/044-recordatorios.md.
+ * se escribe. Ver docs/decisiones/045-recordatorios.md.
  */
 @Component
 @RequiredArgsConstructor

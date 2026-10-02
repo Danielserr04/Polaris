@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
  *
  * <p>Si un recordatorio sigue pendiente lo dice el modulo dueno del dato
  * (ComprobarRecordatorioPort); un tipo sin comprobador no avisa nunca. Ver
- * docs/decisiones/044-recordatorios.md.
+ * docs/decisiones/045-recordatorios.md.
  */
 @Slf4j
 @Service

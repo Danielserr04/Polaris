@@ -82,7 +82,7 @@ polaris:
     remitente: ${POLARIS_CORREO_REMITENTE:no-reply@polaris.local}
 
   # Avisos al movil (Web Push) de los recordatorios. Ver
-  # docs/decisiones/044-recordatorios.md. Las claves VAPID son opcionales: sin
+  # docs/decisiones/045-recordatorios.md. Las claves VAPID son opcionales: sin
   # ellas el backend genera un par la primera vez y lo guarda en push_vapid.
   # Para generarlas aparte vale cualquier herramienta de VAPID (P-256, base64url).
   push:

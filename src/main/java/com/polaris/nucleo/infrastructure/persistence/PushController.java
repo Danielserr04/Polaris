@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Avisos al movil (Web Push): la clave para suscribirse, el alta y la baja
- * del dispositivo y un aviso de prueba. Ver docs/decisiones/044-recordatorios.md.
+ * del dispositivo y un aviso de prueba. Ver docs/decisiones/045-recordatorios.md.
  */
 @Tag(name = "Nucleo - Push",
      description = "Dispositivos del usuario autenticado que reciben los recordatorios aunque Polaris este cerrado.")

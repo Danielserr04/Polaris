@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
  * Cada minuto (hora de Madrid) manda al movil los recordatorios que ya tocan
  * y siguen sin hacer. Repetir una pasada no duplica nada: avisadoEn deja uno
  * por tipo y dia. Se apaga con polaris.jobs.activos: false, como el resto.
- * Ver docs/decisiones/044-recordatorios.md.
+ * Ver docs/decisiones/045-recordatorios.md.
  */
 @Slf4j
 @Component

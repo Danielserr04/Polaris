@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * El tipo va en la ruta en vez del id: hay uno por usuario y tipo, y siempre
  * son los del usuario del JWT. Solo GET y PUT (que crea si no existe). Ver
- * docs/decisiones/044-recordatorios.md.
+ * docs/decisiones/045-recordatorios.md.
  */
 @Tag(name = "Nucleo - Recordatorio",
      description = "Recordatorios del usuario autenticado: apuntar comidas, gastos, entrenar y presupuestos cerca "

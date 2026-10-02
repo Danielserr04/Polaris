@@ -3,7 +3,7 @@ import { api } from './client';
 
 // Recordatorios y avisos al movil. Reflejan RecordatorioListDto, RecordatorioPendienteDto y
 // los DTO de PushController de src/main/java/com/polaris/nucleo/.
-// Ver docs/decisiones/044-recordatorios.md.
+// Ver docs/decisiones/045-recordatorios.md.
 
 export type TipoRecordatorio = 'COMIDAS' | 'GASTOS' | 'ENTRENO' | 'PRESUPUESTO';
 
