@@ -1,0 +1,24 @@
+/* Kuiper, pestaña Recurrentes. Lo de movil va aqui mismo, en el @media de 760 px de styles/mobile.css */
+.kui-rec__intro{margin:0;font-size:13.5px}
+.kui-rec__stats{grid-template-columns:repeat(3,minmax(0,1fr))}
+.table__r.kui-rec{grid-template-columns:36px minmax(0,1fr) 120px 110px auto;grid-template-areas:"chip main cuando importe acciones";height:auto;min-height:60px;padding-top:10px;padding-bottom:10px}
+.kui-rec>.kui-catchip{grid-area:chip}
+.kui-rec__main{grid-area:main;display:flex;flex-direction:column;gap:3px;min-width:0}
+.kui-rec__concepto{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block!important}
+.kui-rec__meta{font-size:12.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-rec__cuotas{max-width:260px;margin-top:2px}
+.kui-rec__cuando{grid-area:cuando;display:flex;flex-direction:column;align-items:flex-start;gap:3px}
+.kui-rec__fecha{font-size:12px}
+.kui-rec__importe{grid-area:importe}
+.kui-rec__importe--ingreso{color:var(--success,var(--text-1))}
+.kui-rec__acciones{grid-area:acciones;display:flex;align-items:center;justify-content:flex-end;gap:4px;white-space:nowrap}
+.kui-rec__pregunta{font-size:13px;margin-right:4px}
+.kui-rec--parado .kui-rec__concepto,.kui-rec--parado .kui-rec__importe{color:var(--text-3)}
+@media (max-width:900px){.kui-rec__stats{grid-template-columns:1fr}}
+
+@media (max-width:760px){
+  .kui-rec__intro{flex-basis:100%}
+  .table__r.kui-rec{grid-template-columns:36px minmax(0,1fr) auto;grid-template-areas:"chip main importe" "chip cuando acciones";row-gap:8px;align-items:start}
+  .kui-rec__cuando{flex-direction:row;align-items:center;gap:8px}
+  .kui-rec__cuotas{max-width:none}
+}

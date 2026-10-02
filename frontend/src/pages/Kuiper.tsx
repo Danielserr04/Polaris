@@ -6,10 +6,11 @@ import type { MovimientoList } from '../api/kuiper';
 import { CategoriasTab } from './kuiper/CategoriasTab';
 import { FormularioMovimiento } from './kuiper/FormularioMovimiento';
 import { MovimientosTab } from './kuiper/MovimientosTab';
+import { RecurrentesTab } from './kuiper/RecurrentesTab';
 import { ResumenTab } from './kuiper/ResumenTab';
 import './kuiper/kuiper.css';
 
-type Pestana = 'resumen' | 'mov' | 'cat';
+type Pestana = 'resumen' | 'mov' | 'cat' | 'rec';
 
 // Un movimiento abierto: nuevo (sin id) o editando uno existente.
 type Abierto = { id?: number } | null;
@@ -54,6 +55,7 @@ export function Kuiper() {
           { value: 'resumen', label: 'Resumen' },
           { value: 'mov', label: 'Movimientos' },
           { value: 'cat', label: 'Categorías' },
+          { value: 'rec', label: 'Recurrentes' },
         ]}
         style={{ marginBottom: 24 }}
       />
@@ -61,6 +63,8 @@ export function Kuiper() {
         <ResumenTab periodo={periodo} onVerTodos={() => setPestana('mov')} onEditar={editar} onIrACategorias={() => setPestana('cat')} />
       ) : pestana === 'mov' ? (
         <MovimientosTab periodo={periodo} onEditar={editar} />
+      ) : pestana === 'rec' ? (
+        <RecurrentesTab />
       ) : (
         <CategoriasTab />
       )}
