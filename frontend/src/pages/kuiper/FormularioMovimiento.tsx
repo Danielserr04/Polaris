@@ -11,6 +11,7 @@ import {
   type MovimientoRequest,
   type TipoMovimiento,
 } from '../../api/kuiper';
+import { avisar, useDuplicarMovimiento } from '../../api/kuiperPapelera';
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
 import { Alert, Button, Dialog, Input, SegmentedControl, Select, Switch } from '../../design-system';
 import { iso } from '../../lib/fechas';
@@ -59,7 +60,12 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
   const crearCategoria = useCrearCategoria();
   const crear = useCrearMovimiento();
   const actualizar = useActualizarMovimiento(movimiento?.id ?? 0);
-  const borrar = useBorrarMovimiento(onClose);
+  // Borrar manda a la papelera: el aviso con "Deshacer" lo pinta AvisoKuiper, que sigue montado.
+  const borrar = useBorrarMovimiento(() => {
+    if (movimiento) avisar({ texto: 'Movimiento en la papelera.', restaurar: [movimiento.id] });
+    onClose();
+  });
+  const duplicar = useDuplicarMovimiento();
 
   const [tipo, setTipo] = useState<TipoMovimiento>(movimiento?.tipo ?? 'GASTO');
   const [importe, setImporte] = useState(movimiento ? String(movimiento.importe).replace('.', ',') : '');
@@ -94,7 +100,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
     : categoriaEfectiva === ''
       ? 'Elige una categoría.'
       : null;
-  const ocupado = crear.isPending || actualizar.isPending || crearCategoria.isPending || borrar.isPending;
+  const ocupado = crear.isPending || actualizar.isPending || crearCategoria.isPending || borrar.isPending || duplicar.isPending;
 
   const guardar = async (ev: FormEvent) => {
     ev.preventDefault();
@@ -130,6 +136,19 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
     borrar.mutate(movimiento.id, { onError: (e) => setErrorEnvio(mensajeError(e)) });
   };
 
+  /** Copia el movimiento guardado (no lo que haya sin guardar en el formulario) con fecha de hoy. */
+  const duplicarMovimiento = async () => {
+    if (!movimiento) return;
+    setErrorEnvio(null);
+    try {
+      await duplicar.mutateAsync({ id: movimiento.id });
+      avisar({ texto: 'Movimiento duplicado con fecha de hoy.', tono: 'success' });
+      onClose();
+    } catch (e) {
+      setErrorEnvio(mensajeError(e));
+    }
+  };
+
   const ver = (error: string | null) => (intentado ? error : null);
 
   return (
@@ -140,7 +159,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
       footer={
         confirmandoBorrado ? (
           <>
-            <span className="muted kui-form__borrar">¿Borrar este movimiento?</span>
+            <span className="muted kui-form__borrar">¿Mandarlo a la papelera?</span>
             <Button variant="ghost" type="button" autoFocus onClick={() => setConfirmandoBorrado(false)}>
               No
             </Button>
@@ -153,6 +172,11 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
             {editando && (
               <Button variant="ghost" type="button" className="kui-form__borrar" disabled={ocupado} onClick={() => setConfirmandoBorrado(true)}>
                 Borrar
+              </Button>
+            )}
+            {editando && (
+              <Button variant="ghost" type="button" icon="copy" disabled={ocupado} onClick={() => void duplicarMovimiento()}>
+                Duplicar
               </Button>
             )}
             <Button variant="ghost" type="button" onClick={onClose}>

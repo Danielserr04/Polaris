@@ -1,9 +1,11 @@
 import { useMemo } from 'react';
 import { mensajeError, useMovimientos, useResumen, type MovimientoList } from '../../api/kuiper';
-import { Alert, BarChart, Badge, Button, Card, Icon, ProgressBar, Stat } from '../../design-system';
+import { Alert, BarChart, Button, Card, Stat } from '../../design-system';
 import { eur, iso, mesAnterior, periodo as periodoDe, rangoMes } from '../../lib/fechas';
-import { iconoOr } from '../../lib/iconos';
+import { AvisoPresupuestos } from './AvisoPresupuestos';
+import { BarraPresupuesto } from './BarraPresupuesto';
 import { ListaMovimientos } from './ListaMovimientos';
+import { PresupuestosAnualesCard } from './PresupuestosAnualesCard';
 
 interface Props {
   periodo: string;
@@ -60,7 +62,7 @@ export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: P
   const r = resumen.data;
   const conLimite = r.gastoPorCategoria.filter((c) => (c.limiteMensual ?? 0) > 0);
   const sinLimite = r.gastoPorCategoria.filter((c) => !(c.limiteMensual ?? 0) && c.gastado > 0);
-  const totalLimite = conLimite.reduce((s, c) => s + (c.limiteMensual ?? 0), 0);
+  const totalLimite = r.presupuestoTotal;
   const gastadoConLimite = conLimite.reduce((s, c) => s + c.gastado, 0);
   const hoyIso = iso(hoy);
   const diaHoy = esActual ? Number(hoyIso.slice(8)) : 0;
@@ -77,6 +79,11 @@ export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: P
 
   return (
     <div className="grid">
+      {r.categoriasEnAviso + r.categoriasExcedidas > 0 && (
+        <div className="span-12 pl-rise">
+          <AvisoPresupuestos filas={r.gastoPorCategoria} onIrACategorias={onIrACategorias} />
+        </div>
+      )}
       <div className="span-12 stats pl-rise">
         <Stat
           label="Gastado"
@@ -123,59 +130,48 @@ export function ResumenTab({ periodo, onVerTodos, onEditar, onIrACategorias }: P
           />
         </Card>
 
-        <Card delay={160} eyebrow="Presupuestos" title="Por categoría">
-          {conLimite.length === 0 && sinLimite.length === 0 ? (
-            <span className="muted">Sin gastos este mes.</span>
-          ) : (
-            <div className="stack-16">
-              {conLimite.map((c) => {
-                const exceso = c.gastado - (c.limiteMensual ?? 0);
-                return (
-                  <div key={c.categoriaId} style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
-                    <span className="catic">
-                      <Icon name={iconoOr(c.categoriaIcono)} size={15} />
-                    </span>
-                    <ProgressBar
-                      style={{ flex: 1 }}
-                      label={
-                        <>
-                          {c.categoriaNombre}
-                          {exceso > 0 && (
-                            <Badge tone="danger" style={{ marginLeft: 8, height: 18 }}>
-                              +{eur(exceso, 0)}
-                            </Badge>
-                          )}
-                        </>
-                      }
-                      value={c.gastado}
-                      max={c.limiteMensual ?? 1}
-                      valueLabel={`${eur(c.gastado, 0)} / ${eur(c.limiteMensual ?? 0, 0)}`}
-                    />
+        <div className="kui-stack">
+          <Card delay={160} eyebrow="Presupuestos" title="Por categoría">
+            {conLimite.length === 0 && sinLimite.length === 0 ? (
+              <span className="muted">Sin gastos este mes.</span>
+            ) : (
+              <div className="stack-16">
+                {conLimite.map((c) => (
+                  <BarraPresupuesto
+                    key={c.categoriaId}
+                    nombre={c.categoriaNombre}
+                    icono={c.categoriaIcono}
+                    gastado={c.gastado}
+                    limite={c.limiteMensual ?? 0}
+                    porcentaje={c.porcentaje}
+                    porcentajeAlerta={c.porcentajeAlerta}
+                    estado={c.estado}
+                  />
+                ))}
+                {conLimite.length === 0 && (
+                  <span className="muted" style={{ fontSize: 13 }}>
+                    Aún no tienes presupuestos.{' '}
+                    <Button variant="ghost" size="sm" onClick={onIrACategorias}>
+                      Ponlos en Categorías
+                    </Button>
+                  </span>
+                )}
+                {sinLimite.length > 0 && (
+                  <div className="stack-8">
+                    <span className="pl-eyebrow">Sin presupuesto</span>
+                    {sinLimite.map((c) => (
+                      <div key={c.categoriaId} className="kui-sinpres">
+                        <b>{c.categoriaNombre}</b>
+                        <span className="money">{eur(c.gastado)}</span>
+                      </div>
+                    ))}
                   </div>
-                );
-              })}
-              {conLimite.length === 0 && (
-                <span className="muted" style={{ fontSize: 13 }}>
-                  Aún no tienes presupuestos.{' '}
-                  <Button variant="ghost" size="sm" onClick={onIrACategorias}>
-                    Ponlos en Categorías
-                  </Button>
-                </span>
-              )}
-              {sinLimite.length > 0 && (
-                <div className="stack-8">
-                  <span className="pl-eyebrow">Sin presupuesto</span>
-                  {sinLimite.map((c) => (
-                    <div key={c.categoriaId} className="kui-sinpres">
-                      <b>{c.categoriaNombre}</b>
-                      <span className="money">{eur(c.gastado)}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
-        </Card>
+                )}
+              </div>
+            )}
+          </Card>
+          <PresupuestosAnualesCard anio={Number(periodo.slice(0, 4))} onIrACategorias={onIrACategorias} />
+        </div>
       </div>
 
       <div className="span-12">

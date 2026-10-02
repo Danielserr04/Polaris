@@ -15,6 +15,7 @@ public record PresupuestoListDto(
         String categoriaColor,
         String categoriaIcono,
         PeriodoPresupuesto periodo,
-        BigDecimal importeLimite
+        BigDecimal importeLimite,
+        Integer porcentajeAlerta
 ) {
 }

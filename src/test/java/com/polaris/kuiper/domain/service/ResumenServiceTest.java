@@ -3,6 +3,7 @@ package com.polaris.kuiper.domain.service;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.application.out.PresupuestoRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
+import com.polaris.kuiper.domain.model.EstadoPresupuesto;
 import com.polaris.kuiper.domain.model.GastoCategoria;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
@@ -72,8 +73,18 @@ class ResumenServiceTest {
     }
 
     private static Presupuesto presupuesto(Categoria categoria, String limite) {
+        return presupuesto(categoria, limite, 80);
+    }
+
+    private static Presupuesto presupuesto(Categoria categoria, String limite, int alerta) {
         return Presupuesto.builder().usuarioId(USUARIO).categoriaId(categoria.getId()).categoria(categoria)
-                .periodo(PeriodoPresupuesto.MENSUAL).importeLimite(new BigDecimal(limite)).build();
+                .periodo(PeriodoPresupuesto.MENSUAL).importeLimite(new BigDecimal(limite))
+                .porcentajeAlerta(alerta).build();
+    }
+
+    private void conPresupuestos(Presupuesto... presupuestos) {
+        when(presupuestoRepository.findAll(eq(USUARIO), any(PresupuestoFilter.class)))
+                .thenReturn(List.of(presupuestos));
     }
 
     private void conMovimientos(Movimiento... movimientos) {
@@ -92,6 +103,9 @@ class ResumenServiceTest {
         assertThat(resumen.getGastos()).isEqualTo(new BigDecimal("0.00"));
         assertThat(resumen.getBalance()).isEqualTo(new BigDecimal("0.00"));
         assertThat(resumen.getGastoPorCategoria()).isEmpty();
+        assertThat(resumen.getPresupuestoTotal()).isEqualTo(new BigDecimal("0.00"));
+        assertThat(resumen.getCategoriasEnAviso()).isZero();
+        assertThat(resumen.getCategoriasExcedidas()).isZero();
     }
 
     @Test
@@ -224,5 +238,109 @@ class ResumenServiceTest {
         ArgumentCaptor<PresupuestoFilter> filtro = ArgumentCaptor.forClass(PresupuestoFilter.class);
         verify(presupuestoRepository).findAll(eq(USUARIO), filtro.capture());
         assertThat(filtro.getValue().getPeriodo()).isEqualTo(PeriodoPresupuesto.MENSUAL);
+    }
+
+    @Test
+    @DisplayName("sin presupuesto la fila sale SIN_PRESUPUESTO, con porcentaje y umbral nulos")
+    void estadoSinPresupuesto() {
+        conMovimientos(mov(COMIDA, "12.50"));
+
+        GastoCategoria fila = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria().get(0);
+
+        assertThat(fila.getEstado()).isEqualTo(EstadoPresupuesto.SIN_PRESUPUESTO);
+        assertThat(fila.getPorcentaje()).isNull();
+        assertThat(fila.getPorcentajeAlerta()).isNull();
+    }
+
+    @Test
+    @DisplayName("por debajo del umbral la fila esta OK y el porcentaje sale con un decimal")
+    void estadoOk() {
+        conMovimientos(mov(COMIDA, "100.00"));
+        conPresupuestos(presupuesto(COMIDA, "300.00"));
+
+        GastoCategoria fila = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria().get(0);
+
+        assertThat(fila.getEstado()).isEqualTo(EstadoPresupuesto.OK);
+        assertThat(fila.getPorcentaje()).isEqualTo(new BigDecimal("33.3"));
+        assertThat(fila.getPorcentajeAlerta()).isEqualTo(80);
+    }
+
+    @Test
+    @DisplayName("justo en el umbral la fila pasa a AVISO")
+    void estadoAvisoEnElUmbral() {
+        conMovimientos(mov(COMIDA, "200.00"));
+        conPresupuestos(presupuesto(COMIDA, "250.00"));
+
+        GastoCategoria fila = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria().get(0);
+
+        assertThat(fila.getPorcentaje()).isEqualTo(new BigDecimal("80.0"));
+        assertThat(fila.getEstado()).isEqualTo(EstadoPresupuesto.AVISO);
+    }
+
+    @Test
+    @DisplayName("un pelo por debajo del umbral sigue OK aunque el porcentaje redondeado sea el umbral")
+    void casiEnElUmbralSigueOk() {
+        conMovimientos(mov(COMIDA, "79.96"));
+        conPresupuestos(presupuesto(COMIDA, "100.00"));
+
+        GastoCategoria fila = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria().get(0);
+
+        assertThat(fila.getPorcentaje()).isEqualTo(new BigDecimal("80.0"));
+        assertThat(fila.getEstado()).isEqualTo(EstadoPresupuesto.OK);
+    }
+
+    @Test
+    @DisplayName("el umbral es el de cada presupuesto, no un 80 fijo")
+    void umbralPropio() {
+        conMovimientos(mov(COMIDA, "60.00"), mov(OCIO, "60.00"));
+        conPresupuestos(presupuesto(COMIDA, "100.00", 50), presupuesto(OCIO, "100.00", 90));
+
+        List<GastoCategoria> filas = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria();
+
+        assertThat(filas).extracting(GastoCategoria::getEstado)
+                .containsExactly(EstadoPresupuesto.AVISO, EstadoPresupuesto.OK);
+    }
+
+    @Test
+    @DisplayName("gastar exactamente el limite es AVISO; pasarse es EXCEDIDO")
+    void limiteExactoYExceso() {
+        conMovimientos(mov(COMIDA, "250.00"), mov(OCIO, "80.01"));
+        conPresupuestos(presupuesto(COMIDA, "250.00"), presupuesto(OCIO, "80.00"));
+
+        List<GastoCategoria> filas = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria();
+
+        assertThat(filas.get(0).getEstado()).isEqualTo(EstadoPresupuesto.AVISO);
+        assertThat(filas.get(0).getPorcentaje()).isEqualTo(new BigDecimal("100.0"));
+        assertThat(filas.get(1).getEstado()).isEqualTo(EstadoPresupuesto.EXCEDIDO);
+        assertThat(filas.get(1).getPorcentaje()).isEqualTo(new BigDecimal("100.0"));
+    }
+
+    @Test
+    @DisplayName("una categoria con presupuesto y sin gasto esta OK al 0 %")
+    void presupuestoSinGastoOk() {
+        conMovimientos();
+        conPresupuestos(presupuesto(OCIO, "80.00"));
+
+        GastoCategoria fila = service.get(USUARIO, SEPTIEMBRE).getGastoPorCategoria().get(0);
+
+        assertThat(fila.getEstado()).isEqualTo(EstadoPresupuesto.OK);
+        assertThat(fila.getPorcentaje()).isEqualTo(new BigDecimal("0.0"));
+    }
+
+    @Test
+    @DisplayName("los totales suman los limites mensuales y cuentan las categorias en aviso y excedidas")
+    void totalesDePresupuesto() {
+        Categoria casa = Categoria.builder().id(13L).usuarioId(USUARIO).nombre("Casa")
+                .tipo(TipoMovimiento.GASTO).build();
+        Categoria ropa = Categoria.builder().id(14L).usuarioId(USUARIO).nombre("Ropa")
+                .tipo(TipoMovimiento.GASTO).build();
+        conMovimientos(mov(COMIDA, "90.00"), mov(OCIO, "150.00"), mov(casa, "10.00"), mov(ropa, "40.00"));
+        conPresupuestos(presupuesto(COMIDA, "100.00"), presupuesto(OCIO, "100.00"), presupuesto(casa, "500.50"));
+
+        ResumenMensual resumen = service.get(USUARIO, SEPTIEMBRE);
+
+        assertThat(resumen.getPresupuestoTotal()).isEqualByComparingTo("700.50");
+        assertThat(resumen.getCategoriasEnAviso()).isEqualTo(1);
+        assertThat(resumen.getCategoriasExcedidas()).isEqualTo(1);
     }
 }

@@ -68,4 +68,9 @@ public class PresupuestoJpaAdapter implements PresupuestoRepositoryPort {
     public boolean existsByCategoriaId(Long categoriaId) {
         return repository.existsByCategoria_Id(categoriaId);
     }
+
+    @Override
+    public List<Presupuesto> findAllByPeriodo(PeriodoPresupuesto periodo) {
+        return mapper.toDomainList(repository.findByPeriodoOrderByIdAsc(periodo));
+    }
 }

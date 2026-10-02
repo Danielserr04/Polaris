@@ -1,0 +1,32 @@
+/* Papelera, seleccion multiple y duplicar de Kuiper (ADR 038). Aparte de kuiper.css a proposito. */
+
+/* Fila con boton de duplicar: una columna mas al final, vacia, y el boton encima. */
+.table__r.table__r--mov.table__r--acc{grid-template-columns:76px minmax(0,1fr) 150px 120px 28px}
+.kui-movfila{position:relative}
+.kui-movfila__dup{position:absolute;right:18px;top:8px}
+.kui-movfila:not(:hover) .kui-movfila__dup:not(:focus-visible){color:var(--text-3)}
+
+/* Modo seleccion: una casilla al principio. */
+.table__r.table__r--mov.table__r--sel{grid-template-columns:16px 76px minmax(0,1fr) 150px 120px}
+.table__r--mov.is-marcado{background:var(--accent-soft)}
+.kui-check{width:16px;height:16px;border-radius:3px;border:1px solid var(--border-strong);display:inline-flex;align-items:center;justify-content:center;color:var(--accent)}
+.is-marcado .kui-check{border-color:var(--accent)}
+
+.kui-selbar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:-4px 0 12px;font-size:13px;color:var(--text-2)}
+.kui-selbar__sep{flex:1}
+
+/* Dialogo de la papelera */
+.kui-pap{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:min(60vh,480px);overflow:auto}
+.kui-pap__r{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--border-1)}
+.kui-pap__txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.kui-pap__txt b{font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-pap__txt .muted{font-size:12.5px}
+.kui-pap__acc{display:flex;gap:4px;align-items:center}
+
+@media (max-width:760px){.kui-movfila__dup{right:14px}}
+@media (max-width:640px){
+  .table__r.table__r--mov.table__r--acc{grid-template-columns:60px minmax(0,1fr) 100px 28px}
+  .table__r.table__r--mov.table__r--sel{grid-template-columns:16px 60px minmax(0,1fr) 100px}
+  .kui-pap__r{grid-template-columns:minmax(0,1fr) auto;row-gap:6px}
+  .kui-pap__acc{grid-column:1/-1;justify-content:flex-end}
+}

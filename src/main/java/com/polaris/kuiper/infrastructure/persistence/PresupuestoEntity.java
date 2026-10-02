@@ -54,4 +54,8 @@ public class PresupuestoEntity {
 
     @Column(name = "importe_limite", nullable = false, precision = 10, scale = 2)
     private BigDecimal importeLimite;
+
+    /** 1 a 100; el CHECK y el DEFAULT 80 viven en V17__kuiper_presupuesto_alerta.sql. */
+    @Column(name = "porcentaje_alerta", nullable = false)
+    private Integer porcentajeAlerta;
 }

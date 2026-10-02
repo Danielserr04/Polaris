@@ -268,4 +268,76 @@ class PresupuestoServiceTest {
 
         verify(repository, never()).deleteById(any());
     }
+
+    @Test
+    @DisplayName("create sin porcentajeAlerta guarda el 80 por defecto")
+    void createSinAlertaUsaElPorDefecto() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndCategoriaIdAndPeriodo(USUARIO, 10L, MENSUAL)).thenReturn(Optional.empty());
+        when(repository.save(any(Presupuesto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Presupuesto creado = service.create(USUARIO, presupuesto(null, null, 10L, MENSUAL));
+
+        assertThat(creado.getPorcentajeAlerta()).isEqualTo(Presupuesto.PORCENTAJE_ALERTA_POR_DEFECTO).isEqualTo(80);
+    }
+
+    @Test
+    @DisplayName("create respeta el porcentajeAlerta que llega, incluidos los extremos 1 y 100")
+    void createRespetaLaAlerta() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndCategoriaIdAndPeriodo(USUARIO, 10L, MENSUAL)).thenReturn(Optional.empty());
+        when(repository.save(any(Presupuesto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        for (int alerta : new int[] {1, 65, 100}) {
+            Presupuesto nuevo = presupuesto(null, null, 10L, MENSUAL);
+            nuevo.setPorcentajeAlerta(alerta);
+            assertThat(service.create(USUARIO, nuevo).getPorcentajeAlerta()).isEqualTo(alerta);
+        }
+    }
+
+    @Test
+    @DisplayName("create lanza ValidationException y no guarda si porcentajeAlerta esta fuera de 1..100")
+    void createLanzaSiLaAlertaEstaFueraDeRango() {
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+
+        for (int alerta : new int[] {0, 101}) {
+            Presupuesto nuevo = presupuesto(null, null, 10L, MENSUAL);
+            nuevo.setPorcentajeAlerta(alerta);
+            assertThatThrownBy(() -> service.create(USUARIO, nuevo)).isInstanceOf(ValidationException.class);
+        }
+
+        verify(repository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("update sin porcentajeAlerta vuelve al 80: el PUT es un reemplazo completo")
+    void updateSinAlertaVuelveAlPorDefecto() {
+        Presupuesto existente = presupuesto(5L, USUARIO, 10L, MENSUAL);
+        existente.setPorcentajeAlerta(50);
+        when(repository.findById(5L)).thenReturn(Optional.of(existente));
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndCategoriaIdAndPeriodo(USUARIO, 10L, MENSUAL))
+                .thenReturn(Optional.of(existente));
+        when(repository.save(any(Presupuesto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Presupuesto actualizado = service.update(USUARIO, 5L, presupuesto(null, null, 10L, MENSUAL));
+
+        assertThat(actualizado.getPorcentajeAlerta()).isEqualTo(80);
+    }
+
+    @Test
+    @DisplayName("update cambia el porcentajeAlerta")
+    void updateCambiaLaAlerta() {
+        Presupuesto existente = presupuesto(5L, USUARIO, 10L, MENSUAL);
+        when(repository.findById(5L)).thenReturn(Optional.of(existente));
+        when(categoriaRepository.findById(10L)).thenReturn(Optional.of(categoria(10L, USUARIO, TipoMovimiento.GASTO)));
+        when(repository.findByUsuarioIdAndCategoriaIdAndPeriodo(USUARIO, 10L, MENSUAL))
+                .thenReturn(Optional.of(existente));
+        when(repository.save(any(Presupuesto.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Presupuesto cambios = presupuesto(null, null, 10L, MENSUAL);
+        cambios.setPorcentajeAlerta(95);
+
+        assertThat(service.update(USUARIO, 5L, cambios).getPorcentajeAlerta()).isEqualTo(95);
+    }
 }

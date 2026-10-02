@@ -23,6 +23,9 @@ import java.util.List;
 /**
  * Un presupuesto por categoria y periodo, y solo sobre categorias de GASTO.
  * Ver docs/decisiones/013-presupuesto-solo-gastos-uno-por-periodo.md.
+ *
+ * <p>El umbral de alerta es opcional: sin el se guarda el 80 %. Ver
+ * docs/decisiones/035-presupuesto-umbral-de-alerta.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -39,6 +42,7 @@ public class PresupuestoService implements
     @Override
     public Presupuesto create(Long usuarioId, Presupuesto presupuesto) {
         validarCategoria(usuarioId, presupuesto);
+        normalizarAlerta(presupuesto);
         comprobarLibre(usuarioId, presupuesto, null);
         presupuesto.setId(null);
         presupuesto.setUsuarioId(usuarioId);
@@ -59,6 +63,7 @@ public class PresupuestoService implements
     public Presupuesto update(Long usuarioId, Long id, Presupuesto presupuesto) {
         Presupuesto existente = getPropio(usuarioId, id);
         validarCategoria(usuarioId, presupuesto);
+        normalizarAlerta(presupuesto);
         comprobarLibre(usuarioId, presupuesto, existente.getId());
         presupuesto.setId(existente.getId());
         presupuesto.setUsuarioId(existente.getUsuarioId());
@@ -84,6 +89,20 @@ public class PresupuestoService implements
 
         if (categoria.getTipo() != TipoMovimiento.GASTO) {
             throw new ValidationException("Solo se puede poner presupuesto a una categoria de gasto");
+        }
+    }
+
+    /**
+     * Sin umbral se pone el de por defecto (tambien en un PUT: es un reemplazo
+     * completo). Fuera de 1..100 es un 400; el DTO ya lo filtra, pero el
+     * dominio no se fia de quien lo llame.
+     */
+    private void normalizarAlerta(Presupuesto presupuesto) {
+        Integer alerta = presupuesto.getPorcentajeAlerta();
+        if (alerta == null) {
+            presupuesto.setPorcentajeAlerta(Presupuesto.PORCENTAJE_ALERTA_POR_DEFECTO);
+        } else if (alerta < 1 || alerta > 100) {
+            throw new ValidationException("El porcentaje de alerta debe estar entre 1 y 100");
         }
     }
 
