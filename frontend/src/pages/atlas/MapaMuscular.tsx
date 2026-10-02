@@ -1,7 +1,5 @@
 import type { TrabajoMuscular } from '../../api/atlas';
-import {
-  ESPALDA, FRENTE, HUESOS_ESPALDA, HUESOS_FRENTE, NOMBRE_MUSCULO, SILUETA, type FormaMusculo, type Musculo,
-} from './mapaMuscular.data';
+import { ESPALDA, FRENTE, NOMBRE_MUSCULO, type Musculo, type Vista } from './mapaMuscular.data';
 
 // El grupo muscular de un ejercicio es texto libre ("Pecho", "Espalda alta", "Cuádriceps"...):
 // se reconoce por palabras clave y se reparte entre los musculos del dibujo.
@@ -33,6 +31,7 @@ const CLAVES: [RegExp, Musculo[]][] = [
   [/gemelo|pantorrilla/, ['gemelos', 'soleo']],
   [/soleo/, ['soleo']],
   [/tibial/, ['tibial']],
+  [/peroneo/, ['peroneos']],
   [/pierna|tren inferior/, ['cuadriceps', 'sartorio', 'aductores', 'isquios', 'gluteo', 'gemelos', 'soleo']],
   [/cuerpo completo|full ?body/, ['pectoral', 'deltoides', 'dorsal', 'trapecio', 'cuadriceps', 'isquios', 'gluteo', 'abdominales']],
 ];
@@ -62,46 +61,56 @@ const pares = (p: number[]): Punto[] => {
   for (let i = 0; i < p.length; i += 2) r.push([p[i], p[i + 1]]);
   return r;
 };
-const espejo = (pts: Punto[]): Punto[] => pts.map(([x, y]): Punto => [200 - x, y]).reverse();
 const n1 = (n: number) => Math.round(n * 10) / 10;
 
-/** Curva cerrada que pasa por los puntos (Catmull-Rom pasada a Bezier cubica). */
-function curva(pts: Punto[]): string {
+/**
+ * Tramos de curva (Catmull-Rom pasada a Bezier cubica) que pasan por los puntos de un borde,
+ * sin el punto de partida. Solo depende del propio borde, asi que las dos piezas que lo
+ * comparten dibujan exactamente la misma linea y encajan.
+ */
+function tramos(pts: Punto[]): string {
   const n = pts.length;
-  let d = `M${n1(pts[0][0])} ${n1(pts[0][1])}`;
-  for (let i = 0; i < n; i++) {
-    const [p0, p1, p2, p3] = [pts[(i - 1 + n) % n], pts[i], pts[(i + 1) % n], pts[(i + 2) % n]];
+  let d = '';
+  for (let i = 0; i < n - 1; i++) {
+    const [p0, p1, p2, p3] = [pts[Math.max(i - 1, 0)], pts[i], pts[i + 1], pts[Math.min(i + 2, n - 1)]];
     d += `C${n1(p1[0] + (p2[0] - p0[0]) / 6)} ${n1(p1[1] + (p2[1] - p0[1]) / 6)} `
       + `${n1(p2[0] - (p3[0] - p1[0]) / 6)} ${n1(p2[1] - (p3[1] - p1[1]) / 6)} ${n1(p2[0])} ${n1(p2[1])}`;
+  }
+  return d;
+}
+
+/** Trazo de una pieza encadenando sus bordes; reflejada, para el lado izquierdo de la imagen. */
+function trazo(vista: Vista, bordes: string[], reflejada: boolean): string {
+  let d = '';
+  for (const b of bordes) {
+    const alReves = b.startsWith('-');
+    let pts = pares(vista.bordes[alReves ? b.slice(1) : b]);
+    if (alReves) pts = pts.reverse();
+    if (reflejada) pts = pts.map(([x, y]): Punto => [200 - x, y]);
+    if (!d) d = `M${n1(pts[0][0])} ${n1(pts[0][1])}`;
+    d += tramos(pts);
   }
   return `${d}Z`;
 }
 
 // Los trazos no dependen de los datos: se calculan una vez al cargar el modulo.
-const mitadSilueta = pares(SILUETA);
-const TRAZO_SILUETA = curva([...mitadSilueta, ...espejo(mitadSilueta).slice(1, -1)]);
-const ambosLados = (puntos: number[]) => [curva(pares(puntos)), curva(espejo(pares(puntos)))];
-const trazos = (formas: FormaMusculo[]) => formas.map((f) => ({ musculo: f.musculo, d: ambosLados(f.puntos) }));
-const VISTAS = {
-  frente: { musculos: trazos(FRENTE), huesos: HUESOS_FRENTE.flatMap(ambosLados) },
-  espalda: { musculos: trazos(ESPALDA), huesos: HUESOS_ESPALDA.flatMap(ambosLados) },
-};
+const trazos = (vista: Vista) =>
+  vista.piezas.map((p) => ({ musculo: p.musculo, d: [trazo(vista, p.bordes, false), trazo(vista, p.bordes, true)] }));
+const VISTAS = { frente: trazos(FRENTE), espalda: trazos(ESPALDA) };
 
 function Figura({ vista, series, maximo, titulo }: { vista: keyof typeof VISTAS; series: Map<Musculo, number>; maximo: number; titulo: string }) {
-  const { musculos, huesos } = VISTAS[vista];
   return (
     <figure className="atl-mapa__fig">
       <svg viewBox="0 0 200 440" role="img" aria-label={titulo}>
-        <path d={TRAZO_SILUETA} className="atl-mapa__silueta" />
-        {huesos.map((d, i) => <path key={i} d={d} className="atl-mapa__hueso" />)}
-        {musculos.map((m, i) => {
-          const n = series.get(m.musculo) ?? 0;
+        {VISTAS[vista].map((p, i) => {
+          if (!p.musculo) return p.d.map((d) => <path key={d} d={d} className="atl-mapa__hueso" />);
+          const n = series.get(p.musculo) ?? 0;
           // Opacidad entre 0,25 y 1 segun las series respecto al musculo mas trabajado.
           const estilo = n > 0 ? { fill: 'var(--accent)', fillOpacity: 0.25 + 0.75 * (n / maximo) } : undefined;
           return (
-            <g key={`${m.musculo}-${i}`} className="atl-mapa__musculo" style={estilo}>
-              <title>{n > 0 ? `${NOMBRE_MUSCULO[m.musculo]}: ${n} series` : NOMBRE_MUSCULO[m.musculo]}</title>
-              {m.d.map((d) => <path key={d} d={d} />)}
+            <g key={`${p.musculo}-${i}`} className="atl-mapa__musculo" style={estilo}>
+              <title>{n > 0 ? `${NOMBRE_MUSCULO[p.musculo]}: ${n} series` : NOMBRE_MUSCULO[p.musculo]}</title>
+              {p.d.map((d) => <path key={d} d={d} />)}
             </g>
           );
         })}
