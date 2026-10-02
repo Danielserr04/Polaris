@@ -23,6 +23,9 @@ export interface RecurrenteList {
   cuotasTotal: number | null;
   cuotasPagadas: number;
   activo: boolean;
+  /** Cuenta de la que sale o a la que entra; null si no tiene */
+  cuentaId: number | null;
+  cuentaNombre: string | null;
 }
 
 export interface RecurrenteForm extends RecurrenteList {
@@ -41,6 +44,8 @@ export interface RecurrenteRequest {
   fechaInicio: string;
   cuotasTotal: number | null;
   activo: boolean;
+  /** Opcional; los movimientos generados la heredan */
+  cuentaId: number | null;
 }
 
 export interface FiltroRecurrentes {
@@ -140,6 +145,7 @@ export function requestDe(r: RecurrenteForm, cambios: Partial<RecurrenteRequest>
     fechaInicio: r.fechaInicio,
     cuotasTotal: r.cuotasTotal,
     activo: r.activo,
+    cuentaId: r.cuentaId,
     ...cambios,
   };
 }

@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { mensajeError, useCategorias, useMovimientos, type MovimientoList, type TipoMovimiento } from '../../api/kuiper';
-import { avisar, useBorrarMovimientos, useDuplicarMovimiento } from '../../api/kuiperPapelera';
+import { useBorrarMovimientos, useDuplicarMovimiento } from '../../api/kuiperPapelera';
+import { avisar } from '../../lib/avisos';
 import { useCuentas } from '../../api/kuiperCuentas';
 import { Alert, Button, Card, SegmentedControl, Select } from '../../design-system';
 import { rangoMes } from '../../lib/fechas';
@@ -71,15 +72,15 @@ export function MovimientosTab({ periodo, onEditar }: Props) {
   const borrarElegidos = () =>
     borrarVarios.mutate(elegidos, {
       onSuccess: () => setSeleccion(null),
-      onError: (e) => avisar({ texto: mensajeError(e), tono: 'danger' }),
+      onError: (e) => avisar(mensajeError(e), { tono: 'danger' }),
     });
 
   const duplicarFila = (m: MovimientoList) =>
     duplicar.mutate(
       { id: m.id },
       {
-        onSuccess: () => avisar({ texto: `«${m.concepto || m.categoriaNombre}» duplicado con fecha de hoy.`, tono: 'success' }),
-        onError: (e) => avisar({ texto: mensajeError(e), tono: 'danger' }),
+        onSuccess: () => avisar(`«${m.concepto || m.categoriaNombre}» duplicado con fecha de hoy.`),
+        onError: (e) => avisar(mensajeError(e), { tono: 'danger' }),
       },
     );
 

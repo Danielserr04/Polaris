@@ -1,7 +1,7 @@
-import { useSyncExternalStore } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient, type QueryClient } from '@tanstack/react-query';
+import { avisar } from '../lib/avisos';
 import { api } from './client';
-import { claves, type MovimientoForm, type MovimientoList } from './kuiper';
+import { claves, mensajeError, type MovimientoForm, type MovimientoList } from './kuiper';
 
 // Papelera y duplicado de movimientos de Kuiper. Ver
 // docs/decisiones/038-movimiento-papelera-y-duplicar.md.
@@ -67,7 +67,7 @@ export function useBorrarMovimientos() {
     mutationFn: (ids: number[]) => api<void>(`${BASE}/borrar`, { metodo: 'POST', cuerpo: { ids } }),
     onSuccess: (_, ids) => {
       ids.forEach((id) => qc.removeQueries({ queryKey: claves.movimiento(id) }));
-      avisar({ texto: ids.length === 1 ? 'Movimiento en la papelera.' : `${ids.length} movimientos en la papelera.`, restaurar: ids });
+      avisarPapelera(qc, ids);
     },
     onSettled: invalidar,
   });
@@ -84,42 +84,24 @@ export function useDuplicarMovimiento() {
 }
 
 // ---------------------------------------------------------------------------
-// Aviso con "Deshacer". Vive fuera de React porque quien borra (el dialogo de edicion) se desmonta
-// justo al borrar; lo pinta <AvisoKuiper />, montado una sola vez en la pagina de Kuiper.
+// Aviso "En la papelera · Deshacer" con el aviso global de lib/avisos (el mismo de toda la app).
+// La restauracion va aqui y no en un hook porque quien borra (el dialogo de edicion) ya se ha
+// desmontado cuando se pulsa "Deshacer".
 
-export interface Aviso {
-  /** Distinto en cada aviso: reinicia el temporizador aunque el texto se repita */
-  id: number;
-  texto: string;
-  /** Por defecto 'info' */
-  tono?: 'success' | 'danger' | 'info';
-  /** Ids a restaurar si se pulsa "Deshacer"; sin ellos el aviso no ofrece deshacer */
-  restaurar?: number[];
+export function avisarPapelera(qc: QueryClient, ids: number[]): void {
+  avisar(ids.length === 1 ? 'Movimiento en la papelera.' : `${ids.length} movimientos en la papelera.`, {
+    tono: 'info',
+    accion: { texto: 'Deshacer', icono: 'rotate-ccw', alPulsar: () => void restaurar(qc, ids) },
+  });
 }
 
-let actual: Aviso | null = null;
-let siguiente = 1;
-const oyentes = new Set<() => void>();
-
-function emitir(a: Aviso | null) {
-  actual = a;
-  oyentes.forEach((o) => o());
-}
-
-export function avisar(a: Omit<Aviso, 'id'>): void {
-  emitir({ ...a, id: siguiente++ });
-}
-
-export function cerrarAviso(): void {
-  emitir(null);
-}
-
-export function useAviso(): Aviso | null {
-  return useSyncExternalStore(
-    (o) => {
-      oyentes.add(o);
-      return () => oyentes.delete(o);
-    },
-    () => actual,
-  );
+async function restaurar(qc: QueryClient, ids: number[]) {
+  try {
+    await Promise.all(ids.map((id) => api<MovimientoForm>(`${BASE}/${id}/restaurar`, { metodo: 'POST' })));
+    avisar(ids.length === 1 ? 'Movimiento restaurado.' : `${ids.length} movimientos restaurados.`);
+  } catch (e) {
+    avisar(mensajeError(e), { tono: 'danger' });
+  } finally {
+    await Promise.all([qc.invalidateQueries({ queryKey: ['kuiper'] }), qc.invalidateQueries({ queryKey: ['inicio'] })]);
+  }
 }

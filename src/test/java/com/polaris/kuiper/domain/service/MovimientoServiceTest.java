@@ -54,6 +54,8 @@ class MovimientoServiceTest {
 
     @Mock
     private ComprobarPresupuestoInterface comprobarPresupuesto;
+
+    @Mock
     private CuentaRepositoryPort cuentaRepository;
 
     @InjectMocks

@@ -188,7 +188,6 @@ export function useBorrarMovimiento(alBorrar?: () => void) {
   const qc = useQueryClient();
   const invalidar = useInvalidarKuiper();
   return useMutation({
-    meta: { aviso: 'Movimiento borrado' },
     mutationFn: (id: number) => api<void>(`${BASE}/movimiento/${id}`, { metodo: 'DELETE' }),
     onSuccess: (_, id) => {
       alBorrar?.();
