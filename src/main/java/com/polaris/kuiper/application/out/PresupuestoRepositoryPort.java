@@ -28,4 +28,7 @@ public interface PresupuestoRepositoryPort {
 
     /** Para que CategoriaService pueda impedir borrar o cambiar de tipo una categoria en uso. */
     boolean existsByCategoriaId(Long categoriaId);
+
+    /** De todos los usuarios, con su categoria. Para el job de avisos. */
+    List<Presupuesto> findAllByPeriodo(PeriodoPresupuesto periodo);
 }

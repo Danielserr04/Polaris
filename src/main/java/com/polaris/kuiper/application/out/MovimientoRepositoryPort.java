@@ -3,6 +3,7 @@ package com.polaris.kuiper.application.out;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.MovimientoFilter;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,4 +24,7 @@ public interface MovimientoRepositoryPort {
 
     /** Para que CategoriaService pueda impedir borrar o cambiar de tipo una categoria en uso. */
     boolean existsByCategoriaId(Long categoriaId);
+
+    /** Usuarios con algun movimiento entre las dos fechas, inclusive. Para el resumen mensual del job de avisos. */
+    List<Long> findUsuarioIdsConMovimientos(LocalDate desde, LocalDate hasta);
 }

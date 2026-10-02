@@ -1,6 +1,7 @@
 package com.polaris.kuiper.domain.service;
 
 import com.polaris.kuiper.application.in.CreateRecurrenteInterface;
+import com.polaris.kuiper.application.in.CrearNotificacionInterface;
 import com.polaris.kuiper.application.in.DeleteRecurrenteInterface;
 import com.polaris.kuiper.application.in.GenerarCargosRecurrentesInterface;
 import com.polaris.kuiper.application.in.GetRecurrenteInterface;
@@ -12,9 +13,13 @@ import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
 import com.polaris.kuiper.domain.model.Movimiento;
+import com.polaris.kuiper.domain.model.Notificacion;
 import com.polaris.kuiper.domain.model.Recurrente;
 import com.polaris.kuiper.domain.model.RecurrenteFilter;
 import com.polaris.kuiper.domain.model.RecurrenteNotFoundException;
+import com.polaris.kuiper.domain.model.TextoAviso;
+import com.polaris.kuiper.domain.model.TipoMovimiento;
+import com.polaris.kuiper.domain.model.TipoNotificacion;
 import com.polaris.shared.error.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,6 +44,7 @@ public class RecurrenteService implements
     private final RecurrenteRepositoryPort repository;
     private final CategoriaRepositoryPort categoriaRepository;
     private final MovimientoRepositoryPort movimientoRepository;
+    private final CrearNotificacionInterface crearNotificacion;
 
     /**
      * El primer cargo es fechaInicio, aunque sea pasada: el job genera los
@@ -114,7 +120,9 @@ public class RecurrenteService implements
     private int generarPendientes(Recurrente recurrente, LocalDate hoy) {
         int creados = 0;
         while (recurrente.isActivo() && !recurrente.getProximaFecha().isAfter(hoy)) {
-            movimientoRepository.save(movimientoDe(recurrente));
+            Movimiento movimiento = movimientoDe(recurrente);
+            movimientoRepository.save(movimiento);
+            avisarCargo(recurrente, movimiento);
             creados++;
             recurrente.setCuotasPagadas(recurrente.getCuotasPagadas() + 1);
             recurrente.setProximaFecha(recurrente.siguienteDespuesDe(recurrente.getProximaFecha()));
@@ -140,6 +148,24 @@ public class RecurrenteService implements
                 .metodoPago(recurrente.getMetodoPago())
                 .recurrente(true)
                 .build();
+    }
+
+    /**
+     * Un aviso por cargo generado. La clave (recurrente y fecha del cargo) hace
+     * que no se repita aunque el job se ejecute dos veces. Crear la
+     * notificacion nunca lanza, asi que no puede tumbar la generacion.
+     */
+    private void avisarCargo(Recurrente recurrente, Movimiento movimiento) {
+        String tipo = movimiento.getTipo() == TipoMovimiento.GASTO ? "gasto" : "ingreso";
+        crearNotificacion.crear(Notificacion.builder()
+                .usuarioId(movimiento.getUsuarioId())
+                .tipo(TipoNotificacion.CARGO_RECURRENTE)
+                .clave("recurrente-" + recurrente.getId() + "-" + movimiento.getFecha())
+                .titulo("Cargo anotado: " + movimiento.getConcepto())
+                .texto("Se ha anotado un " + tipo + " de " + TextoAviso.euros(movimiento.getImporte())
+                        + " con fecha " + TextoAviso.fecha(movimiento.getFecha()) + ".")
+                .enlace(Notificacion.ENLACE_MOVIMIENTOS)
+                .build());
     }
 
     /**
