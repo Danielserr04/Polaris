@@ -1,5 +1,6 @@
 import type { TrabajoMuscular } from '../../api/atlas';
 import { ESPALDA, FRENTE, NOMBRE_MUSCULO, type Musculo, type Vista } from './mapaMuscular.data';
+import './mapaMuscular.css';
 
 // El grupo muscular de un ejercicio es texto libre ("Pecho", "Espalda alta", "Cuádriceps"...):
 // se reconoce por palabras clave y se reparte entre los musculos del dibujo.
@@ -102,7 +103,7 @@ const trazos = (vista: Vista) =>
   }));
 const VISTAS = { frente: trazos(FRENTE), espalda: trazos(ESPALDA) };
 
-function Figura({ vista, series, maximo, titulo }: { vista: keyof typeof VISTAS; series: Map<Musculo, number>; maximo: number; titulo: string }) {
+function Figura({ vista, series, maximo, titulo, compacto }: { vista: keyof typeof VISTAS; series: Map<Musculo, number>; maximo: number; titulo: string; compacto: boolean }) {
   return (
     <figure className="atl-mapa__fig">
       <svg viewBox="0 0 200 440" role="img" aria-label={titulo}>
@@ -119,19 +120,19 @@ function Figura({ vista, series, maximo, titulo }: { vista: keyof typeof VISTAS;
           );
         })}
       </svg>
-      <figcaption>{titulo}</figcaption>
+      {!compacto && <figcaption>{titulo}</figcaption>}
     </figure>
   );
 }
 
-/** Frente y espalda con los musculos coloreados segun las series del rango. */
-export function MapaMuscular({ trabajo }: { trabajo: TrabajoMuscular[] }) {
+/** Frente y espalda con los musculos coloreados segun las series del rango; compacto, sin rotulos. */
+export function MapaMuscular({ trabajo, compacto = false }: { trabajo: TrabajoMuscular[]; compacto?: boolean }) {
   const series = seriesPorMusculo(trabajo);
   const maximo = Math.max(1, ...series.values());
   return (
-    <div className="atl-mapa">
-      <Figura vista="frente" series={series} maximo={maximo} titulo="Frente" />
-      <Figura vista="espalda" series={series} maximo={maximo} titulo="Espalda" />
+    <div className={compacto ? 'atl-mapa atl-mapa--compacto' : 'atl-mapa'}>
+      <Figura vista="frente" series={series} maximo={maximo} titulo="Frente" compacto={compacto} />
+      <Figura vista="espalda" series={series} maximo={maximo} titulo="Espalda" compacto={compacto} />
     </div>
   );
 }
