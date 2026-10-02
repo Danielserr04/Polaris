@@ -164,6 +164,7 @@ function useInvalidarKuiper() {
 export function useCrearMovimiento() {
   const invalidar = useInvalidarKuiper();
   return useMutation({
+    meta: { aviso: 'Movimiento añadido' },
     mutationFn: (cuerpo: MovimientoRequest) => api<MovimientoForm>(`${BASE}/movimiento`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });
@@ -172,6 +173,7 @@ export function useCrearMovimiento() {
 export function useActualizarMovimiento(id: number) {
   const invalidar = useInvalidarKuiper();
   return useMutation({
+    meta: { aviso: 'Movimiento guardado' },
     mutationFn: (cuerpo: MovimientoRequest) => api<MovimientoForm>(`${BASE}/movimiento/${id}`, { metodo: 'PUT', cuerpo }),
     onSuccess: invalidar,
   });
@@ -186,6 +188,7 @@ export function useBorrarMovimiento(alBorrar?: () => void) {
   const qc = useQueryClient();
   const invalidar = useInvalidarKuiper();
   return useMutation({
+    meta: { aviso: 'Movimiento borrado' },
     mutationFn: (id: number) => api<void>(`${BASE}/movimiento/${id}`, { metodo: 'DELETE' }),
     onSuccess: (_, id) => {
       alBorrar?.();
@@ -198,6 +201,7 @@ export function useBorrarMovimiento(alBorrar?: () => void) {
 export function useCrearCategoria() {
   const invalidar = useInvalidarKuiper();
   return useMutation({
+    meta: { aviso: 'Categoría añadida' },
     mutationFn: (cuerpo: Partial<CategoriaRequest> & Pick<CategoriaRequest, 'nombre' | 'tipo'>) =>
       api<Categoria>(`${BASE}/categoria`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
@@ -207,6 +211,7 @@ export function useCrearCategoria() {
 export function useActualizarCategoria(id: number) {
   const invalidar = useInvalidarKuiper();
   return useMutation({
+    meta: { aviso: 'Categoría guardada' },
     mutationFn: (cuerpo: CategoriaRequest) => api<Categoria>(`${BASE}/categoria/${id}`, { metodo: 'PUT', cuerpo }),
     onSuccess: invalidar,
   });
@@ -220,6 +225,7 @@ export function useActualizarCategoria(id: number) {
 export function useBorrarCategoria() {
   const invalidar = useInvalidarKuiper();
   return useMutation({
+    meta: { aviso: 'Categoría borrada' },
     mutationFn: async ({ id, presupuestoId }: { id: number; presupuestoId?: number }) => {
       const movimientos = await api<MovimientoList[]>(`${BASE}/movimiento`, { query: { categoriaId: id } });
       if (movimientos.length > 0) throw new CategoriaConMovimientos(movimientos.length);

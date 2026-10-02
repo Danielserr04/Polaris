@@ -9,7 +9,7 @@ export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   error?: React.ReactNode;
   /** Leading Lucide icon name (e.g. "search") */
   icon?: string;
-  /** Trailing slot (Kbd, IconButton, unit) */
+  /** Trailing slot (Kbd, IconButton, unit). With type="password" a show/hide toggle is added automatically. */
   trailing?: React.ReactNode;
   /** Fixed value: dashed border + lock icon, read-only. Not the same as disabled. */
   locked?: boolean;

@@ -68,21 +68,23 @@ export function Kuiper() {
         ]}
         style={{ marginBottom: 24 }}
       />
-      {pestana === 'resumen' ? (
-        <ResumenTab periodo={periodo} onVerTodos={() => setPestana('mov')} onEditar={editar} onIrACategorias={() => setPestana('cat')} />
-      ) : pestana === 'mov' ? (
-        <MovimientosTab periodo={periodo} onEditar={editar} />
-      ) : pestana === 'rec' ? (
-        <RecurrentesTab />
-      ) : pestana === 'metas' ? (
-        <MetasTab />
-      ) : pestana === 'analisis' ? (
-        <AnalisisTab periodo={periodo} />
-      ) : pestana === 'cuentas' ? (
-        <CuentasTab periodo={periodo} />
-      ) : (
-        <CategoriasTab />
-      )}
+      <div key={pestana} className="pl-tabpanel">
+        {pestana === 'resumen' ? (
+          <ResumenTab periodo={periodo} onVerTodos={() => setPestana('mov')} onEditar={editar} onIrACategorias={() => setPestana('cat')} />
+        ) : pestana === 'mov' ? (
+          <MovimientosTab periodo={periodo} onEditar={editar} />
+        ) : pestana === 'rec' ? (
+          <RecurrentesTab />
+        ) : pestana === 'metas' ? (
+          <MetasTab />
+        ) : pestana === 'analisis' ? (
+          <AnalisisTab periodo={periodo} />
+        ) : pestana === 'cuentas' ? (
+          <CuentasTab periodo={periodo} />
+        ) : (
+          <CategoriasTab />
+        )}
+      </div>
       {abierto && <FormularioMovimiento movimientoId={abierto.id} periodo={periodo} onClose={() => setAbierto(null)} />}
       <AvisoKuiper />
     </div>

@@ -114,170 +114,172 @@ export function Fusion() {
         style={{ marginBottom: 24 }}
       />
 
-      {pestana === 'ali' ? (
-        <AlimentosTab onEditar={(a) => setAlimentoAbierto({ alimento: a })} onRecuento={setRecuento} />
-      ) : (
-        <>
-      {resumen.isError ? (
-        <Alert
-          tone="danger"
-          title="No se ha podido cargar el día"
-          action={
-            <Button size="sm" variant="secondary" onClick={() => void resumen.refetch()}>
-              Reintentar
-            </Button>
-          }
-        >
-          {mensajeError(resumen.error)}
-        </Alert>
-      ) : (
-        <div className="grid">
-          <div className="span-5">
-            <Card delay={60} eyebrow="Energía" title="Calorías del día">
-              {r ? (
-                <div className="fus-kcal" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
-                  <RingChart
-                    value={r.kcal.consumido}
-                    max={objetivo ?? Math.max(r.kcal.consumido, 1)}
-                    size={168}
-                    thickness={14}
-                    label={num(r.kcal.consumido)}
-                    sublabel={objetivo !== null ? `DE ${num(objetivo)} KCAL` : 'KCAL'}
-                  />
-                  <div className="stack-16" style={{ flex: 1 }}>
-                    {objetivo !== null && r.kcal.restante != null ? (
-                      <Stat label={r.kcal.restante >= 0 ? 'Te quedan' : 'Te has pasado'} value={Math.abs(Math.round(r.kcal.restante))} unit="kcal" size={32} />
-                    ) : (
-                      <Stat label="Llevas" value={Math.round(r.kcal.consumido)} unit="kcal" size={32} />
-                    )}
-                    <span className="muted" style={{ fontSize: 13 }}>
-                      {r.objetivoVigenteDesde
-                        ? `Objetivo vigente desde el ${deIso(r.objetivoVigenteDesde).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}.`
-                        : 'Sin objetivo nutricional para este día.'}
-                    </span>
-                    <div>
-                      <Button size="sm" variant="ghost" onClick={() => setObjetivoAbierto(true)}>
-                        {r.objetivoVigenteDesde ? 'Cambiar objetivo' : 'Fijar objetivo'}
-                      </Button>
+      <div key={pestana} className="pl-tabpanel">
+        {pestana === 'ali' ? (
+          <AlimentosTab onEditar={(a) => setAlimentoAbierto({ alimento: a })} onRecuento={setRecuento} />
+        ) : (
+          <>
+        {resumen.isError ? (
+          <Alert
+            tone="danger"
+            title="No se ha podido cargar el día"
+            action={
+              <Button size="sm" variant="secondary" onClick={() => void resumen.refetch()}>
+                Reintentar
+              </Button>
+            }
+          >
+            {mensajeError(resumen.error)}
+          </Alert>
+        ) : (
+          <div className="grid">
+            <div className="span-5">
+              <Card delay={60} eyebrow="Energía" title="Calorías del día">
+                {r ? (
+                  <div className="fus-kcal" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+                    <RingChart
+                      value={r.kcal.consumido}
+                      max={objetivo ?? Math.max(r.kcal.consumido, 1)}
+                      size={168}
+                      thickness={14}
+                      label={num(r.kcal.consumido)}
+                      sublabel={objetivo !== null ? `DE ${num(objetivo)} KCAL` : 'KCAL'}
+                    />
+                    <div className="stack-16" style={{ flex: 1 }}>
+                      {objetivo !== null && r.kcal.restante != null ? (
+                        <Stat label={r.kcal.restante >= 0 ? 'Te quedan' : 'Te has pasado'} value={Math.abs(Math.round(r.kcal.restante))} unit="kcal" size={32} />
+                      ) : (
+                        <Stat label="Llevas" value={Math.round(r.kcal.consumido)} unit="kcal" size={32} />
+                      )}
+                      <span className="muted" style={{ fontSize: 13 }}>
+                        {r.objetivoVigenteDesde
+                          ? `Objetivo vigente desde el ${deIso(r.objetivoVigenteDesde).toLocaleDateString('es-ES', { day: 'numeric', month: 'long' })}.`
+                          : 'Sin objetivo nutricional para este día.'}
+                      </span>
+                      <div>
+                        <Button size="sm" variant="ghost" onClick={() => setObjetivoAbierto(true)}>
+                          {r.objetivoVigenteDesde ? 'Cambiar objetivo' : 'Fijar objetivo'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ) : (
-                <p className="muted" style={{ margin: 0 }}>Cargando…</p>
-              )}
-            </Card>
-          </div>
+                ) : (
+                  <p className="muted" style={{ margin: 0 }}>Cargando…</p>
+                )}
+              </Card>
+            </div>
 
-          <div className="span-7">
-            <Card delay={120} eyebrow="Macros" title={objetivo !== null ? 'Contra objetivo' : 'Del día'}>
-              {r ? (
-                <div className="macros">
-                  {MACROS.map((m) => {
-                    const v: MacroResumen = r[m.clave];
-                    return (
-                      <div key={m.clave} className="macro">
-                        <RingChart
-                          value={v.consumido}
-                          max={v.objetivo ?? Math.max(v.consumido, 1)}
-                          size={104}
-                          thickness={8}
-                          color={m.color}
-                          label={num(v.consumido)}
-                          sublabel={v.objetivo != null ? `/ ${num(v.objetivo)} G` : 'G'}
-                        />
-                        <b>{m.nombre}</b>
-                        <span className="pl-row__num">{v.porcentaje != null ? `${Math.round(v.porcentaje)} %` : '—'}</span>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="muted" style={{ margin: 0 }}>Cargando…</p>
-              )}
-            </Card>
-          </div>
+            <div className="span-7">
+              <Card delay={120} eyebrow="Macros" title={objetivo !== null ? 'Contra objetivo' : 'Del día'}>
+                {r ? (
+                  <div className="macros">
+                    {MACROS.map((m) => {
+                      const v: MacroResumen = r[m.clave];
+                      return (
+                        <div key={m.clave} className="macro">
+                          <RingChart
+                            value={v.consumido}
+                            max={v.objetivo ?? Math.max(v.consumido, 1)}
+                            size={104}
+                            thickness={8}
+                            color={m.color}
+                            label={num(v.consumido)}
+                            sublabel={v.objetivo != null ? `/ ${num(v.objetivo)} G` : 'G'}
+                          />
+                          <b>{m.nombre}</b>
+                          <span className="pl-row__num">{v.porcentaje != null ? `${Math.round(v.porcentaje)} %` : '—'}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <p className="muted" style={{ margin: 0 }}>Cargando…</p>
+                )}
+              </Card>
+            </div>
 
-          <div className="span-6">
-            <Card delay={180} eyebrow="Registro" title="Comidas" padding="4px 0 8px">
-              {comidas.isError ? (
-                <div className="fus-vacio" style={{ padding: '14px 18px' }}>
-                  No se han podido cargar las comidas.{' '}
-                  <Button size="sm" variant="ghost" onClick={() => void comidas.refetch()}>
-                    Reintentar
-                  </Button>
-                </div>
-              ) : comidas.isPending ? (
-                <div className="fus-vacio" style={{ padding: '14px 18px' }}>Cargando…</div>
-              ) : (
-                MOMENTOS.map((momento, i) => {
-                  const lista = porMomento.get(momento) ?? [];
-                  const kcal = lista.reduce((a, c) => a + c.kcalTotal, 0);
-                  if (!lista.length) {
-                    return (
-                      <div key={momento} className="fus-meal fus-meal--vacia pl-rise" style={{ animationDelay: 200 + i * 60 + 'ms' }}>
+            <div className="span-6">
+              <Card delay={180} eyebrow="Registro" title="Comidas" padding="4px 0 8px">
+                {comidas.isError ? (
+                  <div className="fus-vacio" style={{ padding: '14px 18px' }}>
+                    No se han podido cargar las comidas.{' '}
+                    <Button size="sm" variant="ghost" onClick={() => void comidas.refetch()}>
+                      Reintentar
+                    </Button>
+                  </div>
+                ) : comidas.isPending ? (
+                  <div className="fus-vacio" style={{ padding: '14px 18px' }}>Cargando…</div>
+                ) : (
+                  MOMENTOS.map((momento, i) => {
+                    const lista = porMomento.get(momento) ?? [];
+                    const kcal = lista.reduce((a, c) => a + c.kcalTotal, 0);
+                    if (!lista.length) {
+                      return (
+                        <div key={momento} className="fus-meal fus-meal--vacia pl-rise" style={{ animationDelay: 200 + i * 60 + 'ms' }}>
+                          <div className="fus-meal-h">
+                            <b>{ETIQUETA_MOMENTO[momento]}</b>
+                            <Button size="sm" variant="ghost" icon="plus" style={{ marginLeft: 'auto' }} onClick={() => setAbierta({ momento })}>
+                              Añadir
+                            </Button>
+                          </div>
+                        </div>
+                      );
+                    }
+                    return lista.map((c) => (
+                      <button
+                        key={c.id}
+                        type="button"
+                        className="fus-meal pl-rise"
+                        style={{ animationDelay: 200 + i * 60 + 'ms' }}
+                        onClick={() => setAbierta({ id: c.id })}
+                        aria-label={`Editar ${ETIQUETA_MOMENTO[momento].toLowerCase()}, ${num(kcal)} kcal`}
+                      >
                         <div className="fus-meal-h">
                           <b>{ETIQUETA_MOMENTO[momento]}</b>
-                          <Button size="sm" variant="ghost" icon="plus" style={{ marginLeft: 'auto' }} onClick={() => setAbierta({ momento })}>
-                            Añadir
-                          </Button>
+                          <span className="money">{num(c.kcalTotal)} kcal</span>
                         </div>
-                      </div>
-                    );
-                  }
-                  return lista.map((c) => (
-                    <button
-                      key={c.id}
-                      type="button"
-                      className="fus-meal pl-rise"
-                      style={{ animationDelay: 200 + i * 60 + 'ms' }}
-                      onClick={() => setAbierta({ id: c.id })}
-                      aria-label={`Editar ${ETIQUETA_MOMENTO[momento].toLowerCase()}, ${num(kcal)} kcal`}
-                    >
-                      <div className="fus-meal-h">
-                        <b>{ETIQUETA_MOMENTO[momento]}</b>
-                        <span className="money">{num(c.kcalTotal)} kcal</span>
-                      </div>
-                      {c.lineas.map((l) => (
-                        <div key={l.id} className="meal__l">
-                          <span>{l.alimentoNombre}</span>
-                          <span className="pl-row__num">{num(l.cantidadG)} g</span>
-                          <span className="pl-row__num">{num(l.kcal)} kcal</span>
-                        </div>
-                      ))}
-                    </button>
-                  ));
-                })
-              )}
-            </Card>
-          </div>
+                        {c.lineas.map((l) => (
+                          <div key={l.id} className="meal__l">
+                            <span>{l.alimentoNombre}</span>
+                            <span className="pl-row__num">{num(l.cantidadG)} g</span>
+                            <span className="pl-row__num">{num(l.kcal)} kcal</span>
+                          </div>
+                        ))}
+                      </button>
+                    ));
+                  })
+                )}
+              </Card>
+            </div>
 
-          <div className="span-6">
-            <Card delay={240} eyebrow="Tendencia" title="Últimos 14 días">
-              {rango.isSuccess && tendencia.kcal.every((k) => k === 0) ? (
-                <p className="muted" style={{ margin: 0 }}>Sin comidas registradas en estos 14 días.</p>
-              ) : rango.isSuccess ? (
-                <LineChart
-                  height={220}
-                  min={0}
-                  showLegend
-                  labels={[tendencia.dias[0], tendencia.dias[6], tendencia.dias[13]].map((d) => deIso(d).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace('.', ''))}
-                  // El grafico deja un margen por debajo del minimo: nada de kcal negativas en el eje.
-                  format={(v) => (v <= 0 ? '0' : `${Math.round(v / 100) / 10}k`)}
-                  series={[
-                    { name: 'Kcal', points: tendencia.kcal },
-                    ...(objetivo !== null ? [{ name: 'Objetivo', points: tendencia.kcal.map(() => objetivo), dashed: true, color: 'var(--text-3)' }] : []),
-                  ]}
-                />
-              ) : (
-                <p className="muted" style={{ margin: 0 }}>{rango.isError ? 'No se ha podido cargar.' : 'Cargando…'}</p>
-              )}
-            </Card>
+            <div className="span-6">
+              <Card delay={240} eyebrow="Tendencia" title="Últimos 14 días">
+                {rango.isSuccess && tendencia.kcal.every((k) => k === 0) ? (
+                  <p className="muted" style={{ margin: 0 }}>Sin comidas registradas en estos 14 días.</p>
+                ) : rango.isSuccess ? (
+                  <LineChart
+                    height={220}
+                    min={0}
+                    showLegend
+                    labels={[tendencia.dias[0], tendencia.dias[6], tendencia.dias[13]].map((d) => deIso(d).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace('.', ''))}
+                    // El grafico deja un margen por debajo del minimo: nada de kcal negativas en el eje.
+                    format={(v) => (v <= 0 ? '0' : `${Math.round(v / 100) / 10}k`)}
+                    series={[
+                      { name: 'Kcal', points: tendencia.kcal },
+                      ...(objetivo !== null ? [{ name: 'Objetivo', points: tendencia.kcal.map(() => objetivo), dashed: true, color: 'var(--text-3)' }] : []),
+                    ]}
+                  />
+                ) : (
+                  <p className="muted" style={{ margin: 0 }}>{rango.isError ? 'No se ha podido cargar.' : 'Cargando…'}</p>
+                )}
+              </Card>
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
-        </>
-      )}
+          </>
+        )}
+      </div>
 
       {abierta && <FormularioComida comidaId={abierta.id} momentoInicial={abierta.momento} fecha={fecha} onClose={() => setAbierta(null)} />}
       {alimentoAbierto && <FormularioAlimento alimento={alimentoAbierto.alimento} onClose={() => setAlimentoAbierto(null)} />}

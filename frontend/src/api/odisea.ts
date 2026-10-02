@@ -180,6 +180,7 @@ export function aRequest(e: EntradaForm, cambios: Partial<EntradaRequest> = {}):
 export function useActualizarEntrada(id: number) {
   const qc = useQueryClient();
   return useMutation({
+    meta: { aviso: 'Cambios guardados' },
     mutationFn: (cuerpo: EntradaRequest) =>
       api<EntradaForm>(`${BASE}/entrada/${id}`, { metodo: 'PUT', cuerpo }),
     onSuccess: (e) => qc.setQueryData(claves.entrada(id), e),
