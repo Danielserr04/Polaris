@@ -9,6 +9,7 @@ import {
   useResumenDia,
   useResumenMes,
   useSesiones,
+  useTrabajoDia,
   type EntradaResumen,
   type EstadoEntrada,
   type MomentoComida,
@@ -27,6 +28,7 @@ import {
   TypeTag,
 } from '../../design-system';
 import { deIso, diaLargo, diasEntre, eur, iso, lunesDe, nombreMes, num, periodo, relativa, sumarDias } from '../../lib/fechas';
+import { MapaMuscular } from '../atlas/MapaMuscular';
 import { Band, EstadoConsulta } from './Band';
 import './inicio.css';
 
@@ -120,6 +122,7 @@ export function Inicio() {
     [sesiones.data],
   );
   const ultima = sesionesOrdenadas[0];
+  const trabajoUltima = useTrabajoDia(ultima?.fecha);
   const diasConSesion = new Set(sesionesOrdenadas.map((s) => s.fecha));
   const semana = DIAS_SEMANA.map((l, i) => {
     const f = iso(sumarDias(lunes, i));
@@ -412,6 +415,12 @@ export function Inicio() {
                       {ultima.numeroSeries} series{ultima.duracionMin ? ` · ${ultima.duracionMin} min` : ''}
                     </span>
                   </div>
+                  {trabajoUltima.isSuccess && trabajoUltima.data.length > 0 && (
+                    <div className="stack-4 next">
+                      <span className="pl-eyebrow">Entrenado</span>
+                      <MapaMuscular trabajo={trabajoUltima.data} compacto />
+                    </div>
+                  )}
                   <div className="stack-4 next">
                     <span className="pl-eyebrow" style={{ color: 'var(--accent)' }}>Esta semana</span>
                     <b className="big">{sesionesSemana} {sesionesSemana === 1 ? 'sesión' : 'sesiones'}</b>

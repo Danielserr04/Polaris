@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import type { TrabajoMuscular } from './atlas';
 import { api } from './client';
 
 // Lo que necesita el Inicio de cada modulo. Cada consulta es independiente: si una
@@ -110,6 +111,14 @@ export const useSesiones = (desde: string, hasta: string) =>
   useQuery({
     queryKey: ['inicio', 'sesiones', desde, hasta],
     queryFn: () => api<SesionResumen[]>('/api/atlas/sesion', { query: { desde, hasta } }),
+  });
+
+/** Grupos musculares trabajados un dia (el de la ultima sesion); no pide nada hasta saber la fecha. */
+export const useTrabajoDia = (fecha: string | undefined) =>
+  useQuery({
+    queryKey: ['inicio', 'trabajo-muscular', fecha],
+    queryFn: () => api<TrabajoMuscular[]>('/api/atlas/trabajo-muscular', { query: { desde: fecha!, hasta: fecha! } }),
+    enabled: fecha !== undefined,
   });
 
 export const usePesos = (desde: string, hasta: string) =>
