@@ -9,6 +9,8 @@ export interface ListRowProps {
   anio?: number | null;
   /** Minutes for films/series, pages for books, null for games */
   duracionMin?: number | null;
+  /** Where you are ("ep. 7", "pág. 180"); shown instead of the duration when present */
+  progreso?: string | null;
   estado: 'PENDIENTE' | 'EN_CURSO' | 'TERMINADO' | 'ABANDONADO';
   /** 0–10 or null */
   valoracion?: number | null;

@@ -14,7 +14,7 @@
   .m-logros[aria-current="page"]{color:var(--mod-polaris)}
   .app__main{padding:calc(64px + env(safe-area-inset-top)) 20px calc(120px + env(safe-area-inset-bottom))}
 
-  .m-tabs{display:block;position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:var(--z-overlay);height:64px;padding:6px;box-sizing:border-box;background:var(--surface-glass);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--border-2);border-radius:10px;box-shadow:0 18px 40px -18px rgba(0,0,0,.7),4px 4px 0 0 rgba(0,0,0,.35)}
+  .m-tabs{display:block;position:fixed;left:12px;right:12px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:var(--z-overlay);height:64px;padding:6px;box-sizing:border-box;background:var(--surface-glass);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--border-2);border-radius:10px;box-shadow:0 18px 40px -18px var(--sombra-difusa),4px 4px 0 0 var(--sombra-bloque)}
   /* Los avisos flotantes suben por encima de la barra de pestañas. */
   .pl-toast--fixed{bottom:calc(90px + env(safe-area-inset-bottom));max-width:calc(100vw - 32px)}
   .m-tabs__in{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:2px;height:100%}
@@ -39,7 +39,7 @@
 
   /* Dialogos: hoja inferior */
   .pl-dialog{align-items:flex-end;padding:0}
-  .pl-dialog__panel{max-width:none;max-height:92dvh;display:flex;flex-direction:column;border-radius:14px 14px 0 0;border-bottom:0;box-shadow:0 -20px 60px rgba(0,0,0,.6);animation:m-sheet var(--dur-slow) var(--ease-out) both}
+  .pl-dialog__panel{max-width:none;max-height:92dvh;display:flex;flex-direction:column;border-radius:14px 14px 0 0;border-bottom:0;box-shadow:0 -20px 60px var(--sombra-difusa);animation:m-sheet var(--dur-slow) var(--ease-out) both}
   .pl-dialog__body{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
   .pl-dialog__foot{flex:none;padding-bottom:calc(14px + env(safe-area-inset-bottom))}
   .pl-dialog__panel::before{content:"";display:block;flex:none;width:40px;height:4px;margin:10px auto 0;border-radius:2px;background:var(--border-strong)}

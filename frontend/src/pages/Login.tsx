@@ -6,6 +6,7 @@ import { GOOGLE_LOGIN_URL, login } from '../api/auth';
 import { iniciarSesion, useHaySesion } from '../auth/sesion';
 import { Button, Eyebrow, Input, Logo, StarTrails } from '../design-system';
 import { Registro } from './login/Registro';
+import { useTemaOscuro } from '../lib/tema';
 
 const MODULOS: [string, string, string][] = [
   ['Odisea', 'Ocio', 'var(--mod-odisea)'],
@@ -55,6 +56,7 @@ export function Login() {
   const [yendoAGoogle, setYendoAGoogle] = useState(false);
   const [registrando, setRegistrando] = useState(false);
   const [ahora, setAhora] = useState(() => new Date());
+  useTemaOscuro();
 
   useEffect(() => {
     const i = setInterval(() => setAhora(new Date()), 1000);

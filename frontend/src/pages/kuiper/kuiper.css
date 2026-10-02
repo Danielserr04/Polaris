@@ -1,7 +1,7 @@
 /* Solo lo que Kuiper necesita y no esta ya en styles/kit.css */
-.kui-cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:16px;align-items:start}
+.kui-cols{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr);gap:12px;align-items:start}
 @media (max-width:1100px){.kui-cols{grid-template-columns:1fr}}
-.kui-stack{display:flex;flex-direction:column;gap:16px}
+.kui-stack{display:flex;flex-direction:column;gap:12px;min-width:0}
 .kui-toolbar{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:16px}
 .kui-toolbar__sel{width:220px}
 .table__r.table__r--mov{grid-template-columns:76px minmax(0,1fr) 150px 120px;cursor:pointer;width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;font:inherit;text-align:left}

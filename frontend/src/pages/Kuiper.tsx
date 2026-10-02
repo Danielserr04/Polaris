@@ -65,11 +65,11 @@ export function Kuiper() {
           { value: 'analisis', label: 'Análisis' },
           { value: 'cuentas', label: 'Cuentas' },
         ]}
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 16 }}
       />
       <div key={pestana} className="pl-tabpanel">
         {pestana === 'resumen' ? (
-          <ResumenTab periodo={periodo} onVerTodos={() => setPestana('mov')} onEditar={editar} onIrACategorias={() => setPestana('cat')} />
+          <ResumenTab periodo={periodo} onVerTodos={() => setPestana('mov')} onEditar={editar} onIrACategorias={() => setPestana('cat')} onIrAMetas={() => setPestana('metas')} />
         ) : pestana === 'mov' ? (
           <MovimientosTab periodo={periodo} onEditar={editar} />
         ) : pestana === 'rec' ? (

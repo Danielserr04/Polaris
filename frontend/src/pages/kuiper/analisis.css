@@ -2,9 +2,10 @@
 .kan-proy{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center}
 .kan-proy__stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
 .kan-proy__nota{margin:12px 0 0;font-size:12.5px;color:var(--text-3)}
-.kan-insights{display:flex;flex-direction:column;gap:10px}
-.kan-insight{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;padding:12px 14px;border:1px solid var(--border-1);border-left:3px solid var(--tone);border-radius:6px;background:var(--surface-1)}
-.kan-insight .pl-icon{color:var(--tone);margin-top:2px}
+.kan-insights{display:flex;flex-direction:column}
+.kan-insight{display:grid;grid-template-columns:32px minmax(0,1fr);gap:12px;align-items:start;padding:12px 0;border-top:1px dashed var(--border-1)}
+.kan-insight:first-child{border-top:0;padding-top:4px}
+.kan-insight__ico{display:grid;place-items:center;width:32px;height:32px;border-radius:6px;background:color-mix(in oklab,var(--tone) 14%,transparent);color:var(--tone)}
 .kan-insight b{display:block;font-weight:600;font-size:14px;color:var(--text-1);margin-bottom:3px}
 .kan-insight p{margin:0;font-size:13px;line-height:1.45;color:var(--text-2)}
 .kan-insight--AVISO{--tone:var(--warning)}
