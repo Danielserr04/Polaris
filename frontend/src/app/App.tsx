@@ -9,24 +9,28 @@ import { Atlas } from '../pages/Atlas';
 import { Fusion } from '../pages/Fusion';
 import { Pendiente } from '../pages/Pendiente';
 import { Perfil } from '../pages/Perfil';
+import { ErrorServidor } from '../components/ErrorServidor';
 import { AppShell } from './AppShell';
 
 export function App() {
   return (
-    <Routes>
-      <Route path="login" element={<Login />} />
-      <Route path="auth/callback" element={<AuthCallback />} />
-      <Route element={<RequireAuth />}>
-        <Route element={<AppShell />}>
-          <Route index element={<Inicio />} />
-          <Route path="odisea" element={<Odisea />} />
-          <Route path="kuiper" element={<Kuiper />} />
-          <Route path="fusion" element={<Fusion />} />
-          <Route path="atlas" element={<Atlas />} />
-          <Route path="perfil" element={<Perfil />} />
-          <Route path="*" element={<Pendiente eyebrow="Polaris" title="No encontrada" />} />
+    <>
+      <ErrorServidor />
+      <Routes>
+        <Route path="login" element={<Login />} />
+        <Route path="auth/callback" element={<AuthCallback />} />
+        <Route element={<RequireAuth />}>
+          <Route element={<AppShell />}>
+            <Route index element={<Inicio />} />
+            <Route path="odisea" element={<Odisea />} />
+            <Route path="kuiper" element={<Kuiper />} />
+            <Route path="fusion" element={<Fusion />} />
+            <Route path="atlas" element={<Atlas />} />
+            <Route path="perfil" element={<Perfil />} />
+            <Route path="*" element={<Pendiente eyebrow="Polaris" title="No encontrada" />} />
+          </Route>
         </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }

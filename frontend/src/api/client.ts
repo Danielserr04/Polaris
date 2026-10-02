@@ -1,4 +1,5 @@
 import { cerrarSesion, getToken } from '../auth/sesion';
+import { avisarErrorServidor } from '../lib/errorServidor';
 import type { ErrorResponse } from './tipos';
 
 export class ApiError extends Error {
@@ -46,7 +47,11 @@ async function leerError(res: Response): Promise<string> {
   }
   // Un 502 del backend dice que una API externa ha fallado y se conserva; el resto de 5xx
   // ("Internal Server Error", "Error interno del servidor"...) se cambia por el aviso amable.
-  if (res.status >= 500) return res.status === 502 && mensaje ? mensaje : ERROR_SERVIDOR;
+  if (res.status >= 500) {
+    if (res.status === 502 && mensaje) return mensaje;
+    avisarErrorServidor();
+    return ERROR_SERVIDOR;
+  }
   // Sin cuerpo, statusText llega en ingles ("Bad Request"): no se muestra.
   return mensaje || 'No se ha podido completar la operación. Inténtalo de nuevo.';
 }
