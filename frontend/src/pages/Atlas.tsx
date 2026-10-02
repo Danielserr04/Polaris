@@ -110,7 +110,7 @@ export function Atlas() {
   const fechaUltima = ultimas[0]?.fecha ?? hoyIso;
   const trabajoUltima = useTrabajoMuscular(fechaUltima, fechaUltima);
   const recordsOrden = useMemo(
-    () => [...(records.data ?? [])].sort((a, b) => b.fechaPesoMaximo.localeCompare(a.fechaPesoMaximo)).slice(0, 6),
+    () => [...(records.data ?? [])].sort((a, b) => b.fechaPesoMaximo.localeCompare(a.fechaPesoMaximo)).slice(0, 5),
     [records.data],
   );
 
@@ -169,7 +169,7 @@ export function Atlas() {
         value={pestana}
         onChange={(v) => setPestana(v as Pestana)}
         items={(Object.keys(TITULOS) as Pestana[]).map((p) => ({ value: p, label: TITULOS[p] }))}
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 16 }}
       />
 
       <div key={pestana} className="pl-tabpanel">
@@ -244,14 +244,51 @@ export function Atlas() {
               />
             </div>
 
-            <div className="span-8">
+            <div className="span-4">
               <Card
                 delay={100}
+                eyebrow={ultimas[0] ? `Última sesión · ${relativa(ultimas[0].fecha, hoy).toLowerCase()}` : 'Última sesión'}
+                title={ultimas[0] ? (ultimas[0].rutinaNombre ?? 'Improvisado') : 'Entrenado'}
+              >
+                {trabajoUltima.isError ? (
+                  <p className="muted" style={{ margin: 0 }}>No se ha podido cargar el trabajo muscular.</p>
+                ) : trabajoUltima.isPending ? (
+                  <p className="muted" style={{ margin: 0 }}>Cargando…</p>
+                ) : (
+                  <div className="atl-ult">
+                    {trabajoUltima.data.length > 0 && <MapaMuscular trabajo={trabajoUltima.data} />}
+                    <div className="atl-ult__info">
+                      {ultimas[0] && (
+                        <span className="muted">
+                          {ultimas[0].numeroSeries} series{ultimas[0].duracionMin ? ` · ${ultimas[0].duracionMin} min` : ''} · {num(ultimas[0].volumen)} kg
+                        </span>
+                      )}
+                      {trabajoUltima.data.length === 0 ? (
+                        <p className="muted" style={{ margin: 0 }}>Los ejercicios de esa sesión no tienen grupo muscular.</p>
+                      ) : (
+                        <div className="atl-grupos">
+                          {trabajoUltima.data.map((t) => (
+                            <div key={t.grupoMuscular} className="atl-grupos__f">
+                              <b>{t.grupoMuscular}</b>
+                              <span className="muted">{t.numeroSeries} series</span>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </Card>
+            </div>
+
+            <div className="span-4">
+              <Card
+                delay={160}
                 eyebrow={porReps ? 'Repeticiones' : 'Volumen por sesión'}
                 title={ejercicio?.ejercicioNombre ?? 'Progresión'}
                 action={
                   records.data && records.data.length > 0 ? (
-                    <div style={{ width: 190 }}>
+                    <div style={{ width: 170 }}>
                       <Select
                         size="sm"
                         aria-label="Ejercicio"
@@ -268,13 +305,21 @@ export function Atlas() {
                 ) : progresion.isSuccess && puntos.length === 0 ? (
                   <p className="muted" style={{ margin: 0 }}>Sin series de este ejercicio en los últimos 6 meses.</p>
                 ) : progresion.isSuccess ? (
-                  <LineChart
-                    height={220}
-                    min={0}
-                    labels={etiquetasProg.map((p) => relativa(p.fecha, hoy))}
-                    format={(v) => (v <= 0 ? '0' : num(Math.round(v)))}
-                    series={[{ name: porReps ? 'Repeticiones' : 'Volumen (kg)', points: valores }]}
-                  />
+                  <>
+                    <LineChart
+                      height={130}
+                      min={0}
+                      gridLines={3}
+                      labels={etiquetasProg.map((p) => relativa(p.fecha, hoy))}
+                      format={(v) => (v <= 0 ? '0' : num(Math.round(v)))}
+                      series={[{ name: porReps ? 'Repeticiones' : 'Volumen (kg)', points: valores }]}
+                    />
+                    <p className="atl-nota">
+                      {porReps
+                        ? 'Repeticiones totales por sesión, últimos 6 meses.'
+                        : 'Kilos movidos (peso × reps) por sesión, últimos 6 meses.'}
+                    </p>
+                  </>
                 ) : (
                   <p className="muted" style={{ margin: 0 }}>Cargando…</p>
                 )}
@@ -282,42 +327,45 @@ export function Atlas() {
             </div>
 
             <div className="span-4 atl-rec">
-              <Card delay={160} eyebrow="Mejores marcas" title="Récords" padding="4px 0 8px">
+              <Card delay={220} eyebrow="Mejores marcas" title="Récords" padding="4px 0 8px">
                 {records.isPending ? (
-                  <p className="muted" style={{ margin: '14px 18px' }}>Cargando…</p>
+                  <p className="muted" style={{ margin: '14px 16px' }}>Cargando…</p>
                 ) : (
-                  recordsOrden.map((r, i) => (
-                    <div key={r.ejercicioId} className="rec pl-rise" style={{ animationDelay: 200 + i * 60 + 'ms' }}>
-                      <div className="stack-4">
+                  <>
+                    {recordsOrden.map((r, i) => (
+                      <div key={r.ejercicioId} className="rec atl-rec__f pl-rise" style={{ animationDelay: 240 + i * 50 + 'ms' }}>
                         <b>{r.ejercicioNombre}</b>
                         <span className="pl-row__num">{relativa(r.fechaPesoMaximo, hoy)}</span>
+                        <span className="money">{r.pesoMaximo > 0 ? `${num(r.pesoMaximo, r.pesoMaximo % 1 ? 1 : 0)} kg × ${r.repsPesoMaximo}` : `${r.repsPesoMaximo} reps`}</span>
+                        <span>
+                          {diasEntre(deIso(r.fechaPesoMaximo), hoy) <= 7 && (
+                            <Badge tone="accent" variant="solid">
+                              Nuevo
+                            </Badge>
+                          )}
+                        </span>
                       </div>
-                      <span className="money">{r.pesoMaximo > 0 ? `${num(r.pesoMaximo, r.pesoMaximo % 1 ? 1 : 0)} kg × ${r.repsPesoMaximo}` : `${r.repsPesoMaximo} reps`}</span>
-                      {diasEntre(deIso(r.fechaPesoMaximo), hoy) <= 7 && (
-                        <Badge tone="accent" variant="solid">
-                          Nuevo
-                        </Badge>
-                      )}
-                    </div>
-                  ))
+                    ))}
+                    <p className="atl-nota" style={{ padding: '0 16px' }}>Peso máximo levantado × repeticiones. «Nuevo»: batido esta semana.</p>
+                  </>
                 )}
               </Card>
             </div>
 
-            <div className="span-7">
-              <Card delay={220} eyebrow="Historial" title="Últimas sesiones" padding="8px 0 0">
+            <div className="span-8">
+              <Card delay={280} eyebrow="Historial" title="Últimas sesiones" padding="8px 0 0">
                 {sesiones.isError ? (
-                  <p className="muted" style={{ margin: '6px 18px 14px' }}>No se han podido cargar las sesiones.</p>
+                  <p className="muted" style={{ margin: '6px 16px 14px' }}>No se han podido cargar las sesiones.</p>
                 ) : sesiones.isPending ? (
-                  <p className="muted" style={{ margin: '6px 18px 14px' }}>Cargando…</p>
+                  <p className="muted" style={{ margin: '6px 16px 14px' }}>Cargando…</p>
                 ) : (
                   <div className="table">
-                    {ultimas.map((s, i) => (
+                    {ultimas.slice(0, 4).map((s, i) => (
                       <button
                         key={s.id}
                         type="button"
                         className="table__r table__r--5 atl-ses pl-rise"
-                        style={{ animationDelay: 240 + i * 40 + 'ms' }}
+                        style={{ animationDelay: 300 + i * 40 + 'ms' }}
                         onClick={() => setAbierta({ id: s.id })}
                         aria-label={`Editar la sesión del ${relativa(s.fecha, hoy)}`}
                       >
@@ -340,33 +388,9 @@ export function Atlas() {
               </Card>
             </div>
 
-            <div className="span-5">
-              <Card delay={250} eyebrow={ultimas[0] ? `Última sesión · ${relativa(ultimas[0].fecha, hoy).toLowerCase()}` : 'Última sesión'} title="Entrenado">
-                {trabajoUltima.isError ? (
-                  <p className="muted" style={{ margin: 0 }}>No se ha podido cargar el trabajo muscular.</p>
-                ) : trabajoUltima.isPending ? (
-                  <p className="muted" style={{ margin: 0 }}>Cargando…</p>
-                ) : trabajoUltima.data.length === 0 ? (
-                  <p className="muted" style={{ margin: 0 }}>Los ejercicios de esa sesión no tienen grupo muscular.</p>
-                ) : (
-                  <>
-                    <MapaMuscular trabajo={trabajoUltima.data} />
-                    <div className="atl-grupos">
-                      {trabajoUltima.data.map((t) => (
-                        <div key={t.grupoMuscular} className="atl-grupos__f">
-                          <b>{t.grupoMuscular}</b>
-                          <span className="muted">{t.numeroSeries} series</span>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                )}
-              </Card>
-            </div>
-
-            <div className="span-12">
-              <Card delay={280} eyebrow="Volumen" title="Toneladas por semana">
-                <BarChart height={170} data={toneladasSemana} highlight={SEMANAS - 1} format={(v) => `${num(v, 1)} t`} />
+            <div className="span-4">
+              <Card delay={320} eyebrow="Volumen" title="Toneladas por semana" action={<span className="pl-row__num">{num(volSemana / 1000, 1)} t esta semana</span>}>
+                <BarChart height={70} gap={4} gridLines={1} data={toneladasSemana} highlight={SEMANAS - 1} format={(v) => `${num(v, 1)} t`} />
               </Card>
             </div>
           </div>

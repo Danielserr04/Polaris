@@ -1,5 +1,5 @@
 import { useEffect, useRef, type KeyboardEvent } from 'react';
-import type { EntradaList } from '../../api/odisea';
+import { tieneProgreso, type EntradaList, type TipoContenido } from '../../api/odisea';
 import { ListHeader, ListRow } from '../../design-system';
 
 interface Props {
@@ -14,6 +14,12 @@ interface Props {
  * Lista densa. Es un único elemento enfocable: con el foco dentro, las flechas, Inicio y Fin
  * mueven la selección (y con ella la ficha), igual que un listbox de una sola tabulación.
  */
+/** En series y libros a medias, por donde vas pesa mas que la duracion. */
+function textoProgreso(tipo: TipoContenido, progreso: number | null): string | null {
+  if (progreso == null || !tieneProgreso(tipo)) return null;
+  return tipo === 'LIBRO' ? `pág. ${progreso.toLocaleString('es-ES')}` : `ep. ${progreso}`;
+}
+
 export function ListaEntradas({ entradas, seleccionada, onSeleccionar, vacio }: Props) {
   const caja = useRef<HTMLDivElement>(null);
 
@@ -45,7 +51,7 @@ export function ListaEntradas({ entradas, seleccionada, onSeleccionar, vacio }: 
       tabIndex={0}
       onKeyDown={alPulsar}
     >
-      <ListHeader columns={['', 'Título', 'Tipo', 'Año', 'Duración', 'Valoración', 'Estado']} />
+      <ListHeader columns={['', 'Título', 'Tipo', 'Año', 'Detalle', 'Valoración', 'Estado']} />
       {entradas.map((e, i) => (
         <ListRow
           key={e.id}
@@ -55,6 +61,7 @@ export function ListaEntradas({ entradas, seleccionada, onSeleccionar, vacio }: 
           tituloOriginal={e.tituloOriginal ?? undefined}
           anio={e.tituloAnio ?? undefined}
           duracionMin={e.tituloDuracionMin ?? undefined}
+          progreso={textoProgreso(e.tituloTipo, e.progreso)}
           estado={e.estado}
           valoracion={e.valoracion}
           favorito={e.favorito}

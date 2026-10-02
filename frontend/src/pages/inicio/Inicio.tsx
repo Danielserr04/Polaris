@@ -202,7 +202,7 @@ export function Inicio() {
         }
       />
 
-      <div className="stats stats--today pl-rise" style={{ animationDelay: '60ms', marginBottom: 24 }}>
+      <div className="stats stats--today pl-rise" style={{ animationDelay: '60ms', marginBottom: 16 }}>
         <div data-module="kuiper" className="today" onClick={() => navigate('/kuiper')}>
           <span className="today__k">
             <Icon name="wallet" size={14} />
