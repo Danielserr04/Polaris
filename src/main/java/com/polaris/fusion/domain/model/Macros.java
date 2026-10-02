@@ -38,6 +38,23 @@ public record Macros(BigDecimal kcal, BigDecimal proteinas, BigDecimal carbohidr
                 grasas.add(otro.grasas));
     }
 
+    /**
+     * Estos macros multiplicados por {@code numerador / denominador}, escala 2 y
+     * HALF_UP. Sirve para pasar del total de una receta a una racion (1 / raciones)
+     * o a las raciones de una linea de plan (raciones_linea / raciones_receta).
+     */
+    public Macros escalar(BigDecimal numerador, BigDecimal denominador) {
+        return new Macros(
+                escalar(kcal, numerador, denominador),
+                escalar(proteinas, numerador, denominador),
+                escalar(carbohidratos, numerador, denominador),
+                escalar(grasas, numerador, denominador));
+    }
+
+    private static BigDecimal escalar(BigDecimal valor, BigDecimal numerador, BigDecimal denominador) {
+        return valor.multiply(numerador).divide(denominador, ESCALA, RoundingMode.HALF_UP);
+    }
+
     private static BigDecimal porCantidad(BigDecimal valor100g, BigDecimal cantidadG) {
         return valor100g.multiply(cantidadG).divide(CIEN, ESCALA, RoundingMode.HALF_UP);
     }

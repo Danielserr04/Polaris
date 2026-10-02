@@ -257,6 +257,48 @@ Sin unique por `(usuario_id, fecha, momento)`: un día puede tener varios SNACK.
 | alimento_id | bigint | FK a `alimento`; índice para proteger el borrado del catálogo |
 | cantidad_g | DECIMAL(7,2) | mayor que 0 |
 
+**`receta`** (`V30`, [[041-receta-agregado-con-ingredientes]])
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | las recetas son de cada usuario |
+| nombre | VARCHAR(120) | |
+| descripcion | VARCHAR(500) | opcional |
+| raciones | int | 1 a 50 |
+| instrucciones | TEXT | opcional |
+
+**`receta_ingrediente`** (`V30`)
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | el de la receta |
+| receta_id | bigint | FK a `receta`, sin `ON DELETE CASCADE` |
+| alimento_id | bigint | FK a `alimento`; índice para proteger el borrado |
+| cantidad_g | DECIMAL(7,2) | gramos para la receta entera |
+
+**`plan_comida`** (`V31`, [[042-plan-de-comidas-y-lista-de-la-compra]])
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | |
+| nombre | VARCHAR(120) | |
+| activo | BIT(1) | como mucho uno por usuario (lo garantiza el servicio) |
+
+**`plan_comida_linea`** (`V31`)
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | el del plan |
+| plan_id | bigint | FK a `plan_comida` |
+| dia_semana | ENUM LUNES…DOMINGO | en orden de la semana |
+| momento | ENUM | el de `comida` |
+| alimento_id / cantidad_g | bigint / DECIMAL(7,2) | o esto… |
+| receta_id / raciones | bigint / DECIMAL(5,2) | …o esto; `CHECK` en base de datos |
+
 **`objetivo_nutricional`**
 
 | Campo | Tipo | Nota |

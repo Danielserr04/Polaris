@@ -14,6 +14,7 @@ import {
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
 import { Alert, Button, Dialog, IconButton, Input, SegmentedControl } from '../../design-system';
 import { iso, num } from '../../lib/fechas';
+import { AnadirReceta, type IngredienteEscalado } from './AnadirReceta';
 import { BuscadorAlimento } from './BuscadorAlimento';
 
 interface Props {
@@ -92,6 +93,19 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
     setLineas((ls) => [...ls, { alimentoId: a.id, nombre: a.nombre, marca: a.marca, cantidad: '100', kcal100g: a.kcal100g }]);
   };
 
+  const anadirReceta = (ingredientes: IngredienteEscalado[]) => {
+    setLineas((ls) => [
+      ...ls,
+      ...ingredientes.map(({ ingrediente: i, cantidadG }) => ({
+        alimentoId: i.alimentoId,
+        nombre: i.alimentoNombre,
+        marca: i.alimentoMarca ?? null,
+        cantidad: String(cantidadG).replace('.', ','),
+        kcal100g: i.cantidadG > 0 ? (i.kcal / i.cantidadG) * 100 : 0,
+      })),
+    ]);
+  };
+
   const guardar = (ev: FormEvent) => {
     ev.preventDefault();
     setIntentado(true);
@@ -165,6 +179,7 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
         </div>
 
         <BuscadorAlimento onElegir={anadir} />
+        <AnadirReceta onAnadir={anadirReceta} />
 
         {lineas.length > 0 ? (
           <div className="fus-lineas">

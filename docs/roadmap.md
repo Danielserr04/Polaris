@@ -121,6 +121,7 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Kuiper: Recurrentes, Metas, Cuentas y Análisis; alertas de presupuesto, papelera con deshacer, duplicar y campana de notificaciones | **Hecho** |
 | Fusión: Hoy (resumen del día, comidas con alta/edición/borrado, alimento nuevo sobre la marcha, objetivo y tendencia) | **Hecho** |
 | Fusión: pestaña Alimentos (catálogo con búsqueda, alta, edición, borrado e importar de Open Food Facts) | **Hecho** |
+| Fusión: recetas, planes de comidas con lista de la compra, apuntar el plan en el día y objetivo calculado desde el perfil (traído de fitcore) | **Hecho** |
 | Atlas: pantalla de Progresión (stats, progresión por ejercicio, récords, últimas sesiones y series por semana, solo lectura) | **Hecho** |
 | Atlas: registrar, editar y borrar sesiones (rutina que precarga ejercicios, ejercicio nuevo sobre la marcha) | **Hecho** |
 | Atlas: pestañas Ejercicios y Rutinas (alta, edición, borrado, orden de las líneas) y apuntar el peso | **Hecho** |
