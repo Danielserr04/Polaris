@@ -1,7 +1,5 @@
-package com.polaris.atlas.infrastructure.persistence.mapper;
+package com.polaris.shared.logro;
 
-import com.polaris.atlas.domain.model.Logro;
-import com.polaris.atlas.infrastructure.persistence.dto.out.LogroDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.ReportingPolicy;
 

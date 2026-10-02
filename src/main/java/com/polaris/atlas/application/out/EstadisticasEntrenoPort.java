@@ -8,6 +8,6 @@ import com.polaris.atlas.domain.model.EstadisticasEntreno;
  */
 public interface EstadisticasEntrenoPort {
 
-    /** Solo cuenta lo del usuario. Con todo a cero si no ha entrenado nunca. */
+    /** Solo lo del usuario. Con las listas vacias si no ha entrenado nunca. */
     EstadisticasEntreno find(Long usuarioId);
 }

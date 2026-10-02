@@ -9,13 +9,14 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 /**
- * Spring Data. Solo la usa MovimientoJpaAdapter.
+ * Spring Data. La usan MovimientoJpaAdapter y EstadisticasLogrosJpaAdapter (logros).
  *
  * <p>Los {@code @Modifying} llevan su propio {@code @Transactional}: los
  * metodos de consulta heredan uno de solo lectura y un UPDATE o DELETE ahi
@@ -68,4 +69,22 @@ public interface MovimientoRepository extends JpaRepository<MovimientoEntity, Lo
             + "where m.usuarioId = :usuarioId and m.tipo = :tipo and m.cuenta is not null "
             + "and m.borradoEn is null group by m.cuenta.id")
     List<SumaPorCuenta> sumarPorCuenta(@Param("usuarioId") Long usuarioId, @Param("tipo") TipoMovimiento tipo);
+
+    /** La fecha de cada movimiento fuera de la papelera, repetidas incluidas, para los logros. */
+    @Query("select m.fecha from MovimientoEntity m where m.usuarioId = :usuarioId and m.borradoEn is null")
+    List<LocalDate> findFechasLogros(@Param("usuarioId") Long usuarioId);
+
+    /** Ingresos y gastos sumados por dia y tipo, fuera de la papelera: el balance de cada mes de los logros. */
+    @Query("select m.fecha as fecha, m.tipo as tipo, sum(m.importe) as importe from MovimientoEntity m "
+            + "where m.usuarioId = :usuarioId and m.borradoEn is null "
+            + "group by m.fecha, m.tipo")
+    List<ImporteDiaFila> findImportesPorDia(@Param("usuarioId") Long usuarioId);
+
+    interface ImporteDiaFila {
+        LocalDate getFecha();
+
+        TipoMovimiento getTipo();
+
+        BigDecimal getImporte();
+    }
 }

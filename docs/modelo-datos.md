@@ -392,7 +392,7 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 | fecha_limite | date | opcional, no pasada |
 | creada_en | date | |
 
-El valor actual y el progreso no se guardan: se calculan al leer. Los logros no tienen tabla. Ver [[043-logros-calculados-y-metas]].
+El valor actual y el progreso no se guardan: se calculan al leer. Los logros no tienen tabla, en ningún módulo: la fecha se calcula desde los datos. Ver [[043-logros-calculados-y-metas]] y [[044-logros-globales-con-fecha-calculada]].
 
 ---
 

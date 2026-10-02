@@ -140,6 +140,7 @@ Requiere un `User-Agent` que identifique a quien llama; limita el tráfico anón
 | `Titulo` | **Hecho** — CRUD completo, filtros por `tipo` y `texto` con Specifications, verificado contra MySQL |
 | `Entrada` | **Hecho** — CRUD completo, filtros por `tipo` y `estado`, aislada por `usuario_id`, verificada contra MySQL |
 | Catálogo externo | **Hecho** — los cuatro tipos: TMDB, IGDB y OpenLibrary |
+| Logros | **Hechos** — `GET /api/odisea/logros`: terminados, por tipo, Todoterreno y valorados. Ver [[044-logros-globales-con-fecha-calculada]] |
 
 ## Decisiones de implementación (B2)
 

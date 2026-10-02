@@ -1,0 +1,85 @@
+/* Logros: medallas por nivel, tenidas con el color del modulo (data-module). */
+
+.lg{
+  --tier-bronce-1:#e3a36b;--tier-bronce-2:#9a5b2b;
+  --tier-plata-1:#eef1f5;--tier-plata-2:#9aa3ad;
+  --tier-oro-1:#ffe08a;--tier-oro-2:#c8901c;
+  --tier-platino-1:#d9f4ff;--tier-platino-2:#7aa9c9;
+  display:flex;flex-direction:column;gap:20px;
+}
+.lg-resumen{margin-bottom:4px}
+.lg-vacio{margin:0;font-size:13px;line-height:1.5}
+
+/* Medalla */
+.lg-medalla{position:relative;display:inline-flex;flex:none;align-items:center;justify-content:center;border-radius:50%;color:#1b1406;
+  background:radial-gradient(circle at 32% 28%,var(--t1) 0%,var(--t2) 78%);
+  box-shadow:inset 0 0 0 2px color-mix(in oklab,var(--t1) 70%,transparent),inset 0 -3px 0 rgba(0,0,0,.18),0 0 0 3px color-mix(in oklab,var(--accent) 55%,transparent),0 6px 18px -8px var(--t2)}
+.lg-medalla[data-nivel="BRONCE"]{--t1:var(--tier-bronce-1);--t2:var(--tier-bronce-2)}
+.lg-medalla[data-nivel="PLATA"]{--t1:var(--tier-plata-1);--t2:var(--tier-plata-2)}
+.lg-medalla[data-nivel="ORO"]{--t1:var(--tier-oro-1);--t2:var(--tier-oro-2)}
+.lg-medalla[data-nivel="PLATINO"]{--t1:var(--tier-platino-1);--t2:var(--tier-platino-2)}
+.lg-medalla--no{background:var(--bg-sunken);color:var(--text-3);box-shadow:inset 0 0 0 1px var(--border-2)}
+.lg-medalla__candado{position:absolute;right:-2px;bottom:-2px;display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:var(--surface-3);color:var(--text-2);box-shadow:0 0 0 2px var(--bg-app)}
+
+/* Chip de nivel */
+.lg-nivel{flex:none;padding:1px 7px;border-radius:999px;font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--text-2);background:var(--bg-sunken);border:1px solid var(--border-1)}
+.lg-logro--si .lg-nivel[data-nivel="BRONCE"]{color:var(--tier-bronce-2);border-color:color-mix(in oklab,var(--tier-bronce-1) 45%,transparent)}
+.lg-logro--si .lg-nivel[data-nivel="PLATA"]{color:var(--text-1);border-color:color-mix(in oklab,var(--tier-plata-2) 60%,transparent)}
+.lg-logro--si .lg-nivel[data-nivel="ORO"]{color:var(--tier-oro-2);border-color:color-mix(in oklab,var(--tier-oro-1) 55%,transparent)}
+.lg-logro--si .lg-nivel[data-nivel="PLATINO"]{color:var(--tier-platino-2);border-color:color-mix(in oklab,var(--tier-platino-1) 60%,transparent)}
+
+/* Barra de progreso fina, del color del modulo */
+.lg-barra{display:block;height:6px;border-radius:999px;background:var(--surface-3);overflow:hidden}
+.lg-barra>span{display:block;height:100%;border-radius:inherit;background:var(--accent);transition:width 700ms var(--ease-spring)}
+
+/* Coleccion */
+.lg-coleccion{display:flex;align-items:center;gap:22px}
+.lg-niveles{flex:1;display:flex;flex-direction:column;gap:9px;margin:0;padding:0;list-style:none;font-size:13.5px}
+.lg-niveles li{display:flex;align-items:center;gap:10px}
+.lg-niveles li>span:nth-child(2){flex:1;color:var(--text-2)}
+.lg-niveles b{font-family:var(--font-mono);font-weight:600}
+.lg-punto{width:12px;height:12px;border-radius:50%;background:radial-gradient(circle at 35% 30%,var(--t1),var(--t2))}
+.lg-punto[data-nivel="BRONCE"]{--t1:var(--tier-bronce-1);--t2:var(--tier-bronce-2)}
+.lg-punto[data-nivel="PLATA"]{--t1:var(--tier-plata-1);--t2:var(--tier-plata-2)}
+.lg-punto[data-nivel="ORO"]{--t1:var(--tier-oro-1);--t2:var(--tier-oro-2)}
+.lg-punto[data-nivel="PLATINO"]{--t1:var(--tier-platino-1);--t2:var(--tier-platino-2)}
+
+/* Listas cortas: ultimos y casi */
+.lg-lista{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
+.lg-lista li{display:flex;align-items:center;gap:12px;min-width:0}
+.lg-lista li>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;font-size:12.5px}
+.lg-lista li b{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lg-lista__dato{flex:none;font-family:var(--font-mono);font-size:12px;color:var(--text-3)}
+
+/* Filtros */
+.lg-filtros{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px;align-items:center;margin-top:4px}
+
+/* Seccion por modulo */
+.lg-seccion{display:flex;flex-direction:column;gap:12px}
+.lg-seccion__cab{display:flex;align-items:center;gap:10px}
+.lg-seccion__icono{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:8px;background:var(--accent-soft);color:var(--accent)}
+.lg-seccion__cab h2{margin:0;font-family:var(--font-display);font-stretch:118%;font-weight:800;font-size:18px;letter-spacing:-.01em}
+.lg-seccion__cuenta{font-family:var(--font-mono);font-size:12px;color:var(--text-3)}
+.lg-seccion__barra{flex:1;max-width:220px;margin-right:auto}
+
+/* Tarjeta de logro */
+.lg-rejilla{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+.lg-logro{display:flex;gap:14px;align-items:flex-start;padding:14px;border:1px solid var(--border-1);border-radius:var(--radius-sm);background:var(--surface-glass);transition:border-color var(--dur-base),transform var(--dur-fast) var(--ease-spring)}
+.lg-logro--si{border-color:color-mix(in oklab,var(--accent) 40%,var(--border-1));background:linear-gradient(135deg,var(--accent-soft),transparent 60%),var(--surface-glass)}
+.lg-logro--si:hover{transform:translateY(-2px)}
+.lg-logro__txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.lg-logro__cab{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.lg-logro__cab b{font-size:14px;font-weight:600;min-width:0}
+.lg-logro__desc{font-size:12.5px;color:var(--text-3);line-height:1.4}
+.lg-logro:not(.lg-logro--si) .lg-logro__cab b{color:var(--text-2)}
+.lg-logro__fecha{display:inline-flex;align-items:center;gap:6px;margin-top:4px;font-size:12px;color:var(--accent)}
+.lg-logro__prog{display:flex;flex-direction:column;gap:5px;margin-top:6px}
+.lg-logro__num{font-family:var(--font-mono);font-size:11.5px;color:var(--text-3)}
+
+@media (max-width:760px){
+  .lg-coleccion{gap:16px}
+  .lg-seccion__cab{flex-wrap:wrap}
+  .lg-seccion__barra{order:5;flex-basis:100%;max-width:none}
+  .lg-rejilla{grid-template-columns:1fr}
+  .lg-filtros{flex-direction:column;align-items:stretch}
+}

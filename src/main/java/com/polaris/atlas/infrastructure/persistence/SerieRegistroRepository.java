@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * Spring Data. Solo la usan SerieRegistroJpaAdapter (comprobacion de uso de un
  * ejercicio), ProgresionJpaAdapter, RecordJpaAdapter, TrabajoMuscularJpaAdapter y
- * EstadisticasEntrenoJpaAdapter (agregaciones). Las series se escriben siempre a
+ * EstadisticasEntrenoJpaAdapter (agregaciones para los logros). Las series se escriben siempre a
  * traves de SesionEntity.
  *
  * <p>Las agregaciones (SUM, MAX, COUNT, GROUP BY) se hacen en la base y
@@ -85,10 +85,18 @@ public interface SerieRegistroRepository extends JpaRepository<SerieRegistroEnti
                                                   @Param("desde") LocalDate desde,
                                                   @Param("hasta") LocalDate hasta);
 
-    /** Ejercicios distintos y volumen de todas las series del usuario (nulos si no tiene ninguna). */
-    @Query("select count(distinct s.ejercicio.id) as ejerciciosDistintos, sum(s.reps * s.pesoKg) as volumen "
-            + "from SerieRegistroEntity s where s.usuarioId = :usuarioId")
-    TotalesSeriesFila findTotales(@Param("usuarioId") Long usuarioId);
+    /** El primer dia en que se hizo cada ejercicio: una fecha por ejercicio distinto, para los logros. */
+    @Query("select min(se.fecha) from SerieRegistroEntity s join s.sesion se "
+            + "where s.usuarioId = :usuarioId "
+            + "group by s.ejercicio.id")
+    List<LocalDate> findPrimerUsoPorEjercicio(@Param("usuarioId") Long usuarioId);
+
+    /** El volumen de cada sesion con su fecha, para las toneladas de los logros. */
+    @Query("select se.fecha as fecha, sum(s.reps * s.pesoKg) as volumen "
+            + "from SerieRegistroEntity s join s.sesion se "
+            + "where s.usuarioId = :usuarioId "
+            + "group by se.id, se.fecha")
+    List<VolumenFechaFila> findVolumenPorSesion(@Param("usuarioId") Long usuarioId);
 
     interface ProgresionFila {
         Long getSesionId();
@@ -138,8 +146,8 @@ public interface SerieRegistroRepository extends JpaRepository<SerieRegistroEnti
         BigDecimal getVolumen();
     }
 
-    interface TotalesSeriesFila {
-        Long getEjerciciosDistintos();
+    interface VolumenFechaFila {
+        LocalDate getFecha();
 
         BigDecimal getVolumen();
     }

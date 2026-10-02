@@ -12,6 +12,7 @@ import com.polaris.atlas.domain.model.RecordEjercicio;
 import com.polaris.atlas.domain.model.TrabajoMuscular;
 import com.polaris.atlas.domain.model.TrabajoMuscularFilter;
 import com.polaris.auth.infrastructure.security.JwtService;
+import com.polaris.shared.logro.CalculoLogros.FechaImporte;
 import com.polaris.shared.testing.IntegracionBase;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -148,27 +149,43 @@ class ProgresionRecordsIntegracionTest extends IntegracionBase {
     }
 
     @Test
-    @DisplayName("Estadisticas para los logros: sesiones, ejercicios distintos, volumen total y dias distintos, solo de A")
+    @DisplayName("Estadisticas para los logros: una fecha por sesion, el primer dia de cada ejercicio y el volumen por sesion, solo de A")
     void estadisticasEntreno() {
         EstadisticasEntreno e = estadisticas.find(A);
 
-        assertThat(e.getNumeroSesiones()).isEqualTo(6);
-        assertThat(e.getEjerciciosDistintos()).isEqualTo(3);
+        // s2 y s4 caen el mismo dia, pero son dos sesiones.
+        assertThat(e.getFechasSesion()).hasSize(6);
+        assertThat(e.getPrimerUsoEjercicios()).containsExactlyInAnyOrder(
+                LocalDate.of(2026, 3, 2), LocalDate.of(2026, 3, 2), LocalDate.of(2026, 3, 9));
+        assertThat(e.getVolumenPorSesion()).hasSize(6);
         // 4800 de press banca + 500 de sentadilla + 0 de dominadas.
-        assertThat(e.getVolumenTotal()).isEqualByComparingTo("5300");
-        // s2 y s4 caen el mismo dia.
-        assertThat(e.getFechasSesion()).hasSize(5);
+        assertThat(e.getVolumenPorSesion().stream().map(FechaImporte::importe).reduce(BigDecimal.ZERO, BigDecimal::add))
+                .isEqualByComparingTo("5300");
+        assertThat(e.getVolumenPorSesion()).filteredOn(v -> v.fecha().equals(LocalDate.of(2026, 3, 2)))
+                .extracting(FechaImporte::importe).singleElement().satisfies(v -> assertThat(v).isEqualByComparingTo("1600"));
     }
 
     @Test
-    @DisplayName("Estadisticas de un usuario sin entrenos: todo a cero, sin nulos")
+    @DisplayName("Estadisticas de un usuario sin entrenos: listas vacias, sin nulos")
     void estadisticasVacias() {
         EstadisticasEntreno e = estadisticas.find(9199L);
 
-        assertThat(e.getNumeroSesiones()).isZero();
-        assertThat(e.getEjerciciosDistintos()).isZero();
-        assertThat(e.getVolumenTotal()).isEqualByComparingTo("0");
         assertThat(e.getFechasSesion()).isEmpty();
+        assertThat(e.getPrimerUsoEjercicios()).isEmpty();
+        assertThat(e.getVolumenPorSesion()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("GET /api/atlas/logros: el catalogo con progreso y la fecha en que se consiguio cada logro")
+    void logrosConFecha() throws Exception {
+        mockMvc.perform(get("/api/atlas/logros").header("Authorization", bearer(A)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].codigo").value("PRIMER_ENTRENO"))
+                .andExpect(jsonPath("$[0].conseguido").value(true))
+                .andExpect(jsonPath("$[0].fechaConseguido").value("2026-03-02"))
+                .andExpect(jsonPath("$[0].nivel").value("BRONCE"))
+                .andExpect(jsonPath("$[1].progreso").value(6))
+                .andExpect(jsonPath("$[1].fechaConseguido").doesNotExist());
     }
 
     private static void assertTrabajo(TrabajoMuscular t, int series, int sesiones, String volumen) {

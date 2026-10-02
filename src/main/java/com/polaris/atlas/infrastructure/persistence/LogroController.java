@@ -1,8 +1,8 @@
 package com.polaris.atlas.infrastructure.persistence;
 
 import com.polaris.atlas.application.in.ListLogrosInterface;
-import com.polaris.atlas.infrastructure.persistence.dto.out.LogroDto;
-import com.polaris.atlas.infrastructure.persistence.mapper.LogroDtoMapper;
+import com.polaris.shared.logro.LogroDto;
+import com.polaris.shared.logro.LogroDtoMapper;
 import com.polaris.shared.security.UsuarioActual;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -20,9 +20,9 @@ import java.util.List;
  * caso de uso, no el Service.
  */
 @Tag(name = "Atlas - Logros",
-     description = "Catalogo fijo de logros con tu progreso, calculado sobre sesiones, series y peso. Solo "
-             + "lectura.")
-@RestController
+     description = "Catalogo fijo de logros con tu progreso, calculado sobre sesiones y series, con el dia "
+             + "en que lo conseguiste. Solo lectura.")
+@RestController("atlasLogroController")
 @RequestMapping("/api/atlas/logros")
 @RequiredArgsConstructor
 public class LogroController {
@@ -32,7 +32,7 @@ public class LogroController {
     private final UsuarioActual usuarioActual;
 
     @Operation(summary = "Tus logros",
-            description = "Todos los del catalogo, conseguidos o no, con lo que llevas de cada uno.")
+            description = "Todos los del catalogo, conseguidos o no, con lo que llevas de cada uno y la fecha de los conseguidos.")
     @ApiResponse(responseCode = "200", description = "El catalogo con tu progreso")
     @GetMapping
     public ResponseEntity<List<LogroDto>> list() {

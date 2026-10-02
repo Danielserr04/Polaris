@@ -50,7 +50,7 @@ PUT    /api/atlas/sesion/{id}
 GET    /api/atlas/progresion?ejercicioId=      evolución de carga y volumen
 GET    /api/atlas/records                       mejores marcas por ejercicio
 GET    /api/atlas/trabajo-muscular?desde=&hasta=  series y volumen por grupo muscular
-GET    /api/atlas/logros                        catálogo de logros con tu progreso
+GET    /api/atlas/logros                        catálogo de logros con tu progreso y la fecha
 GET    /api/atlas/meta?tipo=                    metas de entreno con su progreso
 POST   /api/atlas/meta
 PUT    /api/atlas/meta/{id}
@@ -78,5 +78,5 @@ Métrica que manda: **volumen total** (reps × peso). Ver [[026-progresion-y-rec
 | `Sesion` | **Hecha** — CRUD en `/api/atlas/sesion`, filtros `?desde=&hasta=&rutinaId=`; agregado con sus series. El listado trae `numeroSeries`, `numeroEjercicios` y `volumen`. Ver [[025-sesion-agregado-con-series]] y [[032-listados-de-odisea-y-atlas-sin-consultas-extra]] |
 | `SerieRegistro` | **Hecha** — dentro del agregado `Sesion`, sin endpoints propios. Lleva `usuario_id` |
 | Trabajo muscular | **Hecho** — `GET /api/atlas/trabajo-muscular`, agregado en la base; alimenta el mapa muscular. Ver [[042-calendario-y-mapa-muscular]] |
-| Logros | **Hechos** — `GET /api/atlas/logros`, catálogo fijo calculado al vuelo, sin tabla. Ver [[043-logros-calculados-y-metas]] |
+| Logros | **Hechos** — `GET /api/atlas/logros`, 13 logros calculados al vuelo, sin tabla, con la fecha en que se consiguieron. Se ven en el apartado Logros. Ver [[043-logros-calculados-y-metas]] y [[044-logros-globales-con-fecha-calculada]] |
 | `MetaEntreno` | **Hecha** — CRUD en `/api/atlas/meta`, filtro `?tipo=`; peso corporal, marca en un ejercicio o sesiones por semana, progreso calculado al leer. Ver [[043-logros-calculados-y-metas]] |

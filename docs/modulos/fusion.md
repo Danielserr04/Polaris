@@ -103,3 +103,4 @@ El listado de `comida` va ordenado por fecha descendente y momento en el orden d
 | `PlanComida` | **Hecho** — CRUD en `/api/fusion/plan`, activar y lista de la compra. Ver [[042-plan-de-comidas-y-lista-de-la-compra]] |
 | Cálculo del objetivo | **Hecho** — `GET /api/fusion/objetivo/calculo`, Mifflin-St Jeor desde el perfil de Núcleo. Ver [[043-calculo-del-objetivo-desde-el-perfil]] |
 | Resumen del día | **Hecho** — `GET /api/fusion/resumen?fecha=`. Ver [[021-resumen-diario-fusion]] |
+| Logros | **Hechos** — `GET /api/fusion/logros`: comidas, días y rachas apuntando, objetivo, recetas y planes. Ver [[044-logros-globales-con-fecha-calculada]] |

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, ApiError } from './client';
+import type { Logro } from './logros';
 
 // Contratos de Atlas (gym). Reflejan los DTO de src/main/java/com/polaris/atlas/.
 // El backend omite los campos nulos: un campo opcional llega como `undefined`, no como `null`.
@@ -319,17 +320,7 @@ export function useApuntarPeso() {
 }
 
 // ---- Logros y metas (docs/decisiones/043-logros-calculados-y-metas.md) ----
-
-export interface Logro {
-  codigo: string;
-  nombre: string;
-  descripcion: string;
-  icono: string;
-  metrica: 'SESIONES' | 'EJERCICIOS' | 'TONELADAS' | 'PESAJES' | 'RACHA_SEMANAS';
-  objetivo: number;
-  progreso: number;
-  conseguido: boolean;
-}
+// Los logros tienen su propia pantalla (pages/logros); aqui solo el resumen de Atlas.
 
 export function useLogros() {
   return useQuery({ queryKey: [...claves.metas, 'logros'] as const, queryFn: () => api<Logro[]>(`${BASE}/logros`) });
