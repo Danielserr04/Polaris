@@ -77,6 +77,7 @@ export const claves = {
   pesos: ['atlas', 'pesos'] as const,
   ejercicios: ['atlas', 'ejercicios'] as const,
   rutinas: ['atlas', 'rutinas'] as const,
+  trabajoMuscular: ['atlas', 'trabajo-muscular'] as const,
 };
 
 /** Listado ligero de sesiones (sin series), de la mas reciente a la mas antigua. */
@@ -103,6 +104,21 @@ export function usePesos(desde: string, hasta: string) {
   return useQuery({
     queryKey: [...claves.pesos, desde, hasta] as const,
     queryFn: () => api<PesoCorporal[]>(`${BASE}/peso`, { query: { desde, hasta } }),
+  });
+}
+
+/** Lo trabajado de un grupo muscular en un rango (GET /trabajo-muscular). */
+export interface TrabajoMuscular {
+  grupoMuscular: string;
+  numeroSeries: number;
+  numeroSesiones: number;
+  volumen: number;
+}
+
+export function useTrabajoMuscular(desde: string, hasta: string) {
+  return useQuery({
+    queryKey: [...claves.trabajoMuscular, desde, hasta] as const,
+    queryFn: () => api<TrabajoMuscular[]>(`${BASE}/trabajo-muscular`, { query: { desde, hasta } }),
   });
 }
 
