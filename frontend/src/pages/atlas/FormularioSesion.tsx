@@ -19,6 +19,8 @@ import { iso, num } from '../../lib/fechas';
 interface Props {
   /** Sin id: alta. Con id: edicion (y borrado) de esa sesion. */
   sesionId?: number;
+  /** Dia de una sesion nueva (desde el calendario); por defecto, hoy. */
+  fechaInicial?: string;
   onClose: () => void;
 }
 
@@ -47,7 +49,7 @@ const errReps = (s: string) => (REPS.test(s.trim()) && Number(s) >= 1 ? null : '
 const errPeso = (s: string) => (PESO.test(s.trim()) && decimal(s) <= 1000 ? null : '0 a 1.000');
 const errRpe = (s: string) => (s.trim() === '' || (RPE.test(s.trim()) && decimal(s) >= 1 && decimal(s) <= 10) ? null : '1 a 10, de 0,5 en 0,5');
 
-export function FormularioSesion({ sesionId, onClose }: Props) {
+export function FormularioSesion({ sesionId, fechaInicial, onClose }: Props) {
   useRestaurarFoco();
   const editando = sesionId !== undefined;
   const ficha = useSesion(sesionId);
@@ -59,7 +61,7 @@ export function FormularioSesion({ sesionId, onClose }: Props) {
       </Dialog>
     );
   }
-  return <Cuerpo sesion={ficha.data} onClose={onClose} />;
+  return <Cuerpo sesion={ficha.data} fechaInicial={fechaInicial} onClose={onClose} />;
 }
 
 /** Las series planas de la API, agrupadas en un bloque por ejercicio (vienen ya agrupadas). */
@@ -76,7 +78,7 @@ function agrupar(sesion: SesionCompleta | undefined): Bloque[] {
   return bloques;
 }
 
-function Cuerpo({ sesion, onClose }: { sesion: SesionCompleta | undefined; onClose: () => void }) {
+function Cuerpo({ sesion, fechaInicial, onClose }: { sesion: SesionCompleta | undefined; fechaInicial?: string; onClose: () => void }) {
   const editando = sesion !== undefined;
   const hoy = iso(new Date());
   const crear = useCrearSesion();
@@ -86,7 +88,7 @@ function Cuerpo({ sesion, onClose }: { sesion: SesionCompleta | undefined; onClo
   const rutinas = useRutinas();
   const crearEjercicio = useCrearEjercicio();
 
-  const [fecha, setFecha] = useState(sesion?.fecha ?? hoy);
+  const [fecha, setFecha] = useState(sesion?.fecha ?? fechaInicial ?? hoy);
   const [rutinaId, setRutinaId] = useState<number | null>(sesion?.rutinaId ?? null);
   const [duracion, setDuracion] = useState(sesion?.duracionMin != null ? String(sesion.duracionMin) : '');
   const [notas, setNotas] = useState(sesion?.notas ?? '');

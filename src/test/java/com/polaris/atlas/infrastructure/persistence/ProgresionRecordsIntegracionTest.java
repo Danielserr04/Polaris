@@ -1,11 +1,16 @@
 package com.polaris.atlas.infrastructure.persistence;
 
 import com.polaris.atlas.application.in.GetProgresionInterface;
+import com.polaris.atlas.application.in.GetTrabajoMuscularInterface;
+import com.polaris.atlas.application.out.EstadisticasEntrenoPort;
+import com.polaris.atlas.domain.model.EstadisticasEntreno;
 import com.polaris.atlas.application.in.ListRecordsInterface;
 import com.polaris.atlas.domain.model.EjercicioNotFoundException;
 import com.polaris.atlas.domain.model.ProgresionFilter;
 import com.polaris.atlas.domain.model.ProgresionSesion;
 import com.polaris.atlas.domain.model.RecordEjercicio;
+import com.polaris.atlas.domain.model.TrabajoMuscular;
+import com.polaris.atlas.domain.model.TrabajoMuscularFilter;
 import com.polaris.auth.infrastructure.security.JwtService;
 import com.polaris.shared.testing.IntegracionBase;
 import org.junit.jupiter.api.AfterEach;
@@ -49,6 +54,10 @@ class ProgresionRecordsIntegracionTest extends IntegracionBase {
     private GetProgresionInterface progresion;
     @Autowired
     private ListRecordsInterface records;
+    @Autowired
+    private GetTrabajoMuscularInterface trabajoMuscular;
+    @Autowired
+    private EstadisticasEntrenoPort estadisticas;
     @Autowired
     private JwtService jwtService;
     @Autowired
@@ -112,6 +121,60 @@ class ProgresionRecordsIntegracionTest extends IntegracionBase {
         Long sb = sesion(B, "2026-03-02");
         serie(B, sb, pressBanca, 1, 1, "200.00");
         serie(B, sb, propioDeB, 1, 20, "15.00");
+    }
+
+    @Test
+    @DisplayName("Trabajo muscular: series, sesiones distintas y volumen por grupo, solo de A y del que mas series tiene al que menos")
+    void trabajoMuscularPorGrupo() {
+        List<TrabajoMuscular> grupos = trabajoMuscular.get(A, new TrabajoMuscularFilter());
+
+        assertThat(grupos).extracting(TrabajoMuscular::getGrupoMuscular).containsExactly("Pecho", "Espalda", "Pierna");
+        // Press banca en las seis sesiones: 2+2+2+1+2+1 series, 1100+800+720+600+1100+480 kg.
+        assertTrabajo(grupos.get(0), 10, 6, "4800.00");
+        // Dominadas con el peso corporal: volumen 0.
+        assertTrabajo(grupos.get(1), 3, 2, "0.00");
+        assertTrabajo(grupos.get(2), 1, 1, "500.00");
+    }
+
+    @Test
+    @DisplayName("Trabajo muscular: el rango de fechas es inclusivo y deja fuera las sesiones de marzo")
+    void trabajoMuscularEnRango() {
+        List<TrabajoMuscular> grupos = trabajoMuscular.get(A, TrabajoMuscularFilter.builder()
+                .desde(LocalDate.of(2026, 4, 6)).hasta(LocalDate.of(2026, 4, 13)).build());
+
+        assertThat(grupos).extracting(TrabajoMuscular::getGrupoMuscular).containsExactly("Pecho", "Espalda");
+        assertTrabajo(grupos.get(0), 3, 2, "1580.00");
+        assertTrabajo(grupos.get(1), 1, 1, "0.00");
+    }
+
+    @Test
+    @DisplayName("Estadisticas para los logros: sesiones, ejercicios distintos, volumen total y dias distintos, solo de A")
+    void estadisticasEntreno() {
+        EstadisticasEntreno e = estadisticas.find(A);
+
+        assertThat(e.getNumeroSesiones()).isEqualTo(6);
+        assertThat(e.getEjerciciosDistintos()).isEqualTo(3);
+        // 4800 de press banca + 500 de sentadilla + 0 de dominadas.
+        assertThat(e.getVolumenTotal()).isEqualByComparingTo("5300");
+        // s2 y s4 caen el mismo dia.
+        assertThat(e.getFechasSesion()).hasSize(5);
+    }
+
+    @Test
+    @DisplayName("Estadisticas de un usuario sin entrenos: todo a cero, sin nulos")
+    void estadisticasVacias() {
+        EstadisticasEntreno e = estadisticas.find(9199L);
+
+        assertThat(e.getNumeroSesiones()).isZero();
+        assertThat(e.getEjerciciosDistintos()).isZero();
+        assertThat(e.getVolumenTotal()).isEqualByComparingTo("0");
+        assertThat(e.getFechasSesion()).isEmpty();
+    }
+
+    private static void assertTrabajo(TrabajoMuscular t, int series, int sesiones, String volumen) {
+        assertThat(t.getNumeroSeries()).isEqualTo(series);
+        assertThat(t.getNumeroSesiones()).isEqualTo(sesiones);
+        assertThat(t.getVolumen()).isEqualTo(new BigDecimal(volumen));
     }
 
     @Test
