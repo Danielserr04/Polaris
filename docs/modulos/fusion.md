@@ -12,6 +12,10 @@ Código nuevo. Cubre la mitad nutricional de lo que intentaba `fitcore`, un proy
 
 **`ComidaLinea`** — qué alimento y cuánto, dentro de una comida. Lleva su propio `usuario_id`. No tiene API propia: se maneja siempre a través de `Comida`.
 
+**`Receta`** — un plato reutilizable: ingredientes (alimento y gramos de la receta entera) y raciones. Macros totales y por ración al vuelo ([[041-receta-agregado-con-ingredientes]]).
+
+**`PlanComida`** — una semana tipo: qué comer cada día y momento, con alimentos o recetas. Un plan activo por usuario y lista de la compra calculada ([[042-plan-de-comidas-y-lista-de-la-compra]]).
+
 **`ObjetivoNutricional`** — kcal y macros objetivo, con `vigente_desde`. Solo se crean, nunca se editan ni se borran ([[016-objetivo-nutricional-historico-inmutable]]).
 
 Esquema completo en [[modelo-datos]].
@@ -26,7 +30,7 @@ Esquema completo en [[modelo-datos]].
 
 Fusión **lee y escribe el peso corporal de [[nucleo]]**: aparece dentro de este módulo, se puede consultar y añadir desde aquí, pero no tiene tabla propia.
 
-Lo usa para calcular necesidades calóricas. Qué es un "objetivo de peso" y cómo se interpreta la evolución lo decide Fusión, no Núcleo.
+Lo usa para calcular necesidades calóricas, junto con el perfil (altura, edad, sexo, actividad), que lee por un puerto propio sin tabla propia ([[043-calculo-del-objetivo-desde-el-perfil]]). Qué es un "objetivo de peso" y cómo se interpreta la evolución lo decide Fusión, no Núcleo.
 
 ## Endpoints
 
@@ -49,6 +53,21 @@ DELETE /api/fusion/comida/{id}            borra también sus líneas
 GET    /api/fusion/objetivo?fecha=        el vigente en esa fecha (hoy si se omite); 404 si no hay
 GET    /api/fusion/objetivo/historico     todos, del más reciente al más antiguo
 POST   /api/fusion/objetivo               crea uno nuevo, no sustituye
+GET    /api/fusion/objetivo/calculo?tipo=  propone kcal y macros desde el perfil y el último peso; no guarda
+
+GET    /api/fusion/receta?q=
+GET    /api/fusion/receta/{id}            con ingredientes, totales y por ración
+POST   /api/fusion/receta
+PUT    /api/fusion/receta/{id}            reemplaza los ingredientes
+DELETE /api/fusion/receta/{id}            400 si está en algún plan
+
+GET    /api/fusion/plan?activo=
+GET    /api/fusion/plan/{id}              líneas por día y momento, media diaria
+POST   /api/fusion/plan                   nace sin activar
+PUT    /api/fusion/plan/{id}              reemplaza nombre y líneas
+POST   /api/fusion/plan/{id}/activar      pasa a ser el único activo
+GET    /api/fusion/plan/{id}/lista-compra gramos por alimento para la semana
+DELETE /api/fusion/plan/{id}
 
 GET    /api/fusion/resumen?fecha=         macros del día vs objetivo vigente en esa fecha (por defecto hoy)
 
@@ -70,7 +89,6 @@ El listado de `comida` va ordenado por fecha descendente y momento en el orden d
 ## Pendiente
 
 - Probar el adaptador de Open Food Facts contra la API real
-- Recetas: agrupar alimentos en un plato reutilizable. Se valorará cuando el módulo básico funcione
 
 ## Estado
 
@@ -81,4 +99,7 @@ El listado de `comida` va ordenado por fecha descendente y momento en el orden d
 | `ComidaLinea` | **Hecha** — dentro del agregado `Comida`, sin endpoints propios. Lleva `usuario_id` |
 | `ObjetivoNutricional` | **Hecha** — `GET` (vigente), `GET /historico` y `POST`; sin `PUT` ni `DELETE`. Ver [[016-objetivo-nutricional-historico-inmutable]] |
 | Peso corporal | **Hecho** — `GET`/`POST /api/fusion/peso` a través de un puerto propio hacia Núcleo; sin tabla propia. Ver [[022-peso-corporal-desde-fusion-y-atlas]] |
+| `Receta` | **Hecha** — CRUD en `/api/fusion/receta`, con ingredientes y macros por ración. Ver [[041-receta-agregado-con-ingredientes]] |
+| `PlanComida` | **Hecho** — CRUD en `/api/fusion/plan`, activar y lista de la compra. Ver [[042-plan-de-comidas-y-lista-de-la-compra]] |
+| Cálculo del objetivo | **Hecho** — `GET /api/fusion/objetivo/calculo`, Mifflin-St Jeor desde el perfil de Núcleo. Ver [[043-calculo-del-objetivo-desde-el-perfil]] |
 | Resumen del día | **Hecho** — `GET /api/fusion/resumen?fecha=`. Ver [[021-resumen-diario-fusion]] |

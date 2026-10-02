@@ -1,5 +1,5 @@
 -- Fusion, entidades Receta y RecetaIngrediente. Un solo agregado, como comida y
--- comida_linea (V10). Ver docs/decisiones/050-receta-agregado-con-ingredientes.md.
+-- comida_linea (V10). Ver docs/decisiones/041-receta-agregado-con-ingredientes.md.
 --
 -- Las recetas son de cada usuario: las dos tablas llevan usuario_id (regla dura 5).
 -- cantidad_g son los gramos para la receta ENTERA, no por racion; los macros no

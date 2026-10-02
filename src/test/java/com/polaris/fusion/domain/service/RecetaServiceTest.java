@@ -32,7 +32,7 @@ import static org.mockito.Mockito.when;
 /**
  * Receta e ingredientes con el usuario del JWT, alimentos que existen,
  * aislamiento entre usuarios y que una receta usada en un plan no se borra.
- * Ver docs/decisiones/050-receta-agregado-con-ingredientes.md.
+ * Ver docs/decisiones/041-receta-agregado-con-ingredientes.md.
  */
 @ExtendWith(MockitoExtension.class)
 class RecetaServiceTest {

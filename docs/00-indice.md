@@ -67,6 +67,9 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[038-movimiento-papelera-y-duplicar]]
 - [[039-cuentas-y-transferencias]]
 - [[040-notificaciones-de-kuiper]]
+- [[041-receta-agregado-con-ingredientes]]
+- [[042-plan-de-comidas-y-lista-de-la-compra]]
+- [[043-calculo-del-objetivo-desde-el-perfil]]
 
 ## Cómo se mantiene esto
 

@@ -1,5 +1,5 @@
 -- Fusion, entidades PlanComida y PlanComidaLinea: un plan semanal. Un solo
--- agregado. Ver docs/decisiones/051-plan-de-comidas-y-lista-de-la-compra.md.
+-- agregado. Ver docs/decisiones/042-plan-de-comidas-y-lista-de-la-compra.md.
 --
 -- Las dos tablas llevan usuario_id (regla dura 5). Como mucho un plan activo por
 -- usuario: lo garantiza el servicio con un solo UPDATE al activar.

@@ -17,7 +17,7 @@ import java.util.List;
  *
  * <p>Los macros no se guardan: {@link #getTotales()} suma los de los
  * ingredientes y {@link #getPorRacion()} los divide entre las raciones. Ver
- * docs/decisiones/050-receta-agregado-con-ingredientes.md.
+ * docs/decisiones/041-receta-agregado-con-ingredientes.md.
  */
 @Getter
 @Setter

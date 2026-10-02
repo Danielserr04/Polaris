@@ -26,7 +26,7 @@ import java.util.List;
  * <p>Un alimento usado en alguna linea de comida, de cualquier usuario, no se
  * borra: 400, como TituloService con sus entradas. Ver
  * docs/decisiones/017-comida-agregado-con-lineas-macros-al-vuelo.md. Lo mismo
- * si esta en alguna receta o plan de comidas (ADR 050 y 051).
+ * si esta en alguna receta o plan de comidas (ADR 041 y 042).
  */
 @Service
 @RequiredArgsConstructor

@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Lee el perfil de Nucleo por su caso de uso de entrada, nunca por su
  * repositorio. Como NucleoPesoCorporalAdapter. Ver
- * docs/decisiones/052-calculo-del-objetivo-desde-el-perfil.md.
+ * docs/decisiones/043-calculo-del-objetivo-desde-el-perfil.md.
  */
 @Component
 @RequiredArgsConstructor

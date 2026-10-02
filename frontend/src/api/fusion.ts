@@ -291,6 +291,8 @@ export function useCrearObjetivo() {
 /** Mensaje legible de un fallo de la API (el backend los escribe sin tildes). */
 export function mensajeError(e: unknown): string {
   if (e instanceof ApiError) {
+    if (e.status === 400 && /plan de comidas/i.test(e.message)) return 'No se puede borrar: está en algún plan de comidas.';
+    if (e.status === 400 && /alguna receta/i.test(e.message)) return 'No se puede borrar: está en alguna receta.';
     if (e.status === 400 && /comida/i.test(e.message)) return 'No se puede borrar: está en alguna comida.';
     if (e.status === 502) return 'Open Food Facts no responde. Prueba otra vez en un rato.';
     if (e.status === 404 && /alimento/i.test(e.message)) return 'Alguno de los alimentos ya no existe.';

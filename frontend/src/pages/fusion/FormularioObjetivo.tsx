@@ -1,7 +1,9 @@
 import { useState, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { mensajeError, useCrearObjetivo, type ResumenDiario } from '../../api/fusion';
+import { ETIQUETA_ACTIVIDAD, ETIQUETA_TIPO, mensajeErrorCalculo, useCalcularObjetivo, type TipoObjetivo } from '../../api/fusionCalculo';
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
-import { Alert, Button, Dialog, Input } from '../../design-system';
+import { Alert, Button, Dialog, Input, SegmentedControl } from '../../design-system';
 import { iso, num } from '../../lib/fechas';
 
 interface Props {
@@ -27,6 +29,20 @@ export function FormularioObjetivo({ resumen, fecha, onClose }: Props) {
   const [gras, setGras] = useState(texto(resumen?.grasas.objetivo));
   const [desde, setDesde] = useState(fecha > hoy ? hoy : fecha);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
+  const [tipo, setTipo] = useState<TipoObjetivo>('MANTENIMIENTO');
+  const calcular = useCalcularObjetivo();
+  const calculo = calcular.data;
+
+  // Rellena los campos con la propuesta; el usuario puede retocarlos antes de guardar.
+  const proponer = () =>
+    calcular.mutate(tipo, {
+      onSuccess: (c) => {
+        setKcal(String(c.kcalDiarias));
+        setProt(String(c.proteinasObj));
+        setCarb(String(c.carbosObj));
+        setGras(String(c.grasasObj));
+      },
+    });
 
   const entero = (s: string) => (ENTERO.test(s.trim()) ? Number(s.trim()) : NaN);
   const k = entero(kcal);
@@ -67,6 +83,28 @@ export function FormularioObjetivo({ resumen, fecha, onClose }: Props) {
     >
       <form id="fus-form-objetivo" className="fus-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
+        <div className="fus-calculo">
+          <span className="pl-eyebrow">Calcular con tu perfil</span>
+          <div className="fus-calculo__fila">
+            <SegmentedControl value={tipo} onChange={(v) => setTipo(v as TipoObjetivo)} options={(Object.keys(ETIQUETA_TIPO) as TipoObjetivo[]).map((t) => ({ value: t, label: ETIQUETA_TIPO[t] }))} />
+            <Button type="button" size="sm" variant="secondary" icon="sparkles" loading={calcular.isPending} onClick={proponer}>
+              Calcular
+            </Button>
+          </div>
+          {calcular.isError ? (
+            <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
+              {mensajeErrorCalculo(calcular.error)} <Link to="/perfil">Ir a Perfil</Link>
+            </p>
+          ) : calculo ? (
+            <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
+              Gasto en reposo {num(calculo.tmb)} kcal; con {ETIQUETA_ACTIVIDAD[calculo.nivelActividad]}, {num(calculo.gastoTotal)} kcal al día
+              {calculo.tipo === 'DEFINICION' ? ', menos 500 para perder grasa' : calculo.tipo === 'VOLUMEN' ? ', más 300 para ganar músculo' : ''}. Con {num(calculo.pesoKg, 1)} kg,
+              {' '}{calculo.edad} años y {calculo.alturaCm} cm. Proteínas a 2 g por kilo y grasas al 25 %.
+            </p>
+          ) : (
+            <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>Usa tu altura, edad, sexo y actividad de Perfil y tu último peso. Rellena los campos de abajo, que puedes retocar.</p>
+          )}
+        </div>
         <div className="fus-form__row">
           <Input label="Calorías al día" inputMode="numeric" autoFocus value={kcal} onChange={(e) => setKcal(e.target.value)} error={errKcal} validarAlSalir />
           <Input label="Vigente desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} error={errDesde} validarAlSalir />

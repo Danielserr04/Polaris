@@ -8,6 +8,11 @@ import { FormularioAlimento } from './fusion/FormularioAlimento';
 import { FormularioComida } from './fusion/FormularioComida';
 import { ImportarOff } from './fusion/ImportarOff';
 import { FormularioObjetivo } from './fusion/FormularioObjetivo';
+import { ApuntarPlan } from './fusion/ApuntarPlan';
+import { FormularioPlan } from './fusion/FormularioPlan';
+import { FormularioReceta } from './fusion/FormularioReceta';
+import { PlanesTab } from './fusion/PlanesTab';
+import { RecetasTab } from './fusion/RecetasTab';
 import './fusion/fusion.css';
 
 // Una comida abierta: nueva (con el momento sugerido) o una existente.
@@ -16,7 +21,12 @@ type Abierta = { id?: number; momento?: MomentoComida } | null;
 // Un alimento abierto: nuevo (sin alimento) o editando uno del catalogo.
 type AlimentoAbierto = { alimento?: Alimento } | null;
 
-type Pestana = 'hoy' | 'ali';
+type Pestana = 'hoy' | 'ali' | 'rec' | 'plan';
+
+// Una receta o un plan abierto: nuevo (sin id) o editando ese id.
+type Abierto = { id?: number } | null;
+
+const TITULO: Record<Pestana, string> = { hoy: '', ali: 'Alimentos', rec: 'Recetas', plan: 'Planes de comidas' };
 
 const MACROS: { clave: 'proteinas' | 'carbohidratos' | 'grasas'; nombre: string; color: string }[] = [
   { clave: 'proteinas', nombre: 'Proteínas', color: 'var(--accent)' },
@@ -45,6 +55,8 @@ export function Fusion() {
   const [alimentoAbierto, setAlimentoAbierto] = useState<AlimentoAbierto>(null);
   const [importarAbierto, setImportarAbierto] = useState(false);
   const [recuento, setRecuento] = useState<number | null>(null);
+  const [recetaAbierta, setRecetaAbierta] = useState<Abierto>(null);
+  const [planAbierto, setPlanAbierto] = useState<Abierto>(null);
 
   const resumen = useResumenDia(fecha);
   const comidas = useComidasDia(fecha);
@@ -74,8 +86,18 @@ export function Fusion() {
     <div>
       <PageHeader
         eyebrow="Fusión"
-        coord={pestana === 'hoy' ? fechaLarga(fecha).toUpperCase() : recuento !== null ? `${recuento} ${recuento === 1 ? 'ALIMENTO' : 'ALIMENTOS'}` : 'CATÁLOGO'}
-        title={pestana === 'hoy' ? tituloDia(fecha, hoy) : 'Alimentos'}
+        coord={
+          pestana === 'hoy'
+            ? fechaLarga(fecha).toUpperCase()
+            : pestana === 'rec'
+              ? 'PLATOS REUTILIZABLES'
+              : pestana === 'plan'
+                ? 'TU SEMANA'
+                : recuento !== null
+                  ? `${recuento} ${recuento === 1 ? 'ALIMENTO' : 'ALIMENTOS'}`
+                  : 'CATÁLOGO'
+        }
+        title={pestana === 'hoy' ? tituloDia(fecha, hoy) : TITULO[pestana]}
         actions={
           pestana === 'hoy' ? (
             <>
@@ -92,6 +114,14 @@ export function Fusion() {
                 Registrar comida
               </Button>
             </>
+          ) : pestana === 'rec' ? (
+            <Button icon="plus" onClick={() => setRecetaAbierta({})}>
+              Receta
+            </Button>
+          ) : pestana === 'plan' ? (
+            <Button icon="plus" onClick={() => setPlanAbierto({})}>
+              Plan
+            </Button>
           ) : (
             <>
               <Button variant="secondary" icon="search" onClick={() => setImportarAbierto(true)}>
@@ -110,6 +140,8 @@ export function Fusion() {
         items={[
           { value: 'hoy', label: 'Hoy' },
           { value: 'ali', label: 'Alimentos' },
+          { value: 'rec', label: 'Recetas' },
+          { value: 'plan', label: 'Planes' },
         ]}
         style={{ marginBottom: 24 }}
       />
@@ -117,6 +149,10 @@ export function Fusion() {
       <div key={pestana} className="pl-tabpanel">
         {pestana === 'ali' ? (
           <AlimentosTab onEditar={(a) => setAlimentoAbierto({ alimento: a })} onRecuento={setRecuento} />
+        ) : pestana === 'rec' ? (
+          <RecetasTab onAbrir={(r) => setRecetaAbierta({ id: r.id })} onNueva={() => setRecetaAbierta({})} />
+        ) : pestana === 'plan' ? (
+          <PlanesTab onEditar={(id) => setPlanAbierto({ id })} onNuevo={() => setPlanAbierto({})} />
         ) : (
           <>
         {resumen.isError ? (
@@ -210,7 +246,9 @@ export function Fusion() {
                 ) : comidas.isPending ? (
                   <div className="fus-vacio" style={{ padding: '14px 18px' }}>Cargando…</div>
                 ) : (
-                  MOMENTOS.map((momento, i) => {
+                  <>
+                  {comidas.data.length === 0 && <ApuntarPlan fecha={fecha} />}
+                  {MOMENTOS.map((momento, i) => {
                     const lista = porMomento.get(momento) ?? [];
                     const kcal = lista.reduce((a, c) => a + c.kcalTotal, 0);
                     if (!lista.length) {
@@ -247,7 +285,8 @@ export function Fusion() {
                         ))}
                       </button>
                     ));
-                  })
+                  })}
+                  </>
                 )}
               </Card>
             </div>
@@ -284,6 +323,8 @@ export function Fusion() {
       {abierta && <FormularioComida comidaId={abierta.id} momentoInicial={abierta.momento} fecha={fecha} onClose={() => setAbierta(null)} />}
       {alimentoAbierto && <FormularioAlimento alimento={alimentoAbierto.alimento} onClose={() => setAlimentoAbierto(null)} />}
       {importarAbierto && <ImportarOff onClose={() => setImportarAbierto(false)} />}
+      {recetaAbierta && <FormularioReceta recetaId={recetaAbierta.id} onClose={() => setRecetaAbierta(null)} />}
+      {planAbierto && <FormularioPlan planId={planAbierto.id} onClose={() => setPlanAbierto(null)} />}
       {objetivoAbierto && <FormularioObjetivo resumen={r} fecha={fecha} onClose={() => setObjetivoAbierto(false)} />}
     </div>
   );

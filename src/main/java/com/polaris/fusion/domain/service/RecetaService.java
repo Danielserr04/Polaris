@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * Receta e ingredientes son un solo agregado, como Comida y sus lineas. Ver
- * docs/decisiones/050-receta-agregado-con-ingredientes.md.
+ * docs/decisiones/041-receta-agregado-con-ingredientes.md.
  *
  * <p>Las recetas son de cada usuario (no catalogo compartido): el usuario de
  * la receta y de cada ingrediente sale del JWT. Una receta usada en algun plan

@@ -11,7 +11,7 @@ import java.time.LocalDate;
 /**
  * Un objetivo propuesto y de donde sale. No se guarda: el usuario lo revisa y,
  * si le vale, crea un ObjetivoNutricional con esos numeros. Ver
- * docs/decisiones/052-calculo-del-objetivo-desde-el-perfil.md.
+ * docs/decisiones/043-calculo-del-objetivo-desde-el-perfil.md.
  */
 @Getter
 @Builder

@@ -35,7 +35,7 @@ import java.util.Map;
 
 /**
  * Plan semanal con sus lineas: un solo agregado. Ver
- * docs/decisiones/051-plan-de-comidas-y-lista-de-la-compra.md.
+ * docs/decisiones/042-plan-de-comidas-y-lista-de-la-compra.md.
  *
  * <p>Cada linea es un alimento con gramos o una receta propia con raciones.
  * Como mucho un plan activo por usuario. La lista de la compra se calcula al

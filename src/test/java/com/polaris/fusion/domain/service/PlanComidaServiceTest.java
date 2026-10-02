@@ -36,7 +36,7 @@ import static org.mockito.Mockito.when;
 /**
  * Lineas de alimento o de receta (nunca las dos), recetas solo propias, un
  * unico plan activo y la lista de la compra con las recetas desplegadas.
- * Ver docs/decisiones/051-plan-de-comidas-y-lista-de-la-compra.md.
+ * Ver docs/decisiones/042-plan-de-comidas-y-lista-de-la-compra.md.
  */
 @ExtendWith(MockitoExtension.class)
 class PlanComidaServiceTest {

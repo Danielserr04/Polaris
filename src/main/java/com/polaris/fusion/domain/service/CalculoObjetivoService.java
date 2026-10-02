@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Propone kcal y macros a partir del perfil y el ultimo peso, sin guardar
- * nada. Ver docs/decisiones/052-calculo-del-objetivo-desde-el-perfil.md.
+ * nada. Ver docs/decisiones/043-calculo-del-objetivo-desde-el-perfil.md.
  *
  * <ul>
  *   <li>Gasto basal, Mifflin-St Jeor: 10 * peso + 6.25 * altura - 5 * edad, +5 hombre / -161 mujer.</li>
@@ -58,7 +58,7 @@ public class CalculoObjetivoService implements CalcularObjetivoNutricionalInterf
         if (nivel == null) faltan.add("el nivel de actividad");
         if (peso == null) faltan.add("un peso registrado");
         if (!faltan.isEmpty()) {
-            throw new ValidationException("Para calcular el objetivo falta " + String.join(", ", faltan)
+            throw new ValidationException("Para calcular el objetivo falta " + enumerar(faltan)
                     + ". Completalo en tu perfil.");
         }
 
@@ -93,6 +93,14 @@ public class CalculoObjetivoService implements CalcularObjetivoNutricionalInterf
     private PesoCorporal ultimoPeso(Long usuarioId, LocalDate hoy) {
         List<PesoCorporal> pesos = pesoCorporalPort.findAll(usuarioId, PesoCorporalFilter.builder().hasta(hoy).build());
         return pesos.isEmpty() ? null : pesos.get(0);
+    }
+
+    /** "a", "a y b", "a, b y c". */
+    private static String enumerar(List<String> partes) {
+        if (partes.size() == 1) {
+            return partes.get(0);
+        }
+        return String.join(", ", partes.subList(0, partes.size() - 1)) + " y " + partes.get(partes.size() - 1);
     }
 
     private static int limitar(int valor, int min, int max) {

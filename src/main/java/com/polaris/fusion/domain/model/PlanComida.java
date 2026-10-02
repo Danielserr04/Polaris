@@ -14,7 +14,7 @@ import java.util.Objects;
 /**
  * Un plan semanal: que se come cada dia y en cada momento. Cada linea es un
  * alimento con sus gramos o una receta con sus raciones. Un solo agregado,
- * como Comida. Modelo puro. Ver docs/decisiones/051-plan-de-comidas-y-lista-de-la-compra.md.
+ * como Comida. Modelo puro. Ver docs/decisiones/042-plan-de-comidas-y-lista-de-la-compra.md.
  *
  * <p>Como mucho un plan activo por usuario: lo garantiza el servicio al activar.
  */
