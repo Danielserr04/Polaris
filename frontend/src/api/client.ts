@@ -33,14 +33,22 @@ function conQuery(ruta: string, query?: Opciones['query']): string {
   return qs ? `${ruta}?${qs}` : ruta;
 }
 
+/** Lo que ve el usuario ante cualquier fallo del servidor (5xx): nunca el texto tecnico. */
+export const ERROR_SERVIDOR = 'Error del servidor. Es cosa nuestra y lo solucionaremos en breve; inténtalo más tarde.';
+
 async function leerError(res: Response): Promise<string> {
+  let mensaje: string | undefined;
   try {
     const cuerpo = (await res.json()) as Partial<ErrorResponse>;
-    if (cuerpo.error) return cuerpo.error;
+    mensaje = cuerpo.error;
   } catch {
-    // cuerpo vacio o no JSON
+    // cuerpo vacio o no JSON (p. ej. el proxy de Vite con el backend caido)
   }
-  return res.statusText || `Error ${res.status}`;
+  // Un 502 del backend dice que una API externa ha fallado y se conserva; el resto de 5xx
+  // ("Internal Server Error", "Error interno del servidor"...) se cambia por el aviso amable.
+  if (res.status >= 500) return res.status === 502 && mensaje ? mensaje : ERROR_SERVIDOR;
+  // Sin cuerpo, statusText llega en ingles ("Bad Request"): no se muestra.
+  return mensaje || 'No se ha podido completar la operación. Inténtalo de nuevo.';
 }
 
 /**
