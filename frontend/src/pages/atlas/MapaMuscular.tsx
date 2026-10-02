@@ -95,7 +95,11 @@ function trazo(vista: Vista, bordes: string[], reflejada: boolean): string {
 
 // Los trazos no dependen de los datos: se calculan una vez al cargar el modulo.
 const trazos = (vista: Vista) =>
-  vista.piezas.map((p) => ({ musculo: p.musculo, d: [trazo(vista, p.bordes, false), trazo(vista, p.bordes, true)] }));
+  vista.piezas.map((p) => ({
+    musculo: p.musculo,
+    nombre: p.musculo && (p.parte ? `${NOMBRE_MUSCULO[p.musculo]} (${p.parte})` : NOMBRE_MUSCULO[p.musculo]),
+    d: [trazo(vista, p.bordes, false), trazo(vista, p.bordes, true)],
+  }));
 const VISTAS = { frente: trazos(FRENTE), espalda: trazos(ESPALDA) };
 
 function Figura({ vista, series, maximo, titulo }: { vista: keyof typeof VISTAS; series: Map<Musculo, number>; maximo: number; titulo: string }) {
@@ -109,7 +113,7 @@ function Figura({ vista, series, maximo, titulo }: { vista: keyof typeof VISTAS;
           const estilo = n > 0 ? { fill: 'var(--accent)', fillOpacity: 0.25 + 0.75 * (n / maximo) } : undefined;
           return (
             <g key={`${p.musculo}-${i}`} className="atl-mapa__musculo" style={estilo}>
-              <title>{n > 0 ? `${NOMBRE_MUSCULO[p.musculo]}: ${n} series` : NOMBRE_MUSCULO[p.musculo]}</title>
+              <title>{n > 0 ? `${p.nombre}: ${n} series` : p.nombre}</title>
               {p.d.map((d) => <path key={d} d={d} />)}
             </g>
           );
