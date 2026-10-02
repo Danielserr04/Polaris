@@ -69,6 +69,21 @@ public interface SerieRegistroRepository extends JpaRepository<SerieRegistroEnti
             + "order by se.fecha asc, se.id asc")
     List<VolumenSesionFila> findVolumenPorEjercicioYSesion(@Param("usuarioId") Long usuarioId);
 
+    /**
+     * Una fila por grupo muscular con series del usuario en el rango. Las
+     * series de un ejercicio sin grupo no cuentan.
+     */
+    @Query("select e.grupoMuscular as grupoMuscular, count(s) as numeroSeries, "
+            + "count(distinct se.id) as numeroSesiones, sum(s.reps * s.pesoKg) as volumen "
+            + "from SerieRegistroEntity s join s.ejercicio e join s.sesion se "
+            + "where s.usuarioId = :usuarioId and e.grupoMuscular is not null "
+            + "and (:desde is null or se.fecha >= :desde) "
+            + "and (:hasta is null or se.fecha <= :hasta) "
+            + "group by e.grupoMuscular")
+    List<TrabajoMuscularFila> findTrabajoMuscular(@Param("usuarioId") Long usuarioId,
+                                                  @Param("desde") LocalDate desde,
+                                                  @Param("hasta") LocalDate hasta);
+
     interface ProgresionFila {
         Long getSesionId();
 
@@ -103,6 +118,16 @@ public interface SerieRegistroRepository extends JpaRepository<SerieRegistroEnti
         Long getSesionId();
 
         LocalDate getFecha();
+
+        BigDecimal getVolumen();
+    }
+
+    interface TrabajoMuscularFila {
+        String getGrupoMuscular();
+
+        Long getNumeroSeries();
+
+        Long getNumeroSesiones();
 
         BigDecimal getVolumen();
     }
