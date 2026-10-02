@@ -1,0 +1,21 @@
+/* Metas de ahorro (pestana Metas de Kuiper). Lo comun (kui-form, kui-catchip...) esta en kuiper.css */
+.kui-metas__resumen{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:16px}
+.kui-metas{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.kui-meta .pl-card__body{display:flex;flex-direction:column;gap:14px}
+.kui-meta__titulo{display:inline-flex;align-items:center;gap:10px;min-width:0}
+.kui-meta__nombre{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-meta__cuerpo{display:flex;align-items:center;gap:18px}
+.kui-meta__datos{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0;font-size:13px}
+.kui-meta__actual{font-size:20px;font-weight:600;color:var(--text-1)}
+.kui-meta__pie{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--text-2)}
+.kui-meta__pie span{display:inline-flex;align-items:center;gap:6px}
+.kui-aportaciones{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;max-height:260px;overflow-y:auto}
+.kui-aportacion{display:grid;grid-template-columns:64px minmax(0,1fr) auto auto;align-items:center;gap:10px;padding:6px 0;border-top:1px solid var(--border-1,var(--border-2));font-size:13px}
+.kui-aportacion:first-child{border-top:0}
+.kui-aportacion__nota{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-aportacion__importe{text-align:right;color:var(--success,var(--text-1))}
+.kui-aportacion__importe--neg{color:var(--danger)}
+@media (max-width:760px){
+  .kui-metas__resumen{grid-template-columns:1fr}
+  .kui-metas{grid-template-columns:1fr}
+}
