@@ -10,8 +10,9 @@ import java.util.List;
 
 /**
  * Spring Data. Solo la usan SerieRegistroJpaAdapter (comprobacion de uso de un
- * ejercicio), ProgresionJpaAdapter y RecordJpaAdapter (agregaciones). Las series
- * se escriben siempre a traves de SesionEntity.
+ * ejercicio), ProgresionJpaAdapter, RecordJpaAdapter, TrabajoMuscularJpaAdapter y
+ * EstadisticasEntrenoJpaAdapter (agregaciones). Las series se escriben siempre a
+ * traves de SesionEntity.
  *
  * <p>Las agregaciones (SUM, MAX, COUNT, GROUP BY) se hacen en la base y
  * devuelven proyecciones, nunca las series. Todas filtran por usuario_id: el
@@ -69,6 +70,26 @@ public interface SerieRegistroRepository extends JpaRepository<SerieRegistroEnti
             + "order by se.fecha asc, se.id asc")
     List<VolumenSesionFila> findVolumenPorEjercicioYSesion(@Param("usuarioId") Long usuarioId);
 
+    /**
+     * Una fila por grupo muscular con series del usuario en el rango. Las
+     * series de un ejercicio sin grupo no cuentan.
+     */
+    @Query("select e.grupoMuscular as grupoMuscular, count(s) as numeroSeries, "
+            + "count(distinct se.id) as numeroSesiones, sum(s.reps * s.pesoKg) as volumen "
+            + "from SerieRegistroEntity s join s.ejercicio e join s.sesion se "
+            + "where s.usuarioId = :usuarioId and e.grupoMuscular is not null "
+            + "and (:desde is null or se.fecha >= :desde) "
+            + "and (:hasta is null or se.fecha <= :hasta) "
+            + "group by e.grupoMuscular")
+    List<TrabajoMuscularFila> findTrabajoMuscular(@Param("usuarioId") Long usuarioId,
+                                                  @Param("desde") LocalDate desde,
+                                                  @Param("hasta") LocalDate hasta);
+
+    /** Ejercicios distintos y volumen de todas las series del usuario (nulos si no tiene ninguna). */
+    @Query("select count(distinct s.ejercicio.id) as ejerciciosDistintos, sum(s.reps * s.pesoKg) as volumen "
+            + "from SerieRegistroEntity s where s.usuarioId = :usuarioId")
+    TotalesSeriesFila findTotales(@Param("usuarioId") Long usuarioId);
+
     interface ProgresionFila {
         Long getSesionId();
 
@@ -103,6 +124,22 @@ public interface SerieRegistroRepository extends JpaRepository<SerieRegistroEnti
         Long getSesionId();
 
         LocalDate getFecha();
+
+        BigDecimal getVolumen();
+    }
+
+    interface TrabajoMuscularFila {
+        String getGrupoMuscular();
+
+        Long getNumeroSeries();
+
+        Long getNumeroSesiones();
+
+        BigDecimal getVolumen();
+    }
+
+    interface TotalesSeriesFila {
+        Long getEjerciciosDistintos();
 
         BigDecimal getVolumen();
     }

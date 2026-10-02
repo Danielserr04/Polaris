@@ -122,14 +122,17 @@ class ProgresionRecordsAdaptersTest {
 
         assertThat(consultas).extracting(Method::getName)
                 .containsExactlyInAnyOrder("findProgresion", "findMejorPesoPorEjercicio",
-                        "findVolumenPorEjercicioYSesion");
+                        "findVolumenPorEjercicioYSesion", "findTrabajoMuscular", "findTotales");
         for (Method consulta : consultas) {
             String jpql = consulta.getAnnotation(Query.class).value();
             assertThat(jpql).as(consulta.getName()).contains("s.usuarioId = :usuarioId");
-            assertThat(jpql).as(consulta.getName()).contains("group by");
             // Una proyeccion, nunca la entidad: no se cargan series en memoria.
-            assertThat(consulta.getReturnType()).isEqualTo(List.class);
             assertThat(jpql).as(consulta.getName()).doesNotStartWith("select s from");
+            // findTotales agrega todas las series del usuario en una sola fila.
+            if (!consulta.getName().equals("findTotales")) {
+                assertThat(jpql).as(consulta.getName()).contains("group by");
+                assertThat(consulta.getReturnType()).isEqualTo(List.class);
+            }
         }
     }
 }

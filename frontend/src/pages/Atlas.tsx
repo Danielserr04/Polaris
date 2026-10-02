@@ -1,9 +1,15 @@
 import { useMemo, useState } from 'react';
-import { mensajeError, type Ejercicio, useProgresion, usePesos, useRecords, useSesiones } from '../api/atlas';
+import { mensajeError, type Ejercicio, type MetaEntreno, useProgresion, usePesos, useRecords, useSesiones } from '../api/atlas';
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Badge, BarChart, Button, Card, LineChart, Select, Stat, Tabs } from '../design-system';
+import { CalculadorasTab } from './atlas/CalculadorasTab';
+import { CalendarioTab } from './atlas/CalendarioTab';
+import { CuerpoTab } from './atlas/CuerpoTab';
 import { EjerciciosTab } from './atlas/EjerciciosTab';
 import { FormularioEjercicio } from './atlas/FormularioEjercicio';
+import { FormularioMedidas } from './atlas/FormularioMedidas';
+import { FormularioMetaEntreno } from './atlas/FormularioMetaEntreno';
+import { MetasTab } from './atlas/MetasTab';
 import { FormularioPeso } from './atlas/FormularioPeso';
 import { FormularioRutina } from './atlas/FormularioRutina';
 import { FormularioSesion } from './atlas/FormularioSesion';
@@ -21,10 +27,20 @@ function delta(n: number, dec: number, unidad = ''): string {
 
 const tono = (n: number) => (n > 0 ? 'up' : n < 0 ? 'down' : 'flat') as 'up' | 'down' | 'flat';
 
-// Una sesion abierta: nueva (sin id) o una existente.
-type Abierta = { id?: number } | null;
+// Una sesion abierta: nueva (sin id, con fecha si viene del calendario) o una existente.
+type Abierta = { id?: number; fecha?: string } | null;
 
-type Pestana = 'prog' | 'ej' | 'rut';
+type Pestana = 'prog' | 'cal' | 'cuerpo' | 'metas' | 'ej' | 'rut' | 'calc';
+
+const TITULOS: Record<Pestana, string> = {
+  prog: 'Progresión',
+  cal: 'Calendario',
+  cuerpo: 'Cuerpo',
+  metas: 'Metas',
+  ej: 'Ejercicios',
+  rut: 'Rutinas',
+  calc: 'Calculadoras',
+};
 
 export function Atlas() {
   const [abierta, setAbierta] = useState<Abierta>(null);
@@ -32,6 +48,8 @@ export function Atlas() {
   const [pesoAbierto, setPesoAbierto] = useState(false);
   const [ejercicioAbierto, setEjercicioAbierto] = useState<{ ejercicio?: Ejercicio } | null>(null);
   const [rutinaAbierta, setRutinaAbierta] = useState<{ id?: number } | null>(null);
+  const [medidasAbiertas, setMedidasAbiertas] = useState<{ id?: number } | null>(null);
+  const [metaAbierta, setMetaAbierta] = useState<{ meta?: MetaEntreno } | null>(null);
   const [recuento, setRecuento] = useState<number | null>(null);
   const hoy = useMemo(() => new Date(), []);
   const hoyIso = iso(hoy);
@@ -101,10 +119,16 @@ export function Atlas() {
     <div>
       <PageHeader
         eyebrow="Atlas"
-        coord={pestana === 'prog' ? `SEMANA ${semanaIso(hoy)}` : recuento !== null ? `${recuento} ${pestana === 'ej' ? (recuento === 1 ? 'EJERCICIO' : 'EJERCICIOS') : recuento === 1 ? 'RUTINA' : 'RUTINAS'}` : pestana === 'ej' ? 'EJERCICIOS' : 'RUTINAS'}
-        title={pestana === 'prog' ? 'Progresión' : pestana === 'ej' ? 'Ejercicios' : 'Rutinas'}
+        coord={
+          pestana === 'prog' || pestana === 'cal'
+            ? `SEMANA ${semanaIso(hoy)}`
+            : (pestana === 'ej' || pestana === 'rut') && recuento !== null
+              ? `${recuento} ${pestana === 'ej' ? (recuento === 1 ? 'EJERCICIO' : 'EJERCICIOS') : recuento === 1 ? 'RUTINA' : 'RUTINAS'}`
+              : TITULOS[pestana].toUpperCase()
+        }
+        title={TITULOS[pestana]}
         actions={
-          pestana === 'prog' ? (
+          pestana === 'prog' || pestana === 'cal' ? (
             <>
               <Button variant="secondary" icon="scale" onClick={() => setPesoAbierto(true)}>
                 Peso
@@ -113,30 +137,47 @@ export function Atlas() {
                 Registrar sesión
               </Button>
             </>
+          ) : pestana === 'cuerpo' ? (
+            <>
+              <Button variant="secondary" icon="scale" onClick={() => setPesoAbierto(true)}>
+                Peso
+              </Button>
+              <Button icon="plus" onClick={() => setMedidasAbiertas({})}>
+                Medidas
+              </Button>
+            </>
+          ) : pestana === 'metas' ? (
+            <Button icon="plus" onClick={() => setMetaAbierta({})}>
+              Meta
+            </Button>
           ) : pestana === 'ej' ? (
             <Button icon="plus" onClick={() => setEjercicioAbierto({})}>
               Ejercicio
             </Button>
-          ) : (
+          ) : pestana === 'rut' ? (
             <Button icon="plus" onClick={() => setRutinaAbierta({})}>
               Rutina
             </Button>
-          )
+          ) : undefined
         }
       />
       <Tabs
         value={pestana}
         onChange={(v) => setPestana(v as Pestana)}
-        items={[
-          { value: 'prog', label: 'Progresión' },
-          { value: 'ej', label: 'Ejercicios' },
-          { value: 'rut', label: 'Rutinas' },
-        ]}
+        items={(Object.keys(TITULOS) as Pestana[]).map((p) => ({ value: p, label: TITULOS[p] }))}
         style={{ marginBottom: 24 }}
       />
 
       <div key={pestana} className="pl-tabpanel">
-        {pestana === 'ej' ? (
+        {pestana === 'cal' ? (
+          <CalendarioTab onAbrir={setAbierta} />
+        ) : pestana === 'cuerpo' ? (
+          <CuerpoTab onEditar={(id) => setMedidasAbiertas({ id })} />
+        ) : pestana === 'metas' ? (
+          <MetasTab onEditar={(meta) => setMetaAbierta({ meta })} />
+        ) : pestana === 'calc' ? (
+          <CalculadorasTab />
+        ) : pestana === 'ej' ? (
           <EjerciciosTab onEditar={(e) => setEjercicioAbierto({ ejercicio: e })} onRecuento={setRecuento} />
         ) : pestana === 'rut' ? (
           <RutinasTab onEditar={(r) => setRutinaAbierta({ id: r.id })} onRecuento={setRecuento} />
@@ -304,7 +345,9 @@ export function Atlas() {
         )}
       </div>
 
-      {abierta && <FormularioSesion sesionId={abierta.id} onClose={() => setAbierta(null)} />}
+      {abierta && <FormularioSesion sesionId={abierta.id} fechaInicial={abierta.fecha} onClose={() => setAbierta(null)} />}
+      {metaAbierta && <FormularioMetaEntreno meta={metaAbierta.meta} onClose={() => setMetaAbierta(null)} />}
+      {medidasAbiertas && <FormularioMedidas medidaId={medidasAbiertas.id} onClose={() => setMedidasAbiertas(null)} />}
       {pesoAbierto && <FormularioPeso onClose={() => setPesoAbierto(false)} />}
       {ejercicioAbierto && <FormularioEjercicio ejercicio={ejercicioAbierto.ejercicio} onClose={() => setEjercicioAbierto(null)} />}
       {rutinaAbierta && <FormularioRutina rutinaId={rutinaAbierta.id} onClose={() => setRutinaAbierta(null)} />}
