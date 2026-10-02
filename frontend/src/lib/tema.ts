@@ -52,12 +52,27 @@ export function useTemaAplicado(): TemaAplicado {
   return elegido === 'claro' || (elegido === 'sistema' && claroSistema) ? 'light' : 'dark';
 }
 
-/** Pone data-theme en <html> mientras haya shell (el login nunca lo lleva: es siempre oscuro). */
+// Color de la barra del navegador en movil; los mismos fondos que --bg-app de cada tema.
+const COLOR_BARRA: Record<TemaAplicado, string> = { dark: '#12110e', light: '#f2eee6' };
+
+function pintar(tema: TemaAplicado): void {
+  if (tema === 'light') document.documentElement.dataset.theme = 'light';
+  else delete document.documentElement.dataset.theme;
+  document.querySelector('meta[name="theme-color"]')?.setAttribute('content', COLOR_BARRA[tema]);
+}
+
+/**
+ * Pone data-theme en <html> mientras haya shell. El script de index.html ya lo deja puesto antes
+ * del primer pintado; esto lo mantiene al cambiar de tema en Perfil o en el sistema.
+ */
 export function useAplicarTema(tema: TemaAplicado): void {
   useEffect(() => {
-    document.documentElement.dataset.theme = tema;
-    return () => {
-      delete document.documentElement.dataset.theme;
-    };
+    pintar(tema);
+    return () => pintar('dark');
   }, [tema]);
+}
+
+/** Login y callback: siempre oscuros, aunque index.html haya puesto el claro antes de redirigir. */
+export function useTemaOscuro(): void {
+  useEffect(() => pintar('dark'), []);
 }

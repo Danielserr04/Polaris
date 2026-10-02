@@ -26,6 +26,7 @@
 --link:var(--accent-hover);--link-hover:var(--teal-300);
 --block-shadow-color:var(--ink-400);
 --scrim:rgba(11,10,8,.72);
+--sombra-bloque:rgba(0,0,0,.4);--sombra-difusa:rgba(0,0,0,.65);
 }
 [data-module="polaris"]{--accent:#5bb3a0;--accent-hover:#7cc6b5;--accent-press:#43907f;--accent-soft:rgba(91,179,160,.12);--accent-deep:#1f4a41;--text-on-accent:#062019}
 [data-module="odisea"]{--accent:#d0799f;--accent-hover:#dc93b3;--accent-press:#b35f83;--accent-soft:rgba(208,121,159,.12);--accent-deep:#5a2c42;--text-on-accent:#240f19}
@@ -40,6 +41,11 @@
 --text-1:#1b1812;--text-2:#57514a;--text-3:#7a7266;--text-disabled:#b4ab9d;
 --accent:#2f8a77;--accent-hover:#26715f;--accent-press:#1f5c4e;--accent-soft:rgba(47,138,119,.12);--accent-deep:#1b1812;--text-on-accent:#ffffff;
 --link:#26715f;--link-hover:#1f5c4e;--block-shadow-color:#1b1812;--scrim:rgba(27,24,18,.4);
+--sombra-bloque:rgba(27,20,7,.1);--sombra-difusa:rgba(27,20,7,.22);
+/* Semanticos y estados de Odisea oscurecidos: los pastel del oscuro no se leen sobre crema */
+--success:#3d7a39;--warning:#94680c;--danger:#b23f2c;--info:#336fa8;
+--success-bg:rgba(61,122,57,.1);--warning-bg:rgba(148,104,12,.1);--danger-bg:rgba(178,63,44,.1);--info-bg:rgba(51,111,168,.1);
+--state-pendiente:#7a7266;--state-en-curso:#336fa8;--state-terminado:#3d7a39;--state-abandonado:#b23f2c;
 }
 
 /* Tema claro: cada modulo con su acento oscurecido para que tenga contraste sobre el fondo claro.
