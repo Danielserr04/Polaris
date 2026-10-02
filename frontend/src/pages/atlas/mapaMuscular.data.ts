@@ -1,7 +1,9 @@
 // Dibujo del mapa muscular (frente y espalda) en un espacio de 200 x 440, dibujo propio.
-// Es un puzle: cada pieza es una lista de bordes con nombre y dos piezas vecinas usan el
-// mismo borde, asi que encajan sin solaparse ni dejar huecos. Solo se dibuja la mitad
-// derecha de la imagen (x >= 100); el componente la refleja y suaviza cada borde.
+// El cuerpo se reparte como un puzle: cada pieza es una lista de bordes con nombre y dos
+// piezas vecinas usan el mismo borde, asi que no se solapan. El componente encoge cada
+// pieza un poco y redondea sus esquinas, de modo que se ven musculos redondeados separados
+// por un hueco igual. Solo se describe la mitad derecha de la imagen (x >= 100); el
+// componente la refleja.
 
 export type Musculo =
   | 'pectoral' | 'deltoides' | 'trapecio' | 'biceps' | 'triceps' | 'antebrazo'
@@ -33,7 +35,7 @@ export interface Vista {
 }
 
 /** Contorno de media figura, de la coronilla a la entrepierna por fuera. Igual de frente y de espalda. */
-const CONTORNO: number[] = [
+export const CONTORNO: number[] = [
   100, 5, 111, 7, 118, 16, 119, 30, 116, 42, 110, 50, 109, 58, 122, 63, 140, 67, 155, 71, 164, 82,
   167, 100, 168, 112, 170, 124, 173, 146, 180, 168, 186, 192, 189, 210, 193, 222, 193, 236, 187, 246,
   179, 245, 175, 232, 173, 216, 165, 192, 157, 168, 151, 152, 146, 132, 141, 116, 139, 140, 137.9, 148,
@@ -131,7 +133,7 @@ export const FRENTE: Vista = {
     // Costado: dorsal, dientes del serrato, oblicuos.
     latIn: [141, 116, 137, 128, 135.5, 140, 137.9, 148],
     oLat: contorno(141, 116, 137.9, 148),
-    serr: [128, 115, 133, 119, 129, 123, 134, 128, 130, 132, 133, 137, 131, 141, 137.9, 148],
+    serr: [128, 115, 134, 121, 131, 128, 135, 134, 133, 141, 137.9, 148],
     oFlanco: contorno(137.9, 148, 140, 200),
     // Linea semilunar (borde del recto abdominal) e intersecciones tendinosas.
     linSem1: [120, 119, 121, 140],
