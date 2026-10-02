@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { mensajeError, type Ejercicio, type MetaEntreno, useProgresion, usePesos, useRecords, useSesiones } from '../api/atlas';
+import { mensajeError, type Ejercicio, type MetaEntreno, useProgresion, usePesos, useRecords, useSesiones, useTrabajoMuscular } from '../api/atlas';
 import { PageHeader } from '../components/PageHeader';
 import { Alert, Badge, BarChart, Button, Card, LineChart, Select, Stat, Tabs } from '../design-system';
 import { CalculadorasTab } from './atlas/CalculadorasTab';
@@ -13,6 +13,7 @@ import { MetasTab } from './atlas/MetasTab';
 import { FormularioPeso } from './atlas/FormularioPeso';
 import { FormularioRutina } from './atlas/FormularioRutina';
 import { FormularioSesion } from './atlas/FormularioSesion';
+import { MapaMuscular } from './atlas/MapaMuscular';
 import { RutinasTab } from './atlas/RutinasTab';
 import './atlas/atlas.css';
 import { diasEntre, deIso, iso, lunesDe, nombreMes, num, relativa, semanaIso, sumarDias } from '../lib/fechas';
@@ -105,6 +106,9 @@ export function Atlas() {
   const pesoPrevio = pesoActual[pesoActual.length - 2];
 
   const ultimas = (lista ?? []).slice(0, 5);
+  // Musculos del dia de la ultima sesion (si ese dia hubo dos, cuentan las dos).
+  const fechaUltima = ultimas[0]?.fecha ?? hoyIso;
+  const trabajoUltima = useTrabajoMuscular(fechaUltima, fechaUltima);
   const recordsOrden = useMemo(
     () => [...(records.data ?? [])].sort((a, b) => b.fechaPesoMaximo.localeCompare(a.fechaPesoMaximo)).slice(0, 6),
     [records.data],
@@ -337,6 +341,30 @@ export function Atlas() {
             </div>
 
             <div className="span-5">
+              <Card delay={250} eyebrow={ultimas[0] ? `Última sesión · ${relativa(ultimas[0].fecha, hoy).toLowerCase()}` : 'Última sesión'} title="Entrenado">
+                {trabajoUltima.isError ? (
+                  <p className="muted" style={{ margin: 0 }}>No se ha podido cargar el trabajo muscular.</p>
+                ) : trabajoUltima.isPending ? (
+                  <p className="muted" style={{ margin: 0 }}>Cargando…</p>
+                ) : trabajoUltima.data.length === 0 ? (
+                  <p className="muted" style={{ margin: 0 }}>Los ejercicios de esa sesión no tienen grupo muscular.</p>
+                ) : (
+                  <>
+                    <MapaMuscular trabajo={trabajoUltima.data} />
+                    <div className="atl-grupos">
+                      {trabajoUltima.data.map((t) => (
+                        <div key={t.grupoMuscular} className="atl-grupos__f">
+                          <b>{t.grupoMuscular}</b>
+                          <span className="muted">{t.numeroSeries} series</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </Card>
+            </div>
+
+            <div className="span-12">
               <Card delay={280} eyebrow="Volumen" title="Toneladas por semana">
                 <BarChart height={170} data={toneladasSemana} highlight={SEMANAS - 1} format={(v) => `${num(v, 1)} t`} />
               </Card>
