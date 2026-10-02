@@ -205,6 +205,7 @@ function Cuerpo({ sesion, onClose }: { sesion: SesionCompleta | undefined; onClo
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       width={640}
       title={editando ? 'Editar sesión' : 'Registrar sesión'}
       footer={
@@ -238,7 +239,7 @@ function Cuerpo({ sesion, onClose }: { sesion: SesionCompleta | undefined; onClo
       <form id="atl-form-sesion" className="atl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
         <div className="atl-form__row">
-          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={ver(errFecha)} />
+          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errFecha} validarAlSalir />
           <Select
             id="atl-rutina"
             label="Rutina"
@@ -258,7 +259,7 @@ function Cuerpo({ sesion, onClose }: { sesion: SesionCompleta | undefined; onClo
             trailing={<span className="muted" style={{ fontSize: 12 }}>min</span>}
             value={duracion}
             onChange={(e) => setDuracion(e.target.value)}
-            error={ver(errDuracion)}
+            error={errDuracion} validarAlSalir
           />
         </div>
 
@@ -279,9 +280,9 @@ function Cuerpo({ sesion, onClose }: { sesion: SesionCompleta | undefined; onClo
             {b.series.map((s, j) => (
               <div key={j} className="atl-serie">
                 <span className="atl-serie__n">{j + 1}</span>
-                <Input aria-label={`Repeticiones, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="numeric" value={s.reps} onChange={(e) => cambiarSerie(i, j, 'reps', e.target.value)} error={ver(errReps(s.reps))} />
-                <Input aria-label={`Peso, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" value={s.peso} onChange={(e) => cambiarSerie(i, j, 'peso', e.target.value)} error={ver(errPeso(s.peso))} />
-                <Input aria-label={`RPE, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" placeholder="—" value={s.rpe} onChange={(e) => cambiarSerie(i, j, 'rpe', e.target.value)} error={ver(errRpe(s.rpe))} />
+                <Input aria-label={`Repeticiones, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="numeric" value={s.reps} onChange={(e) => cambiarSerie(i, j, 'reps', e.target.value)} error={errReps(s.reps)} validarAlSalir />
+                <Input aria-label={`Peso, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" value={s.peso} onChange={(e) => cambiarSerie(i, j, 'peso', e.target.value)} error={errPeso(s.peso)} validarAlSalir />
+                <Input aria-label={`RPE, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" placeholder="—" value={s.rpe} onChange={(e) => cambiarSerie(i, j, 'rpe', e.target.value)} error={errRpe(s.rpe)} validarAlSalir />
                 <IconButton icon="x" label={`Quitar serie ${j + 1} de ${b.nombre}`} variant="ghost" size="sm" type="button" onClick={() => quitarSerie(i, j)} />
               </div>
             ))}
