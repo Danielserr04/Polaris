@@ -157,9 +157,12 @@ class AvisoServiceTest {
     }
 
     @Test
-    @DisplayName("umbralAviso es 80 mientras los presupuestos no tengan el suyo")
-    void umbralPorDefecto() {
+    @DisplayName("umbralAviso usa el porcentaje de alerta del presupuesto, y 80 si no lo trae")
+    void umbralDelPresupuesto() {
         assertThat(service.umbralAviso(presupuesto("100.00"))).isEqualTo(80);
+        Presupuesto propio = presupuesto("100.00");
+        propio.setPorcentajeAlerta(50);
+        assertThat(service.umbralAviso(propio)).isEqualTo(50);
     }
 
     @Test

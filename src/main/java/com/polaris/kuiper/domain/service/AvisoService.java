@@ -44,7 +44,7 @@ public class AvisoService implements ComprobarPresupuestoInterface, GenerarAviso
     /** Cuantos dias antes se avisa de un cargo recurrente. */
     static final int DIAS_CARGO_PROXIMO = 3;
 
-    /** Porcentaje del limite a partir del cual se avisa, mientras no haya uno por presupuesto. */
+    /** Porcentaje del limite a partir del cual se avisa si el presupuesto no trae el suyo. */
     static final int UMBRAL_AVISO_POR_DEFECTO = 80;
 
     private static final BigDecimal CIEN = BigDecimal.valueOf(100);
@@ -84,11 +84,13 @@ public class AvisoService implements ComprobarPresupuestoInterface, GenerarAviso
     }
 
     /**
-     * Porcentaje del limite a partir del cual se avisa. Hoy es fijo; es el unico
-     * sitio que cambia cuando cada presupuesto tenga el suyo.
+     * Porcentaje del limite a partir del cual se avisa: el de cada presupuesto
+     * (docs/decisiones/035-presupuesto-umbral-de-alerta.md), o el de por
+     * defecto si no lo trae.
      */
     int umbralAviso(Presupuesto presupuesto) {
-        return UMBRAL_AVISO_POR_DEFECTO;
+        Integer propio = presupuesto.getPorcentajeAlerta();
+        return propio != null ? propio : UMBRAL_AVISO_POR_DEFECTO;
     }
 
     /**

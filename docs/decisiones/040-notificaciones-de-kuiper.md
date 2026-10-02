@@ -9,7 +9,7 @@ Lumen avisaba de cargos que llegaban, de presupuestos a punto de acabarse y del 
 ## Decisión
 
 - Nueva entidad **`Notificacion`** (tabla `notificacion`, V21) con `usuario_id`, `tipo`, `titulo`, `texto`, `enlace` (nullable), `leida`, `creada_en` y **`clave`**, con `UNIQUE (usuario_id, clave)`.
-- **Tipos**: `CARGO_RECURRENTE`, `CARGO_PROXIMO`, `PRESUPUESTO_AVISO`, `PRESUPUESTO_EXCEDIDO`, `META_ALCANZADA` y `RESUMEN_MENSUAL`. `META_ALCANZADA` ya existe en el enum y en la tabla, pero todavía no la crea nadie: cuando haya metas de ahorro, su servicio llamará a `CrearNotificacionInterface` con ese tipo y una clave tipo `meta-{id}`.
+- **Tipos**: `CARGO_RECURRENTE`, `CARGO_PROXIMO`, `PRESUPUESTO_AVISO`, `PRESUPUESTO_EXCEDIDO`, `META_ALCANZADA` y `RESUMEN_MENSUAL`. `META_ALCANZADA` la crea `MetaAhorroService` al cruzar el objetivo con una aportación, con clave `meta-{id}` (una sola vez por meta).
 - **No se crean por HTTP.** Las crean los servicios a través de **`CrearNotificacionInterface`**. Por HTTP solo se listan, se cuentan, se marcan leídas y se borran:
   - `GET /api/kuiper/notificacion?soloNoLeidas=true`
   - `GET /api/kuiper/notificacion/no-leidas/total` → `{ "total": n }`
@@ -34,9 +34,9 @@ Lumen avisaba de cargos que llegaban, de presupuestos a punto de acabarse y del 
   - `MovimientoService`, después de crear o editar un **gasto**, llama a **`ComprobarPresupuestoInterface`**. Solo avisa si la fecha del gasto es del mes en curso y la categoría tiene presupuesto mensual.
   - **`AvisoJob`** (08:00 Europe/Madrid, después de `RecurrenteJob`, y al arrancar; se apaga con `polaris.jobs.activos: false`) llama a `GenerarAvisosInterface`:
     - `CARGO_PROXIMO` para los recurrentes de **gasto** activos con cargo entre mañana y dentro de **3 días**. Los de hoy no: esos ya los genera `RecurrenteJob` y avisan como `CARGO_RECURRENTE`. Los ingresos no avisan.
-    - `PRESUPUESTO_AVISO` desde el **80 %** del límite mensual (incluido) y `PRESUPUESTO_EXCEDIDO` al **pasar** del 100 %. Llegar justo al 100 % es aviso, no exceso.
+    - `PRESUPUESTO_AVISO` desde el **porcentaje de alerta** del presupuesto (80 % por defecto, incluido; ver [[035-presupuesto-umbral-de-alerta]]) y `PRESUPUESTO_EXCEDIDO` al **pasar** del 100 %. Llegar justo al 100 % es aviso, no exceso.
     - El **día 1**, un `RESUMEN_MENSUAL` del mes anterior para cada usuario con movimientos en ese mes.
-- **El 80 % sale de `AvisoService.umbralAviso(Presupuesto)`**. Hoy devuelve 80 para todos; es el único sitio que cambia cuando cada presupuesto tenga su propio porcentaje.
+- **El umbral sale de `AvisoService.umbralAviso(Presupuesto)`**: el `porcentaje_alerta` del presupuesto, o 80 si no lo trae.
 - **`enlace`** es una pista de navegación, no una URL: la pestaña de Kuiper a la que lleva (`movimientos`, `recurrentes`, `presupuestos`, `resumen`). El frontend la traduce a una pestaña real.
 - **Frontend**: una campana (`IconButton` con `Badge` de no leídas) en las acciones del `PageHeader` de Kuiper abre un `Dialog` con la lista: marcar una, marcar todas, borrar una, borrar las leídas, y al pulsar una notificación se marca leída y se va a su pestaña. El contador se vuelve a pedir **cada 60 s** (`refetchInterval` de TanStack Query). Hooks en `frontend/src/api/kuiperNotificaciones.ts`.
 

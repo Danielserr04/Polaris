@@ -13,7 +13,7 @@ export type TipoNotificacion =
   | 'RESUMEN_MENSUAL';
 
 /** A que pestaña de Kuiper lleva la notificacion. Lo decide el backend. */
-export type EnlaceNotificacion = 'movimientos' | 'recurrentes' | 'presupuestos' | 'resumen';
+export type EnlaceNotificacion = 'movimientos' | 'recurrentes' | 'presupuestos' | 'resumen' | 'metas';
 
 export interface Notificacion {
   id: number;

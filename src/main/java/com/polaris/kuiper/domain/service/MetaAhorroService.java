@@ -1,6 +1,7 @@
 package com.polaris.kuiper.domain.service;
 
 import com.polaris.kuiper.application.in.AportarMetaAhorroInterface;
+import com.polaris.kuiper.application.in.CrearNotificacionInterface;
 import com.polaris.kuiper.application.in.CreateMetaAhorroInterface;
 import com.polaris.kuiper.application.in.DeleteAportacionMetaInterface;
 import com.polaris.kuiper.application.in.DeleteMetaAhorroInterface;
@@ -14,6 +15,9 @@ import com.polaris.kuiper.domain.model.AportacionMetaNotFoundException;
 import com.polaris.kuiper.domain.model.MetaAhorro;
 import com.polaris.kuiper.domain.model.MetaAhorroFilter;
 import com.polaris.kuiper.domain.model.MetaAhorroNotFoundException;
+import com.polaris.kuiper.domain.model.Notificacion;
+import com.polaris.kuiper.domain.model.TipoNotificacion;
+import com.polaris.kuiper.domain.model.TextoAviso;
 import com.polaris.shared.error.DuplicateResourceException;
 import com.polaris.shared.error.ValidationException;
 import lombok.RequiredArgsConstructor;
@@ -42,6 +46,7 @@ public class MetaAhorroService implements
         DeleteAportacionMetaInterface {
 
     private final MetaAhorroRepositoryPort repository;
+    private final CrearNotificacionInterface crearNotificacion;
 
     /** Empieza en 0: lo ahorrado solo entra por aportaciones. */
     @Override
@@ -95,6 +100,7 @@ public class MetaAhorroService implements
     @Override
     public MetaAhorro aportar(Long usuarioId, Long metaId, AportacionMeta aportacion) {
         MetaAhorro meta = getPropia(usuarioId, metaId);
+        boolean yaCompletada = meta.isCompletada();
         LocalDate hoy = LocalDate.now();
 
         if (aportacion.getImporte().signum() == 0) {
@@ -116,7 +122,25 @@ public class MetaAhorroService implements
 
         meta.setImporteActual(repository.sumaAportaciones(metaId));
         meta.calcularPlazo(hoy);
+        if (!yaCompletada && meta.isCompletada()) {
+            avisarMetaAlcanzada(meta);
+        }
         return meta;
+    }
+
+    /**
+     * Una sola vez por meta (clave meta-{id}): si se retira y se vuelve a
+     * llegar, no se repite. Ver docs/decisiones/040-notificaciones-de-kuiper.md.
+     */
+    private void avisarMetaAlcanzada(MetaAhorro meta) {
+        crearNotificacion.crear(Notificacion.builder()
+                .usuarioId(meta.getUsuarioId())
+                .tipo(TipoNotificacion.META_ALCANZADA)
+                .clave("meta-" + meta.getId())
+                .titulo("Meta alcanzada: " + meta.getNombre())
+                .texto("Has llegado a los " + TextoAviso.euros(meta.getImporteObjetivo()) + " que te propusiste.")
+                .enlace(Notificacion.ENLACE_METAS)
+                .build());
     }
 
     @Override

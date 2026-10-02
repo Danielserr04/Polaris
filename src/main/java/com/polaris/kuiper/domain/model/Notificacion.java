@@ -34,6 +34,7 @@ public class Notificacion {
     public static final String ENLACE_RECURRENTES = "recurrentes";
     public static final String ENLACE_PRESUPUESTOS = "presupuestos";
     public static final String ENLACE_RESUMEN = "resumen";
+    public static final String ENLACE_METAS = "metas";
 
     private Long id;
     private Long usuarioId;

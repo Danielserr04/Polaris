@@ -21,9 +21,10 @@ import './notificaciones.css';
  */
 const PESTANA_DE: Record<EnlaceNotificacion, string> = {
   movimientos: 'mov',
-  recurrentes: 'mov',
+  recurrentes: 'rec',
   presupuestos: 'resumen',
   resumen: 'resumen',
+  metas: 'metas',
 };
 
 const ICONO: Record<TipoNotificacion, { icono: string; tono: string }> = {

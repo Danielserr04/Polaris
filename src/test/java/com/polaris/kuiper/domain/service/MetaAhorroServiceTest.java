@@ -1,11 +1,14 @@
 package com.polaris.kuiper.domain.service;
 
+import com.polaris.kuiper.application.in.CrearNotificacionInterface;
 import com.polaris.kuiper.application.out.MetaAhorroRepositoryPort;
 import com.polaris.kuiper.domain.model.AportacionMeta;
 import com.polaris.kuiper.domain.model.AportacionMetaNotFoundException;
 import com.polaris.kuiper.domain.model.MetaAhorro;
 import com.polaris.kuiper.domain.model.MetaAhorroFilter;
 import com.polaris.kuiper.domain.model.MetaAhorroNotFoundException;
+import com.polaris.kuiper.domain.model.Notificacion;
+import com.polaris.kuiper.domain.model.TipoNotificacion;
 import com.polaris.shared.error.DuplicateResourceException;
 import com.polaris.shared.error.ValidationException;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -43,6 +47,9 @@ class MetaAhorroServiceTest {
 
     @Mock
     private MetaAhorroRepositoryPort repository;
+
+    @Mock
+    private CrearNotificacionInterface crearNotificacion;
 
     @InjectMocks
     private MetaAhorroService service;
@@ -246,6 +253,26 @@ class MetaAhorroServiceTest {
         assertThat(guardada.getValue().getFecha()).isEqualTo(LocalDate.now());
         assertThat(resultado.getImporteActual()).isEqualByComparingTo("250.00");
         assertThat(resultado.getPorcentaje()).isEqualByComparingTo("25.0");
+    }
+
+    @Test
+    @DisplayName("Cruzar el objetivo con una aportacion avisa una vez con META_ALCANZADA; si ya estaba completada, no")
+    void avisaAlAlcanzarLaMeta() {
+        when(repository.findById(5L)).thenReturn(Optional.of(meta("1000.00", "900.00")));
+        when(repository.sumaAportaciones(5L)).thenReturn(new BigDecimal("1000.00"));
+
+        service.aportar(USUARIO, 5L, aportacion("100.00"));
+
+        ArgumentCaptor<Notificacion> aviso = ArgumentCaptor.forClass(Notificacion.class);
+        verify(crearNotificacion).crear(aviso.capture());
+        assertThat(aviso.getValue().getTipo()).isEqualTo(TipoNotificacion.META_ALCANZADA);
+        assertThat(aviso.getValue().getClave()).isEqualTo("meta-5");
+        assertThat(aviso.getValue().getUsuarioId()).isEqualTo(USUARIO);
+
+        when(repository.findById(5L)).thenReturn(Optional.of(meta("1000.00", "1000.00")));
+        when(repository.sumaAportaciones(5L)).thenReturn(new BigDecimal("1100.00"));
+        service.aportar(USUARIO, 5L, aportacion("100.00"));
+        verify(crearNotificacion, times(1)).crear(any());
     }
 
     @Test
