@@ -53,3 +53,4 @@ Antes de escribir la primera entidad, merece la pena abrir el proyecto viejo y q
 | `Movimiento` | **Hecha** — CRUD en `/api/kuiper/movimiento`, filtros `desde`/`hasta`/`categoriaId`/`tipo`. Ver [[012-movimiento-categoria-mismo-tipo]] |
 | `Presupuesto` | **Hecha** — CRUD en `/api/kuiper/presupuesto`, filtros `periodo`/`categoriaId`. Ver [[013-presupuesto-solo-gastos-uno-por-periodo]] |
 | Resumen mensual | **Hecho** — `GET /api/kuiper/resumen`. Ver [[014-resumen-mensual-agregado-en-servicio]] |
+| Logros | **Hechos** — `GET /api/kuiper/logros`: movimientos, meses seguidos, meses en verde, metas y presupuestos. Ver [[044-logros-globales-con-fecha-calculada]] |

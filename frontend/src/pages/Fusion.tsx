@@ -143,7 +143,7 @@ export function Fusion() {
           { value: 'rec', label: 'Recetas' },
           { value: 'plan', label: 'Planes' },
         ]}
-        style={{ marginBottom: 24 }}
+        style={{ marginBottom: 16 }}
       />
 
       <div key={pestana} className="pl-tabpanel">
@@ -172,16 +172,16 @@ export function Fusion() {
             <div className="span-5">
               <Card delay={60} eyebrow="Energía" title="Calorías del día">
                 {r ? (
-                  <div className="fus-kcal" style={{ display: 'flex', gap: 28, alignItems: 'center' }}>
+                  <div className="fus-kcal" style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
                     <RingChart
                       value={r.kcal.consumido}
                       max={objetivo ?? Math.max(r.kcal.consumido, 1)}
-                      size={168}
-                      thickness={14}
+                      size={140}
+                      thickness={12}
                       label={num(r.kcal.consumido)}
                       sublabel={objetivo !== null ? `DE ${num(objetivo)} KCAL` : 'KCAL'}
                     />
-                    <div className="stack-16" style={{ flex: 1 }}>
+                    <div className="stack-12" style={{ flex: 1 }}>
                       {objetivo !== null && r.kcal.restante != null ? (
                         <Stat label={r.kcal.restante >= 0 ? 'Te quedan' : 'Te has pasado'} value={Math.abs(Math.round(r.kcal.restante))} unit="kcal" size={32} />
                       ) : (
@@ -297,7 +297,7 @@ export function Fusion() {
                   <p className="muted" style={{ margin: 0 }}>Sin comidas registradas en estos 14 días.</p>
                 ) : rango.isSuccess ? (
                   <LineChart
-                    height={220}
+                    height={240}
                     min={0}
                     showLegend
                     labels={[tendencia.dias[0], tendencia.dias[6], tendencia.dias[13]].map((d) => deIso(d).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }).replace('.', ''))}

@@ -1,3 +1,7 @@
 /* Solo lo que el Inicio necesita y no esta ya en styles/kit.css */
 .prow.prow--sin-barra{grid-template-columns:18px minmax(0,1fr) auto}
 .feed__vacio{padding:18px;font-size:13px}
+/* Atlas en una sola linea en escritorio; el mapa compacto un poco mas pequeño para que quepa */
+@media (min-width:1281px){.bmain{flex-wrap:nowrap}.bmain .atl-mapa--compacto .atl-mapa__fig svg{width:40px}}
+/* Los macros de Fusion no parten "161/290 g" en dos lineas */
+.macros3 .pl-progress__meta{gap:8px;white-space:nowrap}.macros3 .pl-progress__val{font-size:11px}

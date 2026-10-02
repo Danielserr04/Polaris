@@ -3,7 +3,7 @@ import { Icon } from '../core/Icon.jsx';
 import { Logo } from '../core/Logo.jsx';
 import { Avatar } from '../core/Avatar.jsx';
 import { useIndicator } from '../core/hooks.jsx';
-export function NavBar({ items = [], value, onChange, onBrand, onSearch, user, style }) {
+export function NavBar({ items = [], value, onChange, onBrand, onSearch, actions, user, style }) {
   const [refs, pos] = useIndicator(value, [items.length]);
   const cur = items.find(i => i.id === value);
   return (
@@ -19,6 +19,7 @@ export function NavBar({ items = [], value, onChange, onBrand, onSearch, user, s
         ))}
       </div>
       {onSearch !== null && <button className="pl-nav__search" onClick={onSearch}><Icon name="search" size={14} /><span>Buscar</span></button>}
+      {actions}
       {user && <button className="pl-nav__user" onClick={user.onClick} aria-label="Perfil"><Avatar name={user.name} src={user.src} size={34} /></button>}
     </nav>
   );

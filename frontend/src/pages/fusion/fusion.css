@@ -69,3 +69,6 @@
 @media (max-width:640px){.fus-add-receta{grid-template-columns:1fr 80px}.fus-add-receta>:last-child{grid-column:span 2}}
 .fus-apuntar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:10px 18px;border-bottom:1px solid var(--border-1);font-size:13px}
 .fus-apuntar__err{flex-basis:100%;color:var(--danger);font-size:12.5px}
+/* Hoy: macros sin caja dentro de la tarjeta y comidas vacias mas bajas */
+.macros .macro{border:0;background:transparent;padding:4px 8px}
+.fus-meal{padding:10px 16px}.fus-meal.fus-meal--vacia{padding:8px 16px}

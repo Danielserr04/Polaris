@@ -210,7 +210,9 @@ function Insights({ periodo }: Props) {
         <div className="kan-insights">
           {q.data.map((i) => (
             <div key={i.tipo} className={`kan-insight kan-insight--${i.severidad}`}>
-              <Icon name={ICONO[i.severidad]} size={16} />
+              <span className="kan-insight__ico">
+                <Icon name={ICONO[i.severidad]} size={16} />
+              </span>
               <div>
                 <b>{i.titulo}</b>
                 <p>{i.texto}</p>

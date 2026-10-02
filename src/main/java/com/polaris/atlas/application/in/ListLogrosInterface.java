@@ -1,6 +1,6 @@
 package com.polaris.atlas.application.in;
 
-import com.polaris.atlas.domain.model.Logro;
+import com.polaris.shared.logro.Logro;
 
 import java.util.List;
 

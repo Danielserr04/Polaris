@@ -1,14 +1,19 @@
 package com.polaris.odisea.infrastructure.persistence;
 
+import com.polaris.odisea.domain.model.EstadoEntrada;
+import com.polaris.odisea.domain.model.TipoContenido;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
- * Spring Data. Solo la usa EntradaJpaAdapter.
+ * Spring Data. La usan EntradaJpaAdapter y EstadisticasLogrosJpaAdapter (logros).
  */
 public interface EntradaRepository extends JpaRepository<EntradaEntity, Long>,
         JpaSpecificationExecutor<EntradaEntity> {
@@ -24,4 +29,19 @@ public interface EntradaRepository extends JpaRepository<EntradaEntity, Long>,
     boolean existsByTitulo_Id(Long tituloId);
 
     boolean existsByUsuarioIdAndTitulo_Id(Long usuarioId, Long tituloId);
+
+    /** Tipo y fecha de fin de cada entrada en un estado, para los logros. La fecha puede ser nula. */
+    @Query("select t.tipo as tipo, e.fechaFin as fechaFin from EntradaEntity e join e.titulo t "
+            + "where e.usuarioId = :usuarioId and e.estado = :estado")
+    List<TipoFechaFila> findTipoYFechaFin(@Param("usuarioId") Long usuarioId, @Param("estado") EstadoEntrada estado);
+
+    /** La fecha de fin (o nula) de cada entrada valorada, para los logros. */
+    @Query("select e.fechaFin from EntradaEntity e where e.usuarioId = :usuarioId and e.valoracion is not null")
+    List<LocalDate> findFechaFinValoradas(@Param("usuarioId") Long usuarioId);
+
+    interface TipoFechaFila {
+        TipoContenido getTipo();
+
+        LocalDate getFechaFin();
+    }
 }

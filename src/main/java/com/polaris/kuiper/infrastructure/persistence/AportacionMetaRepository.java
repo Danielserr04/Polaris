@@ -9,7 +9,8 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * Spring Data. Solo la usa MetaAhorroJpaAdapter. Las sumas entran por
+ * Spring Data. La usan MetaAhorroJpaAdapter y, para los logros,
+ * EstadisticasLogrosJpaAdapter. Las sumas entran por
  * idx_aportacion_meta_meta_fecha.
  */
 public interface AportacionMetaRepository extends JpaRepository<AportacionMetaEntity, Long> {
@@ -22,4 +23,7 @@ public interface AportacionMetaRepository extends JpaRepository<AportacionMetaEn
     /** Una fila por meta con aportaciones: [metaId, suma]. Para el listado sin N+1. */
     @Query("select a.metaId, sum(a.importe) from AportacionMetaEntity a where a.metaId in :metaIds group by a.metaId")
     List<Object[]> sumasPorMeta(@Param("metaIds") Collection<Long> metaIds);
+
+    /** Todas las aportaciones del usuario, sin cargar sus metas, para los logros. */
+    List<AportacionMetaEntity> findByUsuarioId(Long usuarioId);
 }

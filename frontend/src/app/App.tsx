@@ -9,6 +9,7 @@ import { Atlas } from '../pages/Atlas';
 import { Fusion } from '../pages/Fusion';
 import { Pendiente } from '../pages/Pendiente';
 import { Perfil } from '../pages/Perfil';
+import { Logros } from '../pages/logros/Logros';
 import { ErrorServidor } from '../components/ErrorServidor';
 import { AppShell } from './AppShell';
 
@@ -27,6 +28,7 @@ export function App() {
             <Route path="fusion" element={<Fusion />} />
             <Route path="atlas" element={<Atlas />} />
             <Route path="perfil" element={<Perfil />} />
+            <Route path="logros" element={<Logros />} />
             <Route path="*" element={<Pendiente eyebrow="Polaris" title="No encontrada" />} />
           </Route>
         </Route>

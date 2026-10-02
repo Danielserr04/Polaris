@@ -41,6 +41,7 @@ Si aparece la tentación de meter un cálculo aquí, la pregunta es: ¿lo necesi
 | `MedidaCorporal` | **Hecha** — CRUD en `/api/nucleo/medida-corporal`, filtro `desde`/`hasta`, al menos una medida. Ver [[041-medida-corporal-una-por-dia]] |
 | `Recordatorio` | **Hecha** — `GET`/`PUT /api/nucleo/recordatorio/{tipo}`, pendientes y descartar; job cada minuto. Ver [[044-recordatorios]] |
 | `SuscripcionPush` | **Hecha** — `/api/nucleo/push`: clave, alta, baja y prueba (Web Push sin librerías). Ver [[044-recordatorios]] |
+| Logros | **Hechos** — `GET /api/nucleo/logros`: pesajes, rachas de pesaje, medidas y perfil completo. Ver [[044-logros-globales-con-fecha-calculada]] |
 
 ## Notas
 
