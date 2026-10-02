@@ -169,6 +169,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
       open
       onClose={onClose}
       confirmarDescarte
+      width={820}
       title={editando ? 'Editar recurrente' : 'Nuevo recurrente'}
       footer={
         confirmandoBorrado ? (
@@ -198,101 +199,109 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
         )
       }
     >
-      <form id="kui-form-recurrente" className="kui-form" onSubmit={guardar} noValidate>
+      <form id="kui-form-recurrente" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <SegmentedControl
-          value={tipo}
-          onChange={(v) => setTipo(v as TipoMovimiento)}
-          options={[
-            { value: 'GASTO', label: 'Gasto' },
-            { value: 'INGRESO', label: 'Ingreso' },
-          ]}
-        />
-        <Input
-          label="Concepto"
-          placeholder={tipo === 'GASTO' ? 'Netflix, alquiler, móvil a plazos…' : 'Nómina, alquiler cobrado…'}
-          maxLength={200}
-          autoFocus
-          value={concepto}
-          onChange={(e) => setConcepto(e.target.value)}
-          error={errorConcepto} validarAlSalir
-        />
-        <div className="kui-form__row">
-          <Input
-            label="Importe (€)"
-            inputMode="decimal"
-            placeholder="0,00"
-            value={importe}
-            onChange={(e) => setImporte(e.target.value)}
-            error={errorImporte} validarAlSalir
-          />
-          <Input label="Método de pago" placeholder="Opcional" maxLength={50} value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} />
-        </div>
-        {opcionesCuenta.length > 1 && (
-          <Select label="Cuenta" value={cuentaId} onChange={(e) => setCuentaId(e.target.value)} options={opcionesCuenta} />
-        )}
-        {creandoCategoria ? (
-          <div className="kui-form__nuevacat">
-            <Input
-              label="Nueva categoría"
-              placeholder={tipo === 'GASTO' ? 'Suscripciones, Casa…' : 'Nómina, Ventas…'}
-              value={nuevaCategoria}
-              onChange={(e) => setNuevaCategoria(e.target.value)}
-              error={errorCategoria} validarAlSalir
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Qué se paga</h3>
+            <SegmentedControl
+              value={tipo}
+              onChange={(v) => setTipo(v as TipoMovimiento)}
+              options={[
+                { value: 'GASTO', label: 'Gasto' },
+                { value: 'INGRESO', label: 'Ingreso' },
+              ]}
             />
-            {delTipo.length > 0 && (
-              <Button variant="ghost" type="button" onClick={() => setCategoriaId('')}>
-                Elegir existente
-              </Button>
+            <Input
+              label="Concepto"
+              placeholder={tipo === 'GASTO' ? 'Netflix, alquiler, móvil a plazos…' : 'Nómina, alquiler cobrado…'}
+              maxLength={200}
+              autoFocus
+              value={concepto}
+              onChange={(e) => setConcepto(e.target.value)}
+              error={errorConcepto} validarAlSalir
+            />
+            <div className="pl-form__grid">
+              <Input
+                label="Importe (€)"
+                inputMode="decimal"
+                placeholder="0,00"
+                value={importe}
+                onChange={(e) => setImporte(e.target.value)}
+                error={errorImporte} validarAlSalir
+              />
+              <Input label="Método de pago" placeholder="Opcional" maxLength={50} value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} />
+            </div>
+            {opcionesCuenta.length > 1 && (
+              <Select label="Cuenta" value={cuentaId} onChange={(e) => setCuentaId(e.target.value)} options={opcionesCuenta} />
             )}
-          </div>
-        ) : (
-          <Select
-            label="Categoría"
-            value={categoriaEfectiva}
-            onChange={(e) => setCategoriaId(e.target.value)}
-            options={opciones}
-            error={ver(errorCategoria)}
-          />
-        )}
-        <div>
-          <span className="kui-field__label">Frecuencia</span>
-          <SegmentedControl
-            value={frecuencia}
-            onChange={(v) => setFrecuencia(v as FrecuenciaRecurrente)}
-            options={[
-              { value: 'SEMANAL', label: 'Semanal' },
-              { value: 'MENSUAL', label: 'Mensual' },
-              { value: 'ANUAL', label: 'Anual' },
-            ]}
-          />
+            {creandoCategoria ? (
+              <div className="kui-form__nuevacat">
+                <Input
+                  label="Nueva categoría"
+                  placeholder={tipo === 'GASTO' ? 'Suscripciones, Casa…' : 'Nómina, Ventas…'}
+                  value={nuevaCategoria}
+                  onChange={(e) => setNuevaCategoria(e.target.value)}
+                  error={errorCategoria} validarAlSalir
+                />
+                {delTipo.length > 0 && (
+                  <Button variant="ghost" type="button" onClick={() => setCategoriaId('')}>
+                    Elegir existente
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <Select
+                label="Categoría"
+                value={categoriaEfectiva}
+                onChange={(e) => setCategoriaId(e.target.value)}
+                options={opciones}
+                error={ver(errorCategoria)}
+              />
+            )}
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Cuándo</h3>
+            <div>
+              <span className="kui-field__label">Frecuencia</span>
+              <SegmentedControl
+                value={frecuencia}
+                onChange={(v) => setFrecuencia(v as FrecuenciaRecurrente)}
+                options={[
+                  { value: 'SEMANAL', label: 'Semanal' },
+                  { value: 'MENSUAL', label: 'Mensual' },
+                  { value: 'ANUAL', label: 'Anual' },
+                ]}
+              />
+            </div>
+            <div className="pl-form__grid">
+              <Input
+                label="Primer cargo"
+                type="date"
+                value={fechaInicio}
+                onChange={(e) => setFechaInicio(e.target.value)}
+                error={errorFecha} validarAlSalir
+                hint={pistaFecha}
+              />
+              <Input
+                label="Nº de cuotas"
+                inputMode="numeric"
+                placeholder="Sin fin"
+                value={cuotas}
+                onChange={(e) => setCuotas(e.target.value)}
+                error={errorCuotas} validarAlSalir
+                hint={pistaCuotas}
+              />
+            </div>
+            <Switch label="Activo" checked={activo} onChange={setActivo} />
+            {activo && editando && recurrente && !recurrente.activo && !quedaTerminado && (
+              <p className="kui-pistas">Al reactivarlo no se cobra el tiempo en pausa: el próximo cargo será el primero desde hoy.</p>
+            )}
+            {activo && editando && quedaTerminado && (
+              <p className="kui-pistas">Ya tiene todas sus cuotas pagadas: se quedará terminado. Sube el nº de cuotas para seguir.</p>
+            )}
+          </section>
         </div>
-        <div className="kui-form__row">
-          <Input
-            label="Primer cargo"
-            type="date"
-            value={fechaInicio}
-            onChange={(e) => setFechaInicio(e.target.value)}
-            error={errorFecha} validarAlSalir
-            hint={pistaFecha}
-          />
-          <Input
-            label="Nº de cuotas"
-            inputMode="numeric"
-            placeholder="Sin fin"
-            value={cuotas}
-            onChange={(e) => setCuotas(e.target.value)}
-            error={errorCuotas} validarAlSalir
-            hint={pistaCuotas}
-          />
-        </div>
-        <Switch label="Activo" checked={activo} onChange={setActivo} />
-        {activo && editando && recurrente && !recurrente.activo && !quedaTerminado && (
-          <p className="kui-pistas">Al reactivarlo no se cobra el tiempo en pausa: el próximo cargo será el primero desde hoy.</p>
-        )}
-        {activo && editando && quedaTerminado && (
-          <p className="kui-pistas">Ya tiene todas sus cuotas pagadas: se quedará terminado. Sube el nº de cuotas para seguir.</p>
-        )}
       </form>
     </Dialog>
   );

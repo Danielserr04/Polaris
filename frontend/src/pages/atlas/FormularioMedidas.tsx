@@ -85,7 +85,7 @@ export function FormularioMedidas({ medidaId, onClose }: Props) {
       open
       onClose={onClose}
       confirmarDescarte
-      width={520}
+      width={760}
       title={editando ? 'Editar medidas' : 'Apuntar medidas'}
       footer={
         confirmando ? (
@@ -115,26 +115,31 @@ export function FormularioMedidas({ medidaId, onClose }: Props) {
         )
       }
     >
-      <form id="atl-form-medidas" className="atl-form" onSubmit={guardar} noValidate>
+      <form id="atl-form-medidas" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
         {ficha.isError && <Alert tone="danger">{mensajeError(ficha.error)}</Alert>}
         {intentado && ninguna && <Alert tone="warning">Indica al menos una medida.</Alert>}
-        <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errFecha} validarAlSalir hint="Una medición por día: si ya hay una, se reemplaza." />
-        <div className="atl-form__row2">
-          {CAMPOS_MEDIDA.map((c, i) => (
-            <Input
-              key={c.campo}
-              label={c.nombre}
-              autoFocus={i === 0}
-              inputMode="decimal"
-              trailing={<span className="muted" style={{ fontSize: 12 }}>cm</span>}
-              value={valores[c.campo]}
-              onChange={(e) => setValores((v) => ({ ...v, [c.campo]: e.target.value }))}
-              error={errores[i]}
-              validarAlSalir
-            />
-          ))}
+        <div className="pl-form__grid">
+          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errFecha} validarAlSalir hint="Una medición por día: si ya hay una, se reemplaza." />
         </div>
+        <section className="pl-form__sec">
+          <h3 className="pl-form__titulo">Medidas</h3>
+          <div className="pl-form__grid pl-form__grid--4 pl-form__grid--fijo">
+            {CAMPOS_MEDIDA.map((c, i) => (
+              <Input
+                key={c.campo}
+                label={c.nombre}
+                autoFocus={i === 0}
+                inputMode="decimal"
+                trailing={<span className="muted" style={{ fontSize: 12 }}>cm</span>}
+                value={valores[c.campo]}
+                onChange={(e) => setValores((v) => ({ ...v, [c.campo]: e.target.value }))}
+                error={errores[i]}
+                validarAlSalir
+              />
+            ))}
+          </div>
+        </section>
         <div className="pl-field">
           <label className="pl-field__label" htmlFor="atl-notas-medidas">
             Notas

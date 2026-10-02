@@ -46,6 +46,7 @@
 /* Planes */
 .fus-plan--sel{background:var(--surface-selected);box-shadow:inset 2px 0 0 var(--accent)}
 .fus-plan-dias{overflow-x:auto}
+.fus-plan-dias .pl-seg,.fus-plan-anadir>.pl-seg{display:flex}.fus-plan-dias .pl-seg__opt,.fus-plan-anadir>.pl-seg>.pl-seg__opt{flex:1 1 0;justify-content:center}
 .fus-plan-cab{display:flex;align-items:center;gap:12px}.fus-plan-cab b{font-weight:600}
 .fus-plan-anadir{display:flex;flex-direction:column;gap:10px;padding:12px;border:1px dashed var(--border-2);border-radius:var(--radius-sm)}
 .fus-plan-media{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px;font-size:12.5px;color:var(--text-3);margin-bottom:14px}.fus-plan-media b{color:var(--text-1);font-family:var(--font-mono);font-weight:500}

@@ -177,7 +177,7 @@ function Cuerpo({ plan, onClose }: { plan: PlanCompleto | undefined; onClose: ()
       open
       onClose={onClose}
       confirmarDescarte
-      width={680}
+      width={1000}
       title={editando ? 'Editar plan' : 'Nuevo plan de comidas'}
       footer={
         confirmando ? (
@@ -207,85 +207,90 @@ function Cuerpo({ plan, onClose }: { plan: PlanCompleto | undefined; onClose: ()
         )
       }
     >
-      <form id="fus-form-plan" className="fus-form" onSubmit={guardar} noValidate>
+      <form id="fus-form-plan" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <Input label="Nombre" autoFocus={!editando} placeholder="Semana de definición" value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Plan</h3>
+            <Input label="Nombre" autoFocus={!editando} placeholder="Semana de definición" value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
 
-        <div className="fus-plan-dias">
-          <SegmentedControl
-            value={dia}
-            onChange={(v) => setDia(v as DiaSemana)}
-            options={DIAS.map((d) => ({ value: d, label: <abbr title={ETIQUETA_DIA[d]}>{INICIAL_DIA[d]}</abbr>, count: porDia.get(d) }))}
-          />
-        </div>
-
-        <div className="fus-plan-cab">
-          <b>{ETIQUETA_DIA[dia]}</b>
-          <span className="money">{num(kcalDia)} kcal</span>
-          <div style={{ marginLeft: 'auto', width: 190 }}>
-            <Select
-              size="sm"
-              aria-label="Copiar este día a"
-              value={copiarA}
-              disabled={delDia.length === 0}
-              onChange={(e) => copiarDia(e.target.value)}
-              options={[
-                { value: '', label: 'Copiar este día a…' },
-                { value: 'TODOS', label: 'Todos los demás días' },
-                ...DIAS.filter((d) => d !== dia).map((d) => ({ value: d, label: ETIQUETA_DIA[d] })),
-              ]}
-            />
-          </div>
-        </div>
-
-        <div className="fus-plan-anadir">
-          <SegmentedControl value={momento} onChange={(v) => setMomento(v as MomentoComida)} options={MOMENTOS.map((m) => ({ value: m, label: ETIQUETA_MOMENTO[m] }))} />
-          <div className="fus-form__row">
-            <BuscadorAlimento onElegir={anadirAlimento} />
-            <Select
-              label="O una receta"
-              value=""
-              disabled={!recetas.data?.length}
-              onChange={(e) => anadirReceta(e.target.value)}
-              options={[
-                { value: '', label: recetas.data?.length ? 'Elige una receta…' : 'Aún no tienes recetas' },
-                ...(recetas.data ?? []).map((r) => ({ value: String(r.id), label: `${r.nombre} · ${num(r.kcalRacion)} kcal/ración` })),
-              ]}
-            />
-          </div>
-        </div>
-
-        {delDia.length === 0 ? (
-          <p className="muted" style={{ margin: 0, fontSize: 13 }}>Nada planeado para el {ETIQUETA_DIA[dia].toLowerCase()}. Elige el momento y añade alimentos o recetas.</p>
-        ) : (
-          MOMENTOS.filter((m) => delDia.some((l) => l.momento === m)).map((m) => (
-            <div key={m} className="fus-lineas">
-              <span className="pl-eyebrow">{ETIQUETA_MOMENTO[m]}</span>
-              {delDia
-                .filter((l) => l.momento === m)
-                .map((l) => (
-                  <div key={l.clave} className="fus-linea">
-                    <div className="fus-linea__n">
-                      <b>{l.nombre}</b>
-                      <span>{l.tipo === 'receta' ? `Receta · ${num(l.kcalUnidad)} kcal/ración` : `${num(l.kcalUnidad * 100)} kcal / 100 g`}</span>
-                    </div>
-                    <Input
-                      aria-label={l.tipo === 'receta' ? `Raciones de ${l.nombre}` : `Gramos de ${l.nombre}`}
-                      size="sm"
-                      inputMode="decimal"
-                      trailing={<span className="muted" style={{ fontSize: 12 }}>{l.tipo === 'receta' ? 'rac.' : 'g'}</span>}
-                      value={l.cantidad}
-                      onChange={(e) => setLineas((ls) => ls.map((x) => (x.clave === l.clave ? { ...x, cantidad: e.target.value } : x)))}
-                      error={errCantidad(l)}
-                      validarAlSalir
-                    />
-                    <span className="fus-linea__k">{num(kcalDe(l))} kcal</span>
-                    <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((x) => x.clave !== l.clave))} />
-                  </div>
-                ))}
+            <div className="fus-plan-dias">
+              <SegmentedControl
+                value={dia}
+                onChange={(v) => setDia(v as DiaSemana)}
+                options={DIAS.map((d) => ({ value: d, label: <abbr title={ETIQUETA_DIA[d]}>{INICIAL_DIA[d]}</abbr>, count: porDia.get(d) }))}
+              />
             </div>
-          ))
-        )}
+
+            <div className="fus-plan-anadir">
+              <SegmentedControl value={momento} onChange={(v) => setMomento(v as MomentoComida)} options={MOMENTOS.map((m) => ({ value: m, label: ETIQUETA_MOMENTO[m] }))} />
+              <BuscadorAlimento onElegir={anadirAlimento} />
+              <Select
+                label="O una receta"
+                value=""
+                disabled={!recetas.data?.length}
+                onChange={(e) => anadirReceta(e.target.value)}
+                options={[
+                  { value: '', label: recetas.data?.length ? 'Elige una receta…' : 'Aún no tienes recetas' },
+                  ...(recetas.data ?? []).map((r) => ({ value: String(r.id), label: `${r.nombre} · ${num(r.kcalRacion)} kcal/ración` })),
+                ]}
+              />
+            </div>
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Comidas del día</h3>
+            <div className="fus-plan-cab">
+              <b>{ETIQUETA_DIA[dia]}</b>
+              <span className="money">{num(kcalDia)} kcal</span>
+              <div style={{ marginLeft: 'auto', width: 190 }}>
+                <Select
+                  size="sm"
+                  aria-label="Copiar este día a"
+                  value={copiarA}
+                  disabled={delDia.length === 0}
+                  onChange={(e) => copiarDia(e.target.value)}
+                  options={[
+                    { value: '', label: 'Copiar este día a…' },
+                    { value: 'TODOS', label: 'Todos los demás días' },
+                    ...DIAS.filter((d) => d !== dia).map((d) => ({ value: d, label: ETIQUETA_DIA[d] })),
+                  ]}
+                />
+              </div>
+            </div>
+
+            {delDia.length === 0 ? (
+              <p className="muted" style={{ margin: 0, fontSize: 13 }}>Nada planeado para el {ETIQUETA_DIA[dia].toLowerCase()}. Elige el momento y añade alimentos o recetas.</p>
+            ) : (
+              MOMENTOS.filter((m) => delDia.some((l) => l.momento === m)).map((m) => (
+                <div key={m} className="fus-lineas">
+                  <span className="pl-eyebrow">{ETIQUETA_MOMENTO[m]}</span>
+                  {delDia
+                    .filter((l) => l.momento === m)
+                    .map((l) => (
+                      <div key={l.clave} className="fus-linea">
+                        <div className="fus-linea__n">
+                          <b>{l.nombre}</b>
+                          <span>{l.tipo === 'receta' ? `Receta · ${num(l.kcalUnidad)} kcal/ración` : `${num(l.kcalUnidad * 100)} kcal / 100 g`}</span>
+                        </div>
+                        <Input
+                          aria-label={l.tipo === 'receta' ? `Raciones de ${l.nombre}` : `Gramos de ${l.nombre}`}
+                          size="sm"
+                          inputMode="decimal"
+                          trailing={<span className="muted" style={{ fontSize: 12 }}>{l.tipo === 'receta' ? 'rac.' : 'g'}</span>}
+                          value={l.cantidad}
+                          onChange={(e) => setLineas((ls) => ls.map((x) => (x.clave === l.clave ? { ...x, cantidad: e.target.value } : x)))}
+                          error={errCantidad(l)}
+                          validarAlSalir
+                        />
+                        <span className="fus-linea__k">{num(kcalDe(l))} kcal</span>
+                        <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((x) => x.clave !== l.clave))} />
+                      </div>
+                    ))}
+                </div>
+              ))
+            )}
+          </section>
+        </div>
       </form>
     </Dialog>
   );

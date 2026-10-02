@@ -140,7 +140,7 @@ function Cuerpo({ receta, onClose }: { receta: RecetaCompleta | undefined; onClo
       open
       onClose={onClose}
       confirmarDescarte
-      width={600}
+      width={980}
       title={editando ? 'Editar receta' : 'Nueva receta'}
       footer={
         confirmando ? (
@@ -170,70 +170,76 @@ function Cuerpo({ receta, onClose }: { receta: RecetaCompleta | undefined; onClo
         )
       }
     >
-      <form id="fus-form-receta" className="fus-form" onSubmit={guardar} noValidate>
+      <form id="fus-form-receta" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <div className="fus-form__row fus-form__row--rec">
-          <Input label="Nombre" autoFocus={!editando} placeholder="Lentejas con verduras" value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
-          <Input label="Raciones" inputMode="numeric" hint="Para cuántos sale" value={raciones} onChange={(e) => setRaciones(e.target.value)} error={errRaciones} validarAlSalir />
-        </div>
-        <Input label="Descripción" placeholder="Opcional" maxLength={500} value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Receta</h3>
+            <div className="fus-form__row fus-form__row--rec">
+              <Input label="Nombre" autoFocus={!editando} placeholder="Lentejas con verduras" value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
+              <Input label="Raciones" inputMode="numeric" hint="Para cuántos sale" value={raciones} onChange={(e) => setRaciones(e.target.value)} error={errRaciones} validarAlSalir />
+            </div>
+            <Input label="Descripción" placeholder="Opcional" maxLength={500} value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
+            <div>
+              <label htmlFor="fus-rec-inst" className="pl-field__label" style={{ display: 'block', marginBottom: 6 }}>
+                Preparación
+              </label>
+              <textarea
+                id="fus-rec-inst"
+                className="fus-textarea"
+                rows={8}
+                maxLength={10000}
+                placeholder="Opcional: los pasos para hacerla"
+                value={instrucciones}
+                onChange={(e) => setInstrucciones(e.target.value)}
+              />
+            </div>
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Ingredientes</h3>
+            <BuscadorAlimento onElegir={anadir} />
 
-        <BuscadorAlimento onElegir={anadir} />
-
-        {ingredientes.length > 0 ? (
-          <div className="fus-lineas">
-            {ingredientes.map((i, idx) => {
-              const n = cantidadNum(i.cantidad);
-              return (
-                <div key={`${i.alimentoId}-${idx}`} className="fus-linea">
-                  <div className="fus-linea__n">
-                    <b>{i.nombre}</b>
-                    <span>{i.marca ?? `${num(i.kcal100g)} kcal / 100 g`}</span>
-                  </div>
-                  <Input
-                    aria-label={`Gramos de ${i.nombre}`}
-                    size="sm"
-                    inputMode="decimal"
-                    trailing={<span className="muted" style={{ fontSize: 12 }}>g</span>}
-                    value={i.cantidad}
-                    onChange={(e) => setIngredientes((is) => is.map((x, j) => (j === idx ? { ...x, cantidad: e.target.value } : x)))}
-                    error={errCantidad(i.cantidad)}
-                    validarAlSalir
-                  />
-                  <span className="fus-linea__k">{n > 0 ? `${num((i.kcal100g * n) / 100)} kcal` : '—'}</span>
-                  <IconButton icon="x" label={`Quitar ${i.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setIngredientes((is) => is.filter((_, j) => j !== idx))} />
+            {ingredientes.length > 0 ? (
+              <div className="fus-lineas">
+                {ingredientes.map((i, idx) => {
+                  const n = cantidadNum(i.cantidad);
+                  return (
+                    <div key={`${i.alimentoId}-${idx}`} className="fus-linea">
+                      <div className="fus-linea__n">
+                        <b>{i.nombre}</b>
+                        <span>{i.marca ?? `${num(i.kcal100g)} kcal / 100 g`}</span>
+                      </div>
+                      <Input
+                        aria-label={`Gramos de ${i.nombre}`}
+                        size="sm"
+                        inputMode="decimal"
+                        trailing={<span className="muted" style={{ fontSize: 12 }}>g</span>}
+                        value={i.cantidad}
+                        onChange={(e) => setIngredientes((is) => is.map((x, j) => (j === idx ? { ...x, cantidad: e.target.value } : x)))}
+                        error={errCantidad(i.cantidad)}
+                        validarAlSalir
+                      />
+                      <span className="fus-linea__k">{n > 0 ? `${num((i.kcal100g * n) / 100)} kcal` : '—'}</span>
+                      <IconButton icon="x" label={`Quitar ${i.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setIngredientes((is) => is.filter((_, j) => j !== idx))} />
+                    </div>
+                  );
+                })}
+                <div className="fus-total">
+                  <span>Receta entera</span>
+                  <b>{num(total.kcal)} kcal</b>
                 </div>
-              );
-            })}
-            <div className="fus-total">
-              <span>Receta entera</span>
-              <b>{num(total.kcal)} kcal</b>
-            </div>
-            <div className="fus-racion">
-              <span>Por ración</span>
-              <b>{num(total.kcal / div)} kcal</b>
-              <span>P {num(total.p / div, 1)} g</span>
-              <span>C {num(total.c / div, 1)} g</span>
-              <span>G {num(total.g / div, 1)} g</span>
-            </div>
-          </div>
-        ) : (
-          <p className="muted" style={{ margin: 0, fontSize: 13 }}>{(intentado && errIngredientes) || 'Busca arriba los ingredientes, con los gramos de la receta entera.'}</p>
-        )}
-
-        <div>
-          <label htmlFor="fus-rec-inst" className="pl-eyebrow" style={{ display: 'block', marginBottom: 6 }}>
-            Preparación
-          </label>
-          <textarea
-            id="fus-rec-inst"
-            className="fus-textarea"
-            rows={4}
-            maxLength={10000}
-            placeholder="Opcional: los pasos para hacerla"
-            value={instrucciones}
-            onChange={(e) => setInstrucciones(e.target.value)}
-          />
+                <div className="fus-racion">
+                  <span>Por ración</span>
+                  <b>{num(total.kcal / div)} kcal</b>
+                  <span>P {num(total.p / div, 1)} g</span>
+                  <span>C {num(total.c / div, 1)} g</span>
+                  <span>G {num(total.g / div, 1)} g</span>
+                </div>
+              </div>
+            ) : (
+              <p className="muted" style={{ margin: 0, fontSize: 13 }}>{(intentado && errIngredientes) || 'Busca arriba los ingredientes, con los gramos de la receta entera.'}</p>
+            )}
+          </section>
         </div>
       </form>
     </Dialog>

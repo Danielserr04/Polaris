@@ -170,6 +170,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
       open
       onClose={onClose}
       confirmarDescarte
+      width={760}
       title={editando ? 'Editar movimiento' : 'Nuevo movimiento'}
       footer={
         confirmandoBorrado ? (
@@ -204,61 +205,65 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
         )
       }
     >
-      <form id="kui-form-movimiento" className="kui-form" onSubmit={guardar} noValidate>
+      <form id="kui-form-movimiento" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <SegmentedControl
-          value={tipo}
-          onChange={(v) => setTipo(v as TipoMovimiento)}
-          options={[
-            { value: 'GASTO', label: 'Gasto' },
-            { value: 'INGRESO', label: 'Ingreso' },
-          ]}
-        />
-        <div className="kui-form__row">
-          <Input
-            label="Importe (€)"
-            inputMode="decimal"
-            placeholder="0,00"
-            autoFocus
-            value={importe}
-            onChange={(e) => setImporte(e.target.value)}
-            error={errorImporte} validarAlSalir
-          />
-          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errorFecha} validarAlSalir />
-        </div>
-        {creandoCategoria ? (
-          <div className="kui-form__nuevacat">
-            <Input
-              label="Nueva categoría"
-              placeholder={tipo === 'GASTO' ? 'Casa, Comida, Ocio…' : 'Nómina, Ventas…'}
-              value={nuevaCategoria}
-              onChange={(e) => setNuevaCategoria(e.target.value)}
-              error={errorCategoria} validarAlSalir
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Movimiento</h3>
+            <SegmentedControl
+              value={tipo}
+              onChange={(v) => setTipo(v as TipoMovimiento)}
+              options={[
+                { value: 'GASTO', label: 'Gasto' },
+                { value: 'INGRESO', label: 'Ingreso' },
+              ]}
             />
-            {delTipo.length > 0 && (
-              <Button variant="ghost" type="button" onClick={() => setCategoriaId('')}>
-                Elegir existente
-              </Button>
+            <div className="pl-form__grid">
+              <Input
+                label="Importe (€)"
+                inputMode="decimal"
+                placeholder="0,00"
+                autoFocus
+                value={importe}
+                onChange={(e) => setImporte(e.target.value)}
+                error={errorImporte} validarAlSalir
+              />
+              <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errorFecha} validarAlSalir />
+            </div>
+            {creandoCategoria ? (
+              <div className="kui-form__nuevacat">
+                <Input
+                  label="Nueva categoría"
+                  placeholder={tipo === 'GASTO' ? 'Casa, Comida, Ocio…' : 'Nómina, Ventas…'}
+                  value={nuevaCategoria}
+                  onChange={(e) => setNuevaCategoria(e.target.value)}
+                  error={errorCategoria} validarAlSalir
+                />
+                {delTipo.length > 0 && (
+                  <Button variant="ghost" type="button" onClick={() => setCategoriaId('')}>
+                    Elegir existente
+                  </Button>
+                )}
+              </div>
+            ) : (
+              <Select
+                label="Categoría"
+                value={categoriaEfectiva}
+                onChange={(e) => setCategoriaId(e.target.value)}
+                options={opciones}
+                error={ver(errorCategoria)}
+              />
             )}
-          </div>
-        ) : (
-          <Select
-            label="Categoría"
-            value={categoriaEfectiva}
-            onChange={(e) => setCategoriaId(e.target.value)}
-            options={opciones}
-            error={ver(errorCategoria)}
-          />
-        )}
-        {opcionesCuenta.length > 1 && (
-          <Select label="Cuenta" value={cuentaId} onChange={(e) => setCuentaId(e.target.value)} options={opcionesCuenta} />
-        )}
-        <Input label="Concepto" placeholder="Opcional" maxLength={255} value={concepto} onChange={(e) => setConcepto(e.target.value)} />
-        <div className="kui-form__row">
-          <Input label="Método de pago" placeholder="Opcional" maxLength={50} value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} />
-          <div style={{ alignSelf: 'end', paddingBottom: 8 }}>
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Detalles</h3>
+            {opcionesCuenta.length > 1 && (
+              <Select label="Cuenta" value={cuentaId} onChange={(e) => setCuentaId(e.target.value)} options={opcionesCuenta} />
+            )}
+            <Input label="Concepto" placeholder="Opcional" maxLength={255} value={concepto} onChange={(e) => setConcepto(e.target.value)} />
+            <Input label="Método de pago" placeholder="Opcional" maxLength={50} value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} />
             <Switch label="Recurrente" checked={recurrente} onChange={setRecurrente} />
-          </div>
+          </section>
         </div>
       </form>
     </Dialog>

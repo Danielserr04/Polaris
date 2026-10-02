@@ -94,7 +94,7 @@ export function AltaDialog({ tituloIdsEnLista, tipoInicial, onClose, onImportada
   };
 
   return (
-    <Dialog open onClose={onClose} title="Añadir a Odisea" width={600}>
+    <Dialog open onClose={onClose} title="Añadir a Odisea" width={720}>
       <div className="stack-12">
         <Input
           icon="search"

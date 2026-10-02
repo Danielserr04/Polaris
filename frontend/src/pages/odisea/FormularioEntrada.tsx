@@ -67,7 +67,7 @@ export function FormularioEntrada({ entrada, tipo, onClose }: Props) {
       onClose={onClose}
       confirmarDescarte
       title="Editar entrada"
-      width={520}
+      width={860}
       footer={
         <>
           <Button variant="ghost" type="button" onClick={onClose}>
@@ -79,65 +79,68 @@ export function FormularioEntrada({ entrada, tipo, onClose }: Props) {
         </>
       }
     >
-      <form id="odisea-form-entrada" className="stack-16 odisea-form" onSubmit={guardar} noValidate>
+      <form id="odisea-form-entrada" className="pl-form odisea-form" onSubmit={guardar} noValidate>
         {actualizar.isError && <Alert tone="danger">{mensajeError(actualizar.error)}</Alert>}
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Seguimiento</h3>
+            <div className="odisea-form__row">
+              <Select
+                id="of-estado"
+                autoFocus
+                label="Estado"
+                value={estado}
+                onChange={(ev) => setEstado(ev.target.value as EstadoEntrada)}
+                options={OPCIONES_ESTADO}
+              />
+              {tieneProgreso(tipo) && (
+                <Input
+                  id="of-progreso"
+                  label={ETIQUETA_PROGRESO[tipo]}
+                  type="number"
+                  inputMode="numeric"
+                  min={0}
+                  step={1}
+                  placeholder="—"
+                  value={progreso}
+                  onChange={(ev) => setProgreso(ev.target.value)}
+                  error={errorProgreso}
+                />
+              )}
+            </div>
 
-        <div className="odisea-form__row">
-          <Select
-            id="of-estado"
-            autoFocus
-            label="Estado"
-            value={estado}
-            onChange={(ev) => setEstado(ev.target.value as EstadoEntrada)}
-            options={OPCIONES_ESTADO}
-          />
-          {tieneProgreso(tipo) && (
-            <Input
-              id="of-progreso"
-              label={ETIQUETA_PROGRESO[tipo]}
-              type="number"
-              inputMode="numeric"
-              min={0}
-              step={1}
-              placeholder="—"
-              value={progreso}
-              onChange={(ev) => setProgreso(ev.target.value)}
-              error={errorProgreso}
+            <div className="odisea-form__row">
+              <Input id="of-inicio" label="Inicio" type="date" value={fechaInicio} onChange={(ev) => setFechaInicio(ev.target.value)} />
+              <Input id="of-fin" label="Fin" type="date" value={fechaFin} onChange={(ev) => setFechaFin(ev.target.value)} error={errorFechas} />
+            </div>
+
+            <div className="odisea-form__row">
+              <div className="pl-field">
+                <span className="pl-field__label">Valoración</span>
+                <span className="odisea-form__rating">
+                  <Rating value={valoracion} size={20} onChange={setValoracion} />
+                  <IconButton icon="x" label="Quitar valoración" size="sm" type="button" disabled={valoracion == null} onClick={() => setValoracion(null)} />
+                </span>
+              </div>
+              <div className="pl-field">
+                <span className="pl-field__label">Favorito</span>
+                <Switch checked={favorito} onChange={setFavorito} label={favorito ? 'Sí' : 'No'} />
+              </div>
+            </div>
+          </section>
+          <section className="pl-form__sec">
+            <label className="pl-form__titulo" htmlFor="of-notas">
+              Notas
+            </label>
+            <textarea
+              id="of-notas"
+              className="odisea-textarea"
+              rows={10}
+              placeholder="Qué te ha parecido, dónde lo viste, lo que quieras recordar"
+              value={notas}
+              onChange={(ev) => setNotas(ev.target.value)}
             />
-          )}
-        </div>
-
-        <div className="odisea-form__row">
-          <Input id="of-inicio" label="Inicio" type="date" value={fechaInicio} onChange={(ev) => setFechaInicio(ev.target.value)} />
-          <Input id="of-fin" label="Fin" type="date" value={fechaFin} onChange={(ev) => setFechaFin(ev.target.value)} error={errorFechas} />
-        </div>
-
-        <div className="odisea-form__row">
-          <div className="pl-field">
-            <span className="pl-field__label">Valoración</span>
-            <span className="odisea-form__rating">
-              <Rating value={valoracion} size={20} onChange={setValoracion} />
-              <IconButton icon="x" label="Quitar valoración" size="sm" type="button" disabled={valoracion == null} onClick={() => setValoracion(null)} />
-            </span>
-          </div>
-          <div className="pl-field">
-            <span className="pl-field__label">Favorito</span>
-            <Switch checked={favorito} onChange={setFavorito} label={favorito ? 'Sí' : 'No'} />
-          </div>
-        </div>
-
-        <div className="pl-field">
-          <label className="pl-field__label" htmlFor="of-notas">
-            Notas
-          </label>
-          <textarea
-            id="of-notas"
-            className="odisea-textarea"
-            rows={4}
-            placeholder="Qué te ha parecido, dónde lo viste, lo que quieras recordar"
-            value={notas}
-            onChange={(ev) => setNotas(ev.target.value)}
-          />
+          </section>
         </div>
       </form>
     </Dialog>

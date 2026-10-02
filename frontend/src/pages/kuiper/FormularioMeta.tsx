@@ -80,6 +80,7 @@ export function FormularioMeta({ meta, onClose }: Props) {
       open
       onClose={onClose}
       confirmarDescarte
+      width={760}
       title={editando ? 'Editar meta' : 'Nueva meta de ahorro'}
       footer={
         confirmando ? (
@@ -109,63 +110,71 @@ export function FormularioMeta({ meta, onClose }: Props) {
         )
       }
     >
-      <form id="kui-form-meta" className="kui-form" onSubmit={guardar} noValidate>
+      <form id="kui-form-meta" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <Input
-          label="Nombre"
-          autoFocus
-          maxLength={100}
-          placeholder="Viaje, coche, colchón…"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          error={errorNombre} validarAlSalir
-        />
-        <div className="kui-form__row">
-          <Input
-            label="Objetivo (€)"
-            inputMode="decimal"
-            placeholder="3000"
-            value={objetivo}
-            onChange={(e) => setObjetivo(e.target.value)}
-            error={errorObjetivo} validarAlSalir
-          />
-          <Input
-            label="Fecha límite"
-            type="date"
-            value={fechaLimite}
-            onChange={(e) => setFechaLimite(e.target.value)}
-            error={errorFecha} validarAlSalir
-            hint="Opcional. Con fecha, calcula cuánto apartar al mes."
-          />
-        </div>
-        {editando && meta.importeActual > 0 && (
-          <p className="kui-pistas">Lo ahorrado ({meta.importeActual.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €) no cambia al editar: solo con aportaciones.</p>
-        )}
-        <div>
-          <span className="kui-field__label">Color</span>
-          <div className="kui-swatches" role="group" aria-label="Color">
-            {COLORES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className="kui-swatch"
-                style={{ ['--c' as string]: c }}
-                aria-pressed={color === c}
-                aria-label={`Color ${c}`}
-                onClick={() => setColor(c)}
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Meta</h3>
+            <Input
+              label="Nombre"
+              autoFocus
+              maxLength={100}
+              placeholder="Viaje, coche, colchón…"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              error={errorNombre} validarAlSalir
+            />
+            <div className="pl-form__grid">
+              <Input
+                label="Objetivo (€)"
+                inputMode="decimal"
+                placeholder="3000"
+                value={objetivo}
+                onChange={(e) => setObjetivo(e.target.value)}
+                error={errorObjetivo} validarAlSalir
               />
-            ))}
-          </div>
-        </div>
-        <div>
-          <span className="kui-field__label">Icono</span>
-          <div className="kui-icons" role="group" aria-label="Icono">
-            {ICONOS.map((n) => (
-              <button key={n} type="button" className="kui-icon" aria-pressed={icono === n} aria-label={n} onClick={() => setIcono(icono === n ? null : n)}>
-                <Icon name={n} size={16} />
-              </button>
-            ))}
-          </div>
+              <Input
+                label="Fecha límite"
+                type="date"
+                value={fechaLimite}
+                onChange={(e) => setFechaLimite(e.target.value)}
+                error={errorFecha} validarAlSalir
+                hint="Opcional. Con fecha, calcula cuánto apartar al mes."
+              />
+            </div>
+            {editando && meta.importeActual > 0 && (
+              <p className="kui-pistas">Lo ahorrado ({meta.importeActual.toLocaleString('es-ES', { minimumFractionDigits: 2 })} €) no cambia al editar: solo con aportaciones.</p>
+            )}
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Aspecto</h3>
+            <div>
+              <span className="kui-field__label">Color</span>
+              <div className="kui-swatches" role="group" aria-label="Color">
+                {COLORES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className="kui-swatch"
+                    style={{ ['--c' as string]: c }}
+                    aria-pressed={color === c}
+                    aria-label={`Color ${c}`}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className="kui-field__label">Icono</span>
+              <div className="kui-icons" role="group" aria-label="Icono">
+                {ICONOS.map((n) => (
+                  <button key={n} type="button" className="kui-icon" aria-pressed={icono === n} aria-label={n} onClick={() => setIcono(icono === n ? null : n)}>
+                    <Icon name={n} size={16} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
         </div>
       </form>
     </Dialog>
