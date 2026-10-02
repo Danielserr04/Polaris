@@ -172,6 +172,7 @@ function useInvalidarAtlas() {
 export function useCrearSesion() {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Sesión añadida' },
     mutationFn: (cuerpo: SesionRequest) => api<SesionCompleta>(`${BASE}/sesion`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });
@@ -180,6 +181,7 @@ export function useCrearSesion() {
 export function useActualizarSesion(id: number) {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Sesión guardada' },
     mutationFn: (cuerpo: SesionRequest) => api<SesionCompleta>(`${BASE}/sesion/${id}`, { metodo: 'PUT', cuerpo }),
     onSuccess: invalidar,
   });
@@ -190,6 +192,7 @@ export function useBorrarSesion(alBorrar?: () => void) {
   const qc = useQueryClient();
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Sesión borrada' },
     mutationFn: (id: number) => api<void>(`${BASE}/sesion/${id}`, { metodo: 'DELETE' }),
     onSuccess: (_, id) => {
       alBorrar?.();
@@ -202,6 +205,7 @@ export function useBorrarSesion(alBorrar?: () => void) {
 export function useCrearEjercicio() {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Ejercicio añadido' },
     mutationFn: (cuerpo: EjercicioRequest) => api<Ejercicio>(`${BASE}/ejercicio`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });
@@ -210,6 +214,7 @@ export function useCrearEjercicio() {
 export function useActualizarEjercicio(id: number) {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Ejercicio guardado' },
     mutationFn: (cuerpo: EjercicioRequest) => api<Ejercicio>(`${BASE}/ejercicio/${id}`, { metodo: 'PUT', cuerpo }),
     // Cambia el nombre en rutinas, sesiones y records.
     onSuccess: invalidar,
@@ -220,6 +225,7 @@ export function useActualizarEjercicio(id: number) {
 export function useBorrarEjercicio(alBorrar?: () => void) {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Ejercicio borrado' },
     mutationFn: (id: number) => api<void>(`${BASE}/ejercicio/${id}`, { metodo: 'DELETE' }),
     onSuccess: () => {
       alBorrar?.();
@@ -248,6 +254,7 @@ export function useRutina(id: number | undefined) {
 export function useCrearRutina() {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Rutina añadida' },
     mutationFn: (cuerpo: RutinaRequest) => api<RutinaCompleta>(`${BASE}/rutina`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });
@@ -256,6 +263,7 @@ export function useCrearRutina() {
 export function useActualizarRutina(id: number) {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Rutina guardada' },
     mutationFn: (cuerpo: RutinaRequest) => api<RutinaCompleta>(`${BASE}/rutina/${id}`, { metodo: 'PUT', cuerpo }),
     onSuccess: invalidar,
   });
@@ -266,6 +274,7 @@ export function useBorrarRutina(alBorrar?: () => void) {
   const qc = useQueryClient();
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Rutina borrada' },
     mutationFn: (id: number) => api<void>(`${BASE}/rutina/${id}`, { metodo: 'DELETE' }),
     onSuccess: (_, id) => {
       alBorrar?.();
@@ -286,6 +295,7 @@ export interface PesoRequest {
 export function useApuntarPeso() {
   const invalidar = useInvalidarAtlas();
   return useMutation({
+    meta: { aviso: 'Peso apuntado' },
     mutationFn: (cuerpo: PesoRequest) => api<PesoCorporal>(`${BASE}/peso`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });

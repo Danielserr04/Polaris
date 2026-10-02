@@ -1,4 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { Avisos } from '../components/Avisos';
 import { useUsuario } from '../api/auth';
 import { Avatar, Logo, NavBar, StarTrails } from '../design-system';
 import { useAplicarTema, useTemaAplicado } from '../lib/tema';
@@ -50,6 +51,7 @@ export function AppShell() {
       <main className="app__main" key={pathname}>
         <Outlet />
       </main>
+      <Avisos />
     </div>
   );
 }
