@@ -1,0 +1,35 @@
+/* Pestaña Análisis de Kuiper. Va aparte de kuiper.css para no pisar las otras pestañas. */
+.kan-proy{display:grid;grid-template-columns:auto minmax(0,1fr);gap:24px;align-items:center}
+.kan-proy__stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.kan-proy__nota{margin:12px 0 0;font-size:12.5px;color:var(--text-3)}
+.kan-insights{display:flex;flex-direction:column;gap:10px}
+.kan-insight{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;padding:12px 14px;border:1px solid var(--border-1);border-left:3px solid var(--tone);border-radius:6px;background:var(--surface-1)}
+.kan-insight .pl-icon{color:var(--tone);margin-top:2px}
+.kan-insight b{display:block;font-weight:600;font-size:14px;color:var(--text-1);margin-bottom:3px}
+.kan-insight p{margin:0;font-size:13px;line-height:1.45;color:var(--text-2)}
+.kan-insight--AVISO{--tone:var(--warning)}
+.kan-insight--BIEN{--tone:var(--success)}
+.kan-insight--INFO{--tone:var(--info)}
+.kan-filas{display:flex;flex-direction:column}
+.kan-fila{display:grid;grid-template-columns:minmax(0,1fr) 64px 110px 84px;gap:12px;align-items:center;padding:9px 0;border-top:1px solid var(--border-1);font-size:13.5px}
+.kan-fila:first-child{border-top:0}
+.kan-fila--com{grid-template-columns:22px minmax(0,1fr) 54px 96px 110px}
+.kan-fila__nombre{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.kan-fila__nombre span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kan-fila__nombre i{width:8px;height:8px;border-radius:2px;flex:none;background:var(--cat,var(--accent))}
+.kan-fila .pl-row__num{text-align:right}
+.kan-delta{font-family:var(--font-mono);font-size:12px;text-align:right;font-variant-numeric:tabular-nums}
+.kan-delta--sube{color:var(--danger)}
+.kan-delta--baja{color:var(--success)}
+.kan-delta--igual{color:var(--text-3)}
+.kan-cabecera{color:var(--text-3);font-family:var(--font-mono);font-size:11px;text-transform:uppercase;letter-spacing:.04em}
+.kan-ahorro{display:flex;gap:6px;flex-wrap:wrap;margin-top:14px}
+@media (max-width:1100px){.kan-proy__stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:760px){
+  .kan-proy{grid-template-columns:1fr;justify-items:center}
+  .kan-proy__stats{width:100%}
+  .kan-fila{grid-template-columns:minmax(0,1fr) 90px 70px}
+  .kan-fila > :nth-child(2){display:none}
+  .kan-fila--com{grid-template-columns:minmax(0,1fr) 40px 96px}
+  .kan-fila--com > :first-child,.kan-fila--com > :nth-child(5){display:none}
+  .kan-fila--com > :nth-child(2){display:inline-flex}}
