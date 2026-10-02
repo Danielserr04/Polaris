@@ -119,9 +119,11 @@ Ver [[011-categoria-nombre-unico-por-tipo]].
 | categoria_id | bigint | FK a `categoria`, del mismo usuario |
 | concepto | varchar(255) | opcional |
 | metodo_pago | varchar(50) | opcional, texto libre |
-| recurrente | boolean | por defecto falso |
+| recurrente | boolean | por defecto falso; verdadero si lo generó un `recurrente` |
+| cuenta_id | bigint | FK a `cuenta`, opcional (nulo = sin cuenta). V20 |
+| borrado_en | datetime | nulo fuera de la papelera; se purga a los 30 días. V19 |
 
-Ver [[012-movimiento-categoria-mismo-tipo]].
+Ver [[012-movimiento-categoria-mismo-tipo]] y [[038-movimiento-papelera-y-duplicar]].
 
 **`presupuesto`**
 
@@ -132,8 +134,72 @@ Ver [[012-movimiento-categoria-mismo-tipo]].
 | categoria_id | bigint | FK a `categoria`, del mismo usuario y de tipo GASTO |
 | periodo | enum | MENSUAL, ANUAL. Único con `(usuario_id, categoria_id)` |
 | importe_limite | DECIMAL(10,2) | mayor que 0 |
+| porcentaje_alerta | int | 1 a 100, por defecto 80. V17 |
 
-Ver [[013-presupuesto-solo-gastos-uno-por-periodo]].
+Ver [[013-presupuesto-solo-gastos-uno-por-periodo]] y [[035-presupuesto-umbral-de-alerta]].
+
+**`recurrente`** (V16)
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| id | BIGINT AUTO_INCREMENT | |
+| usuario_id | bigint | |
+| concepto | varchar(255) | concepto de cada movimiento generado |
+| importe | DECIMAL(10,2) | siempre positivo |
+| tipo | enum | INGRESO, GASTO. Debe coincidir con el de la categoría |
+| categoria_id | bigint | FK a `categoria` |
+| metodo_pago | varchar(50) | opcional |
+| frecuencia | enum | SEMANAL, MENSUAL, ANUAL |
+| fecha_inicio | date | primer cargo; fija el día de cobro |
+| proxima_fecha | date | siguiente cargo pendiente |
+| cuotas_total | int | nulo = sin fin |
+| cuotas_pagadas | int | |
+| activo | boolean | falso = pausado o plazos terminados |
+| cuenta_id | bigint | FK a `cuenta`, opcional. V20 |
+
+Ver [[034-recurrente-genera-movimientos]].
+
+**`meta_ahorro`** y **`aportacion_meta`** (V18)
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| meta_ahorro.nombre | varchar(100) | único por usuario |
+| meta_ahorro.importe_objetivo | DECIMAL(10,2) | mayor que 0 |
+| meta_ahorro.fecha_limite | date | opcional |
+| meta_ahorro.color, icono | varchar | opcionales |
+| aportacion_meta.meta_id | bigint | FK a `meta_ahorro`, borrado en cascada |
+| aportacion_meta.importe | DECIMAL(10,2) | con signo: positivo aporta, negativo retira |
+| aportacion_meta.fecha, nota | date, varchar(255) | |
+
+Lo ahorrado es la suma de las aportaciones; nunca baja de 0. Ver [[036-meta-ahorro-con-aportaciones]].
+
+**`cuenta`** y **`transferencia`** (V20)
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| cuenta.nombre | varchar(100) | único por usuario |
+| cuenta.tipo | enum | CORRIENTE, AHORRO, TARJETA, EFECTIVO |
+| cuenta.saldo_inicial | DECIMAL(12,2) | con signo; el saldo actual se calcula |
+| cuenta.banco, color, icono | varchar | opcionales |
+| cuenta.archivada | boolean | |
+| transferencia.cuenta_origen_id, cuenta_destino_id | bigint | FK a `cuenta`, distintas |
+| transferencia.importe | DECIMAL(10,2) | mayor que 0 |
+| transferencia.fecha, concepto | date, varchar(255) | |
+
+Las transferencias no cuentan como ingreso ni gasto. Ver [[039-cuentas-y-transferencias]].
+
+**`notificacion`** (V21)
+
+| Campo | Tipo | Nota |
+|---|---|---|
+| tipo | enum | CARGO_RECURRENTE, CARGO_PROXIMO, PRESUPUESTO_AVISO, PRESUPUESTO_EXCEDIDO, META_ALCANZADA, RESUMEN_MENSUAL |
+| clave | varchar(120) | único con `usuario_id`: el mismo aviso nunca se repite |
+| titulo, texto | varchar(150), varchar(500) | |
+| enlace | varchar(50) | pestaña de Kuiper a la que lleva |
+| leida | boolean | |
+| creada_en | datetime(6) | |
+
+Ver [[040-notificaciones-de-kuiper]].
 
 `importe` siempre positivo y el signo lo pone `tipo`: evita sumas con signos mezclados.
 
@@ -262,7 +328,7 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 
 ## Índices
 
-Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volumen ([[028-revision-de-indices-b8]]). Todo `ref`/`range`/`const` salvo lo indicado como "vigilar" en esa nota. Los nombres son los de las migraciones (`V1` a `V15`); la clave primaria no se lista. Los marcados como FK existen porque MySQL exige un índice por cada clave ajena y de paso sirven a la comprobación de uso antes de borrar.
+Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volumen ([[028-revision-de-indices-b8]]). Todo `ref`/`range`/`const` salvo lo indicado como "vigilar" en esa nota. Los nombres son los de las migraciones (`V1` a `V21`); la clave primaria no se lista. Los marcados como FK existen porque MySQL exige un índice por cada clave ajena y de paso sirven a la comprobación de uso antes de borrar.
 
 | Tabla | Índice | Migración | Para qué |
 |---|---|---|---|
@@ -277,6 +343,15 @@ Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volume
 | `movimiento` | `idx_movimiento_categoria` `(categoria_id)` | V6 | FK; bloquear el borrado de una categoría en uso |
 | `presupuesto` | `uk_presupuesto_usuario_categoria_periodo` `(usuario_id, categoria_id, periodo)` único | V7 | uno por categoría y periodo y el listado por usuario |
 | `presupuesto` | `idx_presupuesto_categoria` `(categoria_id)` | V7 | FK; bloquear el borrado de una categoría en uso |
+| `recurrente` | `idx_recurrente_usuario_proxima` `(usuario_id, proxima_fecha)` | V16 | listado de próximos cargos |
+| `recurrente` | `idx_recurrente_activo_proxima` `(activo, proxima_fecha)` | V16 | el job de cargos pendientes |
+| `meta_ahorro` | `uk_meta_ahorro_usuario_nombre` `(usuario_id, nombre)` único | V18 | nombre único y listado por usuario |
+| `aportacion_meta` | `idx_aportacion_meta_meta_fecha` `(meta_id, fecha)` | V18 | FK; suma e historial de una meta |
+| `movimiento` | `idx_movimiento_borrado` `(borrado_en)` | V19 | purgar la papelera |
+| `cuenta` | `uk_cuenta_usuario_nombre` `(usuario_id, nombre)` único | V20 | nombre único y listado por usuario |
+| `transferencia` | `idx_transferencia_usuario_fecha` `(usuario_id, fecha)` | V20 | listado por rango |
+| `notificacion` | `uk_notificacion_usuario_clave` `(usuario_id, clave)` único | V21 | no repetir avisos |
+| `notificacion` | `idx_notificacion_usuario_creada` `(usuario_id, creada_en)` | V21 | listado más reciente primero |
 | `alimento` | `uk_alimento_fuente_externa` `(fuente_externa, id_externo)` único | V8 | evitar duplicados al importar |
 | `objetivo_nutricional` | `uk_objetivo_nutricional_usuario_vigente` `(usuario_id, vigente_desde)` único | V9 | el vigente en una fecha y el histórico |
 | `comida` | `idx_comida_usuario_fecha` `(usuario_id, fecha)` | V10 | resumen del día y listado por rango |

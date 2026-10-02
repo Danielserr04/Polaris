@@ -53,6 +53,8 @@ cambiar el enum de Java no basta, `fuente_externa` es un `ENUM` de MySQL.
 
 Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí conviene es revisar el proyecto viejo antes de empezar y quedarse con lo aprendido del dominio.
 
+**Ampliado el 2026-10-02 con lo que tenía `lumen-app`:** recurrentes con job diario (`V16`, [[034-recurrente-genera-movimientos]]), umbral de alerta por presupuesto y presupuestos anuales (`V17`, [[035-presupuesto-umbral-de-alerta]]), metas de ahorro (`V18`, [[036-meta-ahorro-con-aportaciones]]), análisis ([[037-analisis-calculado-en-servicio]]), papelera y duplicar (`V19`, [[038-movimiento-papelera-y-duplicar]]), cuentas y transferencias (`V20`, [[039-cuentas-y-transferencias]]) y notificaciones (`V21`, [[040-notificaciones-de-kuiper]]).
+
 ### B6 — Fusión
 `Alimento`, `Comida`, `ComidaLinea`, `ObjetivoNutricional`. API de alimentos. Cálculo de macros del día contra objetivo.
 
@@ -116,6 +118,7 @@ Stack y design system en [[030-frontend-react-vite-y-design-system]]. Pantallas,
 | Odisea (lista, filtros, ficha, edición, borrado y alta desde el catálogo externo) | **Hecho** |
 | Kuiper: Resumen y Movimientos (listado con filtros, alta con categoría nueva, edición y borrado) | **Hecho** |
 | Kuiper: pestaña Categorías (crear, editar, borrar, color, icono y presupuesto mensual) | **Hecho** |
+| Kuiper: Recurrentes, Metas, Cuentas y Análisis; alertas de presupuesto, papelera con deshacer, duplicar y campana de notificaciones | **Hecho** |
 | Fusión: Hoy (resumen del día, comidas con alta/edición/borrado, alimento nuevo sobre la marcha, objetivo y tendencia) | **Hecho** |
 | Fusión: pestaña Alimentos (catálogo con búsqueda, alta, edición, borrado e importar de Open Food Facts) | **Hecho** |
 | Atlas: pantalla de Progresión (stats, progresión por ejercicio, récords, últimas sesiones y series por semana, solo lectura) | **Hecho** |

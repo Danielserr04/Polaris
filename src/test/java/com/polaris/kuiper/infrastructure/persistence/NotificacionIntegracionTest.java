@@ -29,8 +29,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
  */
 class NotificacionIntegracionTest extends IntegracionBase {
 
-    private static final Long A = 9401L;
-    private static final Long B = 9402L;
+    private static final Long A = 9411L;
+    private static final Long B = 9412L;
 
     @Autowired
     private JdbcTemplate jdbc;
