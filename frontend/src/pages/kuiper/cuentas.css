@@ -1,0 +1,26 @@
+/* Pestaña Cuentas de Kuiper. Lo comun (chips, tabla, formularios) viene de kuiper.css y kit.css. */
+.kui-cuentas__stats{grid-template-columns:repeat(3,minmax(0,1fr));margin-bottom:24px}
+.kui-cuentas__acciones{display:flex;gap:8px;margin-left:auto}
+.kui-cuentas{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.kui-cuenta .pl-card__body{display:flex;flex-direction:column;gap:14px}
+.kui-cuenta--archivada{opacity:.7}
+.kui-cuenta__head{display:flex;align-items:center;gap:12px;min-width:0}
+.kui-cuenta__id{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.kui-cuenta__id b,.kui-cuenta__id span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-cuenta__id span{font-size:12.5px}
+.kui-cuenta__saldo{font-size:26px;line-height:1.1}
+.kui-cuenta__botones{display:flex;gap:4px;flex-wrap:wrap;margin:0 -8px -6px}
+.table__r.table__r--trf{grid-template-columns:76px minmax(0,1.2fr) minmax(0,1fr) 120px;cursor:pointer;width:100%;border-left:0;border-right:0;border-bottom:0;background:transparent;color:inherit;font:inherit;text-align:left}
+.table__r.table__r--trf:focus-visible{outline-offset:-2px}
+.kui-trf__ruta{display:inline-flex;align-items:center;gap:8px;min-width:0}
+.kui-trf__ruta b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kui-trf__ruta .pl-icon{flex:none;color:var(--text-3)}
+.kui-trf__concepto{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:760px){
+  .kui-cuentas__stats{grid-template-columns:1fr}
+  .kui-cuentas__acciones{margin-left:0;width:100%}
+  .kui-cuentas__acciones>*{flex:1}
+  .kui-cuentas{grid-template-columns:1fr}
+  .table__r.table__r--trf{grid-template-columns:60px minmax(0,1fr) 96px}
+  .table__r--trf .kui-trf__concepto{display:none}
+}

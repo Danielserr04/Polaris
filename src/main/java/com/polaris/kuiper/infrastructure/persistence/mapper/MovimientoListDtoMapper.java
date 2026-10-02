@@ -15,6 +15,7 @@ public interface MovimientoListDtoMapper {
     @Mapping(target = "categoriaNombre", source = "categoria.nombre")
     @Mapping(target = "categoriaColor", source = "categoria.color")
     @Mapping(target = "categoriaIcono", source = "categoria.icono")
+    @Mapping(target = "cuentaNombre", source = "cuenta.nombre")
     MovimientoListDto toListDto(Movimiento movimiento);
 
     List<MovimientoListDto> toListDtoList(List<Movimiento> movimientos);

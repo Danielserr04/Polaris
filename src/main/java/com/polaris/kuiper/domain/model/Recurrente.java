@@ -43,6 +43,9 @@ public class Recurrente {
     private Integer cuotasTotal;
     private int cuotasPagadas;
     private boolean activo;
+    /** Opcional: los movimientos que genera heredan esta cuenta. */
+    private Long cuentaId;
+    private Cuenta cuenta;
 
     /**
      * El cargo que sigue a {@code fecha}, con el dia de {@code fechaInicio}

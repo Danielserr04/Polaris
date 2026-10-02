@@ -8,10 +8,12 @@ import com.polaris.kuiper.application.in.GetRecurrenteInterface;
 import com.polaris.kuiper.application.in.ListRecurrenteInterface;
 import com.polaris.kuiper.application.in.UpdateRecurrenteInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.CuentaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
+import com.polaris.kuiper.domain.model.CuentaNotFoundException;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.Notificacion;
 import com.polaris.kuiper.domain.model.Recurrente;
@@ -45,6 +47,7 @@ public class RecurrenteService implements
     private final CategoriaRepositoryPort categoriaRepository;
     private final MovimientoRepositoryPort movimientoRepository;
     private final CrearNotificacionInterface crearNotificacion;
+    private final CuentaRepositoryPort cuentaRepository;
 
     /**
      * El primer cargo es fechaInicio, aunque sea pasada: el job genera los
@@ -54,6 +57,7 @@ public class RecurrenteService implements
     @Override
     public Recurrente create(Long usuarioId, Recurrente recurrente) {
         validarCategoria(usuarioId, recurrente);
+        validarCuenta(usuarioId, recurrente.getCuentaId());
         recurrente.setId(null);
         recurrente.setUsuarioId(usuarioId);
         recurrente.setCuotasPagadas(0);
@@ -80,6 +84,7 @@ public class RecurrenteService implements
     public Recurrente update(Long usuarioId, Long id, Recurrente recurrente) {
         Recurrente existente = getPropio(usuarioId, id);
         validarCategoria(usuarioId, recurrente);
+        validarCuenta(usuarioId, recurrente.getCuentaId());
 
         recurrente.setId(existente.getId());
         recurrente.setUsuarioId(existente.getUsuarioId());
@@ -147,6 +152,7 @@ public class RecurrenteService implements
                 .concepto(concepto.length() > 255 ? concepto.substring(0, 255) : concepto)
                 .metodoPago(recurrente.getMetodoPago())
                 .recurrente(true)
+                .cuentaId(recurrente.getCuentaId())
                 .build();
     }
 
@@ -181,6 +187,19 @@ public class RecurrenteService implements
         if (categoria.getTipo() != recurrente.getTipo()) {
             throw new ValidationException("El tipo del recurrente no coincide con el de su categoria");
         }
+    }
+
+    /**
+     * 404 si la cuenta no existe o es de otro usuario. Es opcional: los
+     * movimientos generados heredan la cuenta, o se quedan sin ella.
+     */
+    private void validarCuenta(Long usuarioId, Long cuentaId) {
+        if (cuentaId == null) {
+            return;
+        }
+        cuentaRepository.findById(cuentaId)
+                .filter(c -> c.getUsuarioId().equals(usuarioId))
+                .orElseThrow(() -> new CuentaNotFoundException(cuentaId));
     }
 
     /**

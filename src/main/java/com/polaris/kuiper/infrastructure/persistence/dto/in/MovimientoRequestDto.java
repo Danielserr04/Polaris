@@ -29,6 +29,8 @@ public record MovimientoRequestDto(
         @Size(max = 255) String concepto,
         @Schema(description = "Texto libre; opcional")
         @Size(max = 50) String metodoPago,
-        boolean recurrente
+        boolean recurrente,
+        @Schema(description = "Id de una cuenta tuya; opcional (sin cuenta)")
+        Long cuentaId
 ) {
 }

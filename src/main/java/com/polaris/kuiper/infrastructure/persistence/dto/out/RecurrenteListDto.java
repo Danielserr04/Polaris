@@ -22,6 +22,8 @@ public record RecurrenteListDto(
         LocalDate proximaFecha,
         Integer cuotasTotal,
         int cuotasPagadas,
-        boolean activo
+        boolean activo,
+        Long cuentaId,
+        String cuentaNombre
 ) {
 }

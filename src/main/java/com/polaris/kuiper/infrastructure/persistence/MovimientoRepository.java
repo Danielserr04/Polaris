@@ -1,5 +1,6 @@
 package com.polaris.kuiper.infrastructure.persistence;
 
+import com.polaris.kuiper.domain.model.TipoMovimiento;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -58,4 +59,13 @@ public interface MovimientoRepository extends JpaRepository<MovimientoEntity, Lo
     @Query("select distinct m.usuarioId from MovimientoEntity m "
             + "where m.fecha between :desde and :hasta and m.borradoEn is null")
     List<Long> findUsuarioIdsConMovimientos(@Param("desde") LocalDate desde, @Param("hasta") LocalDate hasta);
+
+    /** Tambien cuenta los de la papelera: la FK impediria borrar la cuenta igualmente. */
+    boolean existsByCuenta_Id(Long cuentaId);
+
+    /** Un SUM por cuenta para el saldo actual. Ni los movimientos sin cuenta ni los de la papelera entran. */
+    @Query("select m.cuenta.id as cuentaId, sum(m.importe) as total from MovimientoEntity m "
+            + "where m.usuarioId = :usuarioId and m.tipo = :tipo and m.cuenta is not null "
+            + "and m.borradoEn is null group by m.cuenta.id")
+    List<SumaPorCuenta> sumarPorCuenta(@Param("usuarioId") Long usuarioId, @Param("tipo") TipoMovimiento tipo);
 }

@@ -2,10 +2,13 @@ package com.polaris.kuiper.domain.service;
 
 import com.polaris.kuiper.application.in.CrearNotificacionInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
+import com.polaris.kuiper.application.out.CuentaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
+import com.polaris.kuiper.domain.model.Cuenta;
+import com.polaris.kuiper.domain.model.CuentaNotFoundException;
 import com.polaris.kuiper.domain.model.FrecuenciaRecurrente;
 import com.polaris.kuiper.domain.model.Movimiento;
 import com.polaris.kuiper.domain.model.Notificacion;
@@ -58,6 +61,7 @@ class RecurrenteServiceTest {
 
     @Mock
     private CrearNotificacionInterface crearNotificacion;
+    private CuentaRepositoryPort cuentaRepository;
 
     @InjectMocks
     private RecurrenteService service;
@@ -243,5 +247,37 @@ class RecurrenteServiceTest {
         assertThatThrownBy(() -> service.update(USUARIO, 3L, ajeno)).isInstanceOf(RecurrenteNotFoundException.class);
         assertThatThrownBy(() -> service.delete(USUARIO, 3L)).isInstanceOf(RecurrenteNotFoundException.class);
         verify(repository, never()).deleteById(any());
+    }
+
+    @Test
+    @DisplayName("Los movimientos generados heredan la cuenta del recurrente")
+    void generarHeredaLaCuenta() {
+        Recurrente r = recurrente(FrecuenciaRecurrente.MENSUAL, LocalDate.of(2026, 9, 5));
+        r.setCuentaId(3L);
+        when(repository.findPendientes(LocalDate.of(2026, 9, 10))).thenReturn(List.of(r));
+
+        service.generar(LocalDate.of(2026, 9, 10));
+
+        ArgumentCaptor<Movimiento> captor = ArgumentCaptor.forClass(Movimiento.class);
+        verify(movimientoRepository).save(captor.capture());
+        assertThat(captor.getValue().getCuentaId()).isEqualTo(3L);
+    }
+
+    @Test
+    @DisplayName("create rechaza con 404 una cuenta de otro usuario y acepta una propia")
+    void createValidaCuenta() {
+        categoriaDeGasto();
+        when(cuentaRepository.findById(3L))
+                .thenReturn(Optional.of(Cuenta.builder().id(3L).usuarioId(OTRO_USUARIO).build()));
+        when(cuentaRepository.findById(4L)).thenReturn(Optional.of(Cuenta.builder().id(4L).usuarioId(USUARIO).build()));
+        when(repository.save(any(Recurrente.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        Recurrente ajena = recurrente(FrecuenciaRecurrente.MENSUAL, LocalDate.of(2026, 9, 5));
+        ajena.setCuentaId(3L);
+        Recurrente propia = recurrente(FrecuenciaRecurrente.MENSUAL, LocalDate.of(2026, 9, 5));
+        propia.setCuentaId(4L);
+
+        assertThatThrownBy(() -> service.create(USUARIO, ajena)).isInstanceOf(CuentaNotFoundException.class);
+        assertThat(service.create(USUARIO, propia).getCuentaId()).isEqualTo(4L);
     }
 }
