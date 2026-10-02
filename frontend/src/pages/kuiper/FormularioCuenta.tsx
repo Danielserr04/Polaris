@@ -99,6 +99,7 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
       open
       onClose={onClose}
       confirmarDescarte
+      width={760}
       title={editando ? 'Editar cuenta' : 'Nueva cuenta'}
       footer={
         confirmando ? (
@@ -128,66 +129,74 @@ function Cuerpo({ cuenta, onClose }: { cuenta: CuentaForm | undefined; onClose: 
         )
       }
     >
-      <form id="kui-form-cuenta" className="kui-form" onSubmit={guardar} noValidate>
+      <form id="kui-form-cuenta" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <Input
-          label="Nombre"
-          autoFocus
-          maxLength={100}
-          placeholder="Nómina, Hucha, Cartera…"
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          error={errorNombre} validarAlSalir
-        />
-        <div className="kui-form__row">
-          <Select label="Tipo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoCuenta)} options={TIPOS_CUENTA} />
-          <Input label="Banco" placeholder="Opcional" maxLength={100} value={banco} onChange={(e) => setBanco(e.target.value)} />
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Cuenta</h3>
+            <Input
+              label="Nombre"
+              autoFocus
+              maxLength={100}
+              placeholder="Nómina, Hucha, Cartera…"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              error={errorNombre} validarAlSalir
+            />
+            <div className="pl-form__grid">
+              <Select label="Tipo" value={tipo} onChange={(e) => setTipo(e.target.value as TipoCuenta)} options={TIPOS_CUENTA} />
+              <Input label="Banco" placeholder="Opcional" maxLength={100} value={banco} onChange={(e) => setBanco(e.target.value)} />
+            </div>
+            <Input
+              label="Saldo inicial (€)"
+              inputMode="decimal"
+              placeholder="0,00"
+              value={saldo}
+              onChange={(e) => setSaldo(e.target.value)}
+              error={errorSaldo} validarAlSalir
+              hint="Lo que había al empezar a apuntar. El saldo actual se calcula con los movimientos y transferencias."
+            />
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Aspecto</h3>
+            <div>
+              <span className="kui-field__label">Color</span>
+              <div className="kui-swatches" role="group" aria-label="Color">
+                <button
+                  type="button"
+                  className="kui-swatch kui-swatch--none"
+                  aria-pressed={color === null}
+                  aria-label="Sin color"
+                  onClick={() => setColor(null)}
+                >
+                  —
+                </button>
+                {COLORES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className="kui-swatch"
+                    style={{ ['--c' as string]: c }}
+                    aria-pressed={color === c}
+                    aria-label={`Color ${c}`}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className="kui-field__label">Icono</span>
+              <div className="kui-icons" role="group" aria-label="Icono">
+                {ICONOS.map((n) => (
+                  <button key={n} type="button" className="kui-icon" aria-pressed={icono === n} aria-label={n} onClick={() => setIcono(icono === n ? null : n)}>
+                    <Icon name={n} size={16} />
+                  </button>
+                ))}
+              </div>
+            </div>
+            {editando && <Switch label="Archivada (no se ofrece para movimientos nuevos)" checked={archivada} onChange={setArchivada} />}
+          </section>
         </div>
-        <Input
-          label="Saldo inicial (€)"
-          inputMode="decimal"
-          placeholder="0,00"
-          value={saldo}
-          onChange={(e) => setSaldo(e.target.value)}
-          error={errorSaldo} validarAlSalir
-          hint="Lo que había al empezar a apuntar. El saldo actual se calcula con los movimientos y transferencias."
-        />
-        <div>
-          <span className="kui-field__label">Color</span>
-          <div className="kui-swatches" role="group" aria-label="Color">
-            <button
-              type="button"
-              className="kui-swatch kui-swatch--none"
-              aria-pressed={color === null}
-              aria-label="Sin color"
-              onClick={() => setColor(null)}
-            >
-              —
-            </button>
-            {COLORES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className="kui-swatch"
-                style={{ ['--c' as string]: c }}
-                aria-pressed={color === c}
-                aria-label={`Color ${c}`}
-                onClick={() => setColor(c)}
-              />
-            ))}
-          </div>
-        </div>
-        <div>
-          <span className="kui-field__label">Icono</span>
-          <div className="kui-icons" role="group" aria-label="Icono">
-            {ICONOS.map((n) => (
-              <button key={n} type="button" className="kui-icon" aria-pressed={icono === n} aria-label={n} onClick={() => setIcono(icono === n ? null : n)}>
-                <Icon name={n} size={16} />
-              </button>
-            ))}
-          </div>
-        </div>
-        {editando && <Switch label="Archivada (no se ofrece para movimientos nuevos)" checked={archivada} onChange={setArchivada} />}
       </form>
     </Dialog>
   );

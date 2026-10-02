@@ -107,6 +107,7 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
       open
       onClose={onClose}
       confirmarDescarte
+      width={conPresupuesto ? 880 : 480}
       title={editando ? 'Editar categoría' : 'Nueva categoría'}
       footer={
         confirmando ? (
@@ -138,125 +139,131 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
         )
       }
     >
-      <form id="kui-form-categoria" className="kui-form" onSubmit={guardar} noValidate>
+      <form id="kui-form-categoria" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        {editando ? (
-          // El tipo no se cambia: con movimientos o presupuestos asociados el backend lo rechaza.
-          <Input label="Tipo" value={tipo === 'GASTO' ? 'Gasto' : 'Ingreso'} locked readOnly />
-        ) : (
-          <SegmentedControl
-            value={tipo}
-            onChange={(v) => setTipo(v as TipoMovimiento)}
-            options={[
-              { value: 'GASTO', label: 'Gasto' },
-              { value: 'INGRESO', label: 'Ingreso' },
-            ]}
-          />
-        )}
-        <Input
-          label="Nombre"
-          autoFocus
-          maxLength={100}
-          placeholder={tipo === 'GASTO' ? 'Casa, Comida, Ocio…' : 'Nómina, Ventas…'}
-          value={nombre}
-          onChange={(e) => setNombre(e.target.value)}
-          error={errorNombre} validarAlSalir
-        />
-        <div>
-          <span className="kui-field__label">Color</span>
-          <div className="kui-swatches" role="group" aria-label="Color">
-            <button
-              type="button"
-              className="kui-swatch kui-swatch--none"
-              aria-pressed={color === null}
-              aria-label="Sin color"
-              onClick={() => setColor(null)}
-            >
-              —
-            </button>
-            {COLORES.map((c) => (
-              <button
-                key={c}
-                type="button"
-                className="kui-swatch"
-                style={{ ['--c' as string]: c }}
-                aria-pressed={color === c}
-                aria-label={`Color ${c}`}
-                onClick={() => setColor(c)}
+        <div className={conPresupuesto ? 'pl-form__cols' : 'pl-form__col'}>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Categoría</h3>
+            {editando ? (
+              // El tipo no se cambia: con movimientos o presupuestos asociados el backend lo rechaza.
+              <Input label="Tipo" value={tipo === 'GASTO' ? 'Gasto' : 'Ingreso'} locked readOnly />
+            ) : (
+              <SegmentedControl
+                value={tipo}
+                onChange={(v) => setTipo(v as TipoMovimiento)}
+                options={[
+                  { value: 'GASTO', label: 'Gasto' },
+                  { value: 'INGRESO', label: 'Ingreso' },
+                ]}
               />
-            ))}
-          </div>
-        </div>
-        <div>
-          <span className="kui-field__label">Icono</span>
-          <div className="kui-icons" role="group" aria-label="Icono">
-            {ICONOS.map((n) => (
-              <button key={n} type="button" className="kui-icon" aria-pressed={icono === n} aria-label={n} onClick={() => setIcono(icono === n ? null : n)}>
-                <Icon name={n} size={16} />
-              </button>
-            ))}
-          </div>
-        </div>
-        {conPresupuesto && (
-          <>
-            {presupuesto && gasto && gasto.limiteMensual !== null && (
-              <div>
-                <span className="kui-field__label">Este mes</span>
-                <BarraPresupuesto
-                  nombre={categoria?.nombre ?? ''}
-                  icono={categoria?.icono ?? null}
-                  gastado={gasto.gastado}
-                  limite={gasto.limiteMensual}
-                  porcentaje={gasto.porcentaje}
-                  porcentajeAlerta={gasto.porcentajeAlerta}
-                  estado={gasto.estado}
+            )}
+            <Input
+              label="Nombre"
+              autoFocus
+              maxLength={100}
+              placeholder={tipo === 'GASTO' ? 'Casa, Comida, Ocio…' : 'Nómina, Ventas…'}
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
+              error={errorNombre} validarAlSalir
+            />
+            <div>
+              <span className="kui-field__label">Color</span>
+              <div className="kui-swatches" role="group" aria-label="Color">
+                <button
+                  type="button"
+                  className="kui-swatch kui-swatch--none"
+                  aria-pressed={color === null}
+                  aria-label="Sin color"
+                  onClick={() => setColor(null)}
+                >
+                  —
+                </button>
+                {COLORES.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    className="kui-swatch"
+                    style={{ ['--c' as string]: c }}
+                    aria-pressed={color === c}
+                    aria-label={`Color ${c}`}
+                    onClick={() => setColor(c)}
+                  />
+                ))}
+              </div>
+            </div>
+            <div>
+              <span className="kui-field__label">Icono</span>
+              <div className="kui-icons" role="group" aria-label="Icono">
+                {ICONOS.map((n) => (
+                  <button key={n} type="button" className="kui-icon" aria-pressed={icono === n} aria-label={n} onClick={() => setIcono(icono === n ? null : n)}>
+                    <Icon name={n} size={16} />
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+          {conPresupuesto && (
+            <section className="pl-form__sec">
+              <h3 className="pl-form__titulo">Presupuesto</h3>
+              {presupuesto && gasto && gasto.limiteMensual !== null && (
+                <div>
+                  <span className="kui-field__label">Este mes</span>
+                  <BarraPresupuesto
+                    nombre={categoria?.nombre ?? ''}
+                    icono={categoria?.icono ?? null}
+                    gastado={gasto.gastado}
+                    limite={gasto.limiteMensual}
+                    porcentaje={gasto.porcentaje}
+                    porcentajeAlerta={gasto.porcentajeAlerta}
+                    estado={gasto.estado}
+                  />
+                </div>
+              )}
+              <div className="pl-form__grid">
+                <Input
+                  label="Presupuesto mensual (€)"
+                  inputMode="decimal"
+                  placeholder="Sin presupuesto"
+                  value={limite}
+                  onChange={(e) => setLimite(e.target.value)}
+                  error={errorLimite} validarAlSalir
+                  hint="Déjalo vacío para no ponerle límite."
+                />
+                <Input
+                  label="Presupuesto anual (€)"
+                  inputMode="decimal"
+                  placeholder="Sin presupuesto"
+                  value={limiteAnual}
+                  onChange={(e) => setLimiteAnual(e.target.value)}
+                  error={errorAnual} validarAlSalir
+                  hint="Para gastos de todo el año: viajes, seguros…"
                 />
               </div>
-            )}
-            <div className="kui-form__row">
-              <Input
-                label="Presupuesto mensual (€)"
-                inputMode="decimal"
-                placeholder="Sin presupuesto"
-                value={limite}
-                onChange={(e) => setLimite(e.target.value)}
-                error={errorLimite} validarAlSalir
-                hint="Déjalo vacío para no ponerle límite."
-              />
-              <Input
-                label="Presupuesto anual (€)"
-                inputMode="decimal"
-                placeholder="Sin presupuesto"
-                value={limiteAnual}
-                onChange={(e) => setLimiteAnual(e.target.value)}
-                error={errorAnual} validarAlSalir
-                hint="Para gastos de todo el año: viajes, seguros…"
-              />
-            </div>
-            <div className="kui-alerta">
-              <label className="kui-field__label" htmlFor="kui-alerta">
-                Avisar al llegar al <b className="money">{alerta} %</b>
-              </label>
-              <input
-                id="kui-alerta"
-                type="range"
-                min={1}
-                max={100}
-                step={1}
-                value={alerta}
-                disabled={limiteVacio && anualVacio}
-                onChange={(e) => setAlerta(Number(e.target.value))}
-              />
-              <p className="kui-pistas">
-                {limiteNum > 0
-                  ? `Con ${eur(limiteNum, 0)} al mes, avisa a partir de ${eur((limiteNum * alerta) / 100, 0)}.`
-                  : anualNum > 0
-                    ? `Con ${eur(anualNum, 0)} al año, avisa a partir de ${eur((anualNum * alerta) / 100, 0)}.`
-                    : 'Ponle un presupuesto para elegir cuándo avisar.'}
-              </p>
-            </div>
-          </>
-        )}
+              <div className="kui-alerta">
+                <label className="kui-field__label" htmlFor="kui-alerta">
+                  Avisar al llegar al <b className="money">{alerta} %</b>
+                </label>
+                <input
+                  id="kui-alerta"
+                  type="range"
+                  min={1}
+                  max={100}
+                  step={1}
+                  value={alerta}
+                  disabled={limiteVacio && anualVacio}
+                  onChange={(e) => setAlerta(Number(e.target.value))}
+                />
+                <p className="kui-pistas">
+                  {limiteNum > 0
+                    ? `Con ${eur(limiteNum, 0)} al mes, avisa a partir de ${eur((limiteNum * alerta) / 100, 0)}.`
+                    : anualNum > 0
+                      ? `Con ${eur(anualNum, 0)} al año, avisa a partir de ${eur((anualNum * alerta) / 100, 0)}.`
+                      : 'Ponle un presupuesto para elegir cuándo avisar.'}
+                </p>
+              </div>
+            </section>
+          )}
+        </div>
       </form>
     </Dialog>
   );

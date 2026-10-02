@@ -69,6 +69,7 @@ export function FormularioObjetivo({ resumen, fecha, onClose }: Props) {
       open
       onClose={onClose}
       confirmarDescarte
+      width={880}
       title={resumen?.objetivoVigenteDesde ? 'Cambiar objetivo' : 'Fijar objetivo'}
       footer={
         <>
@@ -81,47 +82,54 @@ export function FormularioObjetivo({ resumen, fecha, onClose }: Props) {
         </>
       }
     >
-      <form id="fus-form-objetivo" className="fus-form" onSubmit={guardar} noValidate>
+      <form id="fus-form-objetivo" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <div className="fus-calculo">
-          <span className="pl-eyebrow">Calcular con tu perfil</span>
-          <div className="fus-calculo__fila">
-            <SegmentedControl value={tipo} onChange={(v) => setTipo(v as TipoObjetivo)} options={(Object.keys(ETIQUETA_TIPO) as TipoObjetivo[]).map((t) => ({ value: t, label: ETIQUETA_TIPO[t] }))} />
-            <Button type="button" size="sm" variant="secondary" icon="sparkles" loading={calcular.isPending} onClick={proponer}>
-              Calcular
-            </Button>
-          </div>
-          {calcular.isError ? (
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Calcular con tu perfil</h3>
+            <div className="fus-calculo">
+              <div className="fus-calculo__fila">
+                <SegmentedControl value={tipo} onChange={(v) => setTipo(v as TipoObjetivo)} options={(Object.keys(ETIQUETA_TIPO) as TipoObjetivo[]).map((t) => ({ value: t, label: ETIQUETA_TIPO[t] }))} />
+                <Button type="button" size="sm" variant="secondary" icon="sparkles" loading={calcular.isPending} onClick={proponer}>
+                  Calcular
+                </Button>
+              </div>
+              {calcular.isError ? (
+                <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
+                  {mensajeErrorCalculo(calcular.error)} <Link to="/perfil">Ir a Perfil</Link>
+                </p>
+              ) : calculo ? (
+                <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
+                  Gasto en reposo {num(calculo.tmb)} kcal; con {ETIQUETA_ACTIVIDAD[calculo.nivelActividad]}, {num(calculo.gastoTotal)} kcal al día
+                  {calculo.tipo === 'DEFINICION' ? ', menos 500 para perder grasa' : calculo.tipo === 'VOLUMEN' ? ', más 300 para ganar músculo' : ''}. Con {num(calculo.pesoKg, 1)} kg,
+                  {' '}{calculo.edad} años y {calculo.alturaCm} cm. Proteínas a 2 g por kilo y grasas al 25 %.
+                </p>
+              ) : (
+                <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>Usa tu altura, edad, sexo y actividad de Perfil y tu último peso. Rellena los campos de abajo, que puedes retocar.</p>
+              )}
+            </div>
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Objetivo</h3>
+            <div className="fus-form__row">
+              <Input label="Calorías al día" inputMode="numeric" autoFocus value={kcal} onChange={(e) => setKcal(e.target.value)} error={errKcal} validarAlSalir />
+              <Input label="Vigente desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} error={errDesde} validarAlSalir />
+            </div>
+            <div className="fus-form__row4" style={{ gridTemplateColumns: 'repeat(3,minmax(0,1fr))' }}>
+              <Input label="Proteínas (g)" inputMode="numeric" value={prot} onChange={(e) => setProt(e.target.value)} error={errMacro(p)} validarAlSalir />
+              <Input label="Carbohidratos (g)" inputMode="numeric" value={carb} onChange={(e) => setCarb(e.target.value)} error={errMacro(c)} validarAlSalir />
+              <Input label="Grasas (g)" inputMode="numeric" value={gras} onChange={(e) => setGras(e.target.value)} error={errMacro(g)} validarAlSalir />
+            </div>
+            {sumaMacros !== null && (
+              <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
+                Esos macros suman unas {num(sumaMacros)} kcal.
+              </p>
+            )}
             <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
-              {mensajeErrorCalculo(calcular.error)} <Link to="/perfil">Ir a Perfil</Link>
+              Se guarda como un objetivo nuevo desde esa fecha; el histórico no se modifica.
             </p>
-          ) : calculo ? (
-            <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
-              Gasto en reposo {num(calculo.tmb)} kcal; con {ETIQUETA_ACTIVIDAD[calculo.nivelActividad]}, {num(calculo.gastoTotal)} kcal al día
-              {calculo.tipo === 'DEFINICION' ? ', menos 500 para perder grasa' : calculo.tipo === 'VOLUMEN' ? ', más 300 para ganar músculo' : ''}. Con {num(calculo.pesoKg, 1)} kg,
-              {' '}{calculo.edad} años y {calculo.alturaCm} cm. Proteínas a 2 g por kilo y grasas al 25 %.
-            </p>
-          ) : (
-            <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>Usa tu altura, edad, sexo y actividad de Perfil y tu último peso. Rellena los campos de abajo, que puedes retocar.</p>
-          )}
+          </section>
         </div>
-        <div className="fus-form__row">
-          <Input label="Calorías al día" inputMode="numeric" autoFocus value={kcal} onChange={(e) => setKcal(e.target.value)} error={errKcal} validarAlSalir />
-          <Input label="Vigente desde" type="date" value={desde} onChange={(e) => setDesde(e.target.value)} error={errDesde} validarAlSalir />
-        </div>
-        <div className="fus-form__row4" style={{ gridTemplateColumns: 'repeat(3,minmax(0,1fr))' }}>
-          <Input label="Proteínas (g)" inputMode="numeric" value={prot} onChange={(e) => setProt(e.target.value)} error={errMacro(p)} validarAlSalir />
-          <Input label="Carbohidratos (g)" inputMode="numeric" value={carb} onChange={(e) => setCarb(e.target.value)} error={errMacro(c)} validarAlSalir />
-          <Input label="Grasas (g)" inputMode="numeric" value={gras} onChange={(e) => setGras(e.target.value)} error={errMacro(g)} validarAlSalir />
-        </div>
-        {sumaMacros !== null && (
-          <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
-            Esos macros suman unas {num(sumaMacros)} kcal.
-          </p>
-        )}
-        <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
-          Se guarda como un objetivo nuevo desde esa fecha; el histórico no se modifica.
-        </p>
       </form>
     </Dialog>
   );

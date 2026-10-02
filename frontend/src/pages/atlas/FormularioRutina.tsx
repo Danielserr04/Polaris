@@ -125,7 +125,7 @@ function Cuerpo({ rutina, onClose }: { rutina: RutinaCompleta | undefined; onClo
       open
       onClose={onClose}
       confirmarDescarte
-      width={600}
+      width={980}
       title={editando ? 'Editar rutina' : 'Nueva rutina'}
       footer={
         confirmando ? (
@@ -155,79 +155,87 @@ function Cuerpo({ rutina, onClose }: { rutina: RutinaCompleta | undefined; onClo
         )
       }
     >
-      <form id="atl-form-rutina" className="atl-form" onSubmit={guardar} noValidate>
+      <form id="atl-form-rutina" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <Input label="Nombre" autoFocus value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
-        <div className="pl-field">
-          <label className="pl-field__label" htmlFor="atl-rut-desc">
-            Descripción
-          </label>
-          <textarea id="atl-rut-desc" className="atl-textarea" rows={2} maxLength={2000} placeholder="Opcional" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
-        </div>
-        <Switch label={activa ? 'Activa' : 'Inactiva (no sale al registrar sesiones)'} checked={activa} onChange={setActiva} />
-
-        {lineas.length > 0 && (
-          <div>
-            <div className="atl-linea atl-serie--cab" style={{ borderBottom: 0, paddingBottom: 0 }}>
-              <span>Ejercicio</span>
-              <span>Series</span>
-              <span>Reps</span>
-              <span />
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Rutina</h3>
+            <Input label="Nombre" autoFocus value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
+            <div className="pl-field">
+              <label className="pl-field__label" htmlFor="atl-rut-desc">
+                Descripción
+              </label>
+              <textarea id="atl-rut-desc" className="atl-textarea" rows={4} maxLength={2000} placeholder="Opcional" value={descripcion} onChange={(e) => setDescripcion(e.target.value)} />
             </div>
-            {lineas.map((l, i) => (
-              <div key={l.ejercicioId} className="atl-linea">
-                <div className="atl-linea__n">
-                  <b>{l.nombre}</b>
-                  {l.grupo && <span>{l.grupo}</span>}
+            <Switch label={activa ? 'Activa' : 'Inactiva (no sale al registrar sesiones)'} checked={activa} onChange={setActiva} />
+          </section>
+
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Ejercicios</h3>
+            {lineas.length > 0 && (
+              <div>
+                <div className="atl-linea atl-serie--cab" style={{ borderBottom: 0, paddingBottom: 0 }}>
+                  <span>Ejercicio</span>
+                  <span>Series</span>
+                  <span>Reps</span>
+                  <span />
                 </div>
-                <Input aria-label={`Series de ${l.nombre}`} size="sm" inputMode="numeric" value={l.series} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, series: e.target.value } : x)))} error={errSeries(l.series)} validarAlSalir />
-                <Input aria-label={`Repeticiones de ${l.nombre}`} size="sm" placeholder="6-8" value={l.reps} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, reps: e.target.value } : x)))} error={errReps(l.reps)} validarAlSalir />
-                <span className="atl-linea__m">
-                  <IconButton icon="chevron-up" label={`Subir ${l.nombre}`} variant="ghost" size="sm" type="button" disabled={i === 0} onClick={() => mover(i, -1)} />
-                  <IconButton icon="chevron-down" label={`Bajar ${l.nombre}`} variant="ghost" size="sm" type="button" disabled={i === lineas.length - 1} onClick={() => mover(i, 1)} />
-                  <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((_, j) => j !== i))} />
-                </span>
+                {lineas.map((l, i) => (
+                  <div key={l.ejercicioId} className="atl-linea">
+                    <div className="atl-linea__n">
+                      <b>{l.nombre}</b>
+                      {l.grupo && <span>{l.grupo}</span>}
+                    </div>
+                    <Input aria-label={`Series de ${l.nombre}`} size="sm" inputMode="numeric" value={l.series} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, series: e.target.value } : x)))} error={errSeries(l.series)} validarAlSalir />
+                    <Input aria-label={`Repeticiones de ${l.nombre}`} size="sm" placeholder="6-8" value={l.reps} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, reps: e.target.value } : x)))} error={errReps(l.reps)} validarAlSalir />
+                    <span className="atl-linea__m">
+                      <IconButton icon="chevron-up" label={`Subir ${l.nombre}`} variant="ghost" size="sm" type="button" disabled={i === 0} onClick={() => mover(i, -1)} />
+                      <IconButton icon="chevron-down" label={`Bajar ${l.nombre}`} variant="ghost" size="sm" type="button" disabled={i === lineas.length - 1} onClick={() => mover(i, 1)} />
+                      <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((_, j) => j !== i))} />
+                    </span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {nuevo ? (
-          <div>
-            <div className="atl-nuevo">
-              <Input label="Ejercicio nuevo" autoFocus value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} />
-              <Input label="Grupo muscular" value={nuevo.grupo} onChange={(e) => setNuevo({ ...nuevo, grupo: e.target.value })} />
-              <span style={{ display: 'flex', gap: 6 }}>
-                <Button type="button" loading={crearEjercicio.isPending} onClick={crearNuevo}>
-                  Crear
+            {nuevo ? (
+              <div>
+                <div className="atl-nuevo">
+                  <Input label="Ejercicio nuevo" autoFocus value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} />
+                  <Input label="Grupo muscular" value={nuevo.grupo} onChange={(e) => setNuevo({ ...nuevo, grupo: e.target.value })} />
+                  <span style={{ display: 'flex', gap: 6 }}>
+                    <Button type="button" loading={crearEjercicio.isPending} onClick={crearNuevo}>
+                      Crear
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={() => { setNuevo(null); setErrorNuevo(null); }}>
+                      Cancelar
+                    </Button>
+                  </span>
+                </div>
+                {errorNuevo && <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--danger)' }}>{errorNuevo}</p>}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: 10, alignItems: 'end' }}>
+                <div style={{ flex: 1 }}>
+                  <Select
+                    id="atl-rut-anadir"
+                    label="Añadir ejercicio"
+                    value=""
+                    onChange={(e) => {
+                      const x = disponibles.find((d) => d.id === Number(e.target.value));
+                      if (x) anadir(x);
+                    }}
+                    options={[{ value: '', label: disponibles.length ? 'Elige un ejercicio…' : 'No hay más ejercicios' }, ...disponibles.map((d) => ({ value: String(d.id), label: d.nombre }))]}
+                  />
+                </div>
+                <Button type="button" variant="secondary" icon="plus" onClick={() => setNuevo({ nombre: '', grupo: '' })}>
+                  Nuevo
                 </Button>
-                <Button type="button" variant="ghost" onClick={() => { setNuevo(null); setErrorNuevo(null); }}>
-                  Cancelar
-                </Button>
-              </span>
-            </div>
-            {errorNuevo && <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--danger)' }}>{errorNuevo}</p>}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', gap: 10, alignItems: 'end' }}>
-            <div style={{ flex: 1 }}>
-              <Select
-                id="atl-rut-anadir"
-                label="Añadir ejercicio"
-                value=""
-                onChange={(e) => {
-                  const x = disponibles.find((d) => d.id === Number(e.target.value));
-                  if (x) anadir(x);
-                }}
-                options={[{ value: '', label: disponibles.length ? 'Elige un ejercicio…' : 'No hay más ejercicios' }, ...disponibles.map((d) => ({ value: String(d.id), label: d.nombre }))]}
-              />
-            </div>
-            <Button type="button" variant="secondary" icon="plus" onClick={() => setNuevo({ nombre: '', grupo: '' })}>
-              Nuevo
-            </Button>
-          </div>
-        )}
-        {ver(errLineas) && <p style={{ margin: 0, fontSize: 12.5, color: 'var(--danger)' }}>{ver(errLineas)}</p>}
+              </div>
+            )}
+            {ver(errLineas) && <p style={{ margin: 0, fontSize: 12.5, color: 'var(--danger)' }}>{ver(errLineas)}</p>}
+          </section>
+        </div>
       </form>
     </Dialog>
   );

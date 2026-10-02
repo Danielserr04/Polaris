@@ -137,7 +137,7 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
       open
       onClose={onClose}
       confirmarDescarte
-      width={560}
+      width={920}
       title={editando ? 'Editar comida' : 'Registrar comida'}
       footer={
         confirmando ? (
@@ -167,52 +167,58 @@ function Cuerpo({ comida, momentoInicial, fecha, onClose }: { comida: ComidaComp
         )
       }
     >
-      <form id="fus-form-comida" className="fus-form" onSubmit={guardar} noValidate>
+      <form id="fus-form-comida" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <div className="fus-form__row">
-          <SegmentedControl
-            value={momento}
-            onChange={(v) => setMomento(v as MomentoComida)}
-            options={MOMENTOS.map((m) => ({ value: m, label: ETIQUETA_MOMENTO[m] }))}
-          />
-          <Input aria-label="Fecha" type="date" max={hoy} value={dia} onChange={(e) => setDia(e.target.value)} error={errDia} validarAlSalir />
-        </div>
+        <div className="pl-form__cols">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Comida</h3>
+            <SegmentedControl
+              value={momento}
+              onChange={(v) => setMomento(v as MomentoComida)}
+              options={MOMENTOS.map((m) => ({ value: m, label: ETIQUETA_MOMENTO[m] }))}
+            />
+            <Input label="Fecha" type="date" max={hoy} value={dia} onChange={(e) => setDia(e.target.value)} error={errDia} validarAlSalir />
 
-        <BuscadorAlimento onElegir={anadir} />
-        <AnadirReceta onAnadir={anadirReceta} />
+            <BuscadorAlimento onElegir={anadir} />
+            <AnadirReceta onAnadir={anadirReceta} />
+          </section>
 
-        {lineas.length > 0 ? (
-          <div className="fus-lineas">
-            {lineas.map((l, i) => {
-              const n = cantidadNum(l.cantidad);
-              return (
-                <div key={`${l.alimentoId}-${i}`} className="fus-linea">
-                  <div className="fus-linea__n">
-                    <b>{l.nombre}</b>
-                    <span>{l.marca ?? `${num(l.kcal100g)} kcal / 100 g`}</span>
-                  </div>
-                  <Input
-                    aria-label={`Gramos de ${l.nombre}`}
-                    size="sm"
-                    inputMode="decimal"
-                    trailing={<span className="muted" style={{ fontSize: 12 }}>g</span>}
-                    value={l.cantidad}
-                    onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, cantidad: e.target.value } : x)))}
-                    error={errCantidad(l.cantidad)} validarAlSalir
-                  />
-                  <span className="fus-linea__k">{n > 0 ? `${num((l.kcal100g * n) / 100)} kcal` : '—'}</span>
-                  <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((_, j) => j !== i))} />
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Lo que has comido</h3>
+            {lineas.length > 0 ? (
+              <div className="fus-lineas">
+                {lineas.map((l, i) => {
+                  const n = cantidadNum(l.cantidad);
+                  return (
+                    <div key={`${l.alimentoId}-${i}`} className="fus-linea">
+                      <div className="fus-linea__n">
+                        <b>{l.nombre}</b>
+                        <span>{l.marca ?? `${num(l.kcal100g)} kcal / 100 g`}</span>
+                      </div>
+                      <Input
+                        aria-label={`Gramos de ${l.nombre}`}
+                        size="sm"
+                        inputMode="decimal"
+                        trailing={<span className="muted" style={{ fontSize: 12 }}>g</span>}
+                        value={l.cantidad}
+                        onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, cantidad: e.target.value } : x)))}
+                        error={errCantidad(l.cantidad)} validarAlSalir
+                      />
+                      <span className="fus-linea__k">{n > 0 ? `${num((l.kcal100g * n) / 100)} kcal` : '—'}</span>
+                      <IconButton icon="x" label={`Quitar ${l.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setLineas((ls) => ls.filter((_, j) => j !== i))} />
+                    </div>
+                  );
+                })}
+                <div className="fus-total">
+                  <span>Total</span>
+                  <b>{num(kcalTotal)} kcal</b>
                 </div>
-              );
-            })}
-            <div className="fus-total">
-              <span>Total</span>
-              <b>{num(kcalTotal)} kcal</b>
-            </div>
-          </div>
-        ) : (
-          <p className="muted" style={{ margin: 0, fontSize: 13 }}>{ver(errLineas) ?? 'Busca arriba lo que has comido.'}</p>
-        )}
+              </div>
+            ) : (
+              <p className="muted" style={{ margin: 0, fontSize: 13 }}>{ver(errLineas) ?? 'Busca arriba lo que has comido.'}</p>
+            )}
+          </section>
+        </div>
       </form>
     </Dialog>
   );

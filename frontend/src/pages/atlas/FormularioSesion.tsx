@@ -208,7 +208,7 @@ function Cuerpo({ sesion, fechaInicial, onClose }: { sesion: SesionCompleta | un
       open
       onClose={onClose}
       confirmarDescarte
-      width={640}
+      width={1040}
       title={editando ? 'Editar sesión' : 'Registrar sesión'}
       footer={
         confirmando ? (
@@ -238,113 +238,119 @@ function Cuerpo({ sesion, fechaInicial, onClose }: { sesion: SesionCompleta | un
         )
       }
     >
-      <form id="atl-form-sesion" className="atl-form" onSubmit={guardar} noValidate>
+      <form id="atl-form-sesion" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <div className="atl-form__row">
-          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errFecha} validarAlSalir />
-          <Select
-            id="atl-rutina"
-            label="Rutina"
-            value={rutinaId !== null ? String(rutinaId) : ''}
-            onChange={(e) => void elegirRutina(e.target.value)}
-            options={[
-              { value: '', label: 'Sin rutina' },
-              ...(rutinas.data ?? [])
-                // Una rutina inactiva sigue valiendo si ya era la de esta sesion.
-                .filter((r) => r.activa || r.id === sesion?.rutinaId)
-                .map((r) => ({ value: String(r.id), label: r.activa ? r.nombre : `${r.nombre} (inactiva)` })),
-            ]}
-          />
-          <Input
-            label="Duración"
-            inputMode="numeric"
-            trailing={<span className="muted" style={{ fontSize: 12 }}>min</span>}
-            value={duracion}
-            onChange={(e) => setDuracion(e.target.value)}
-            error={errDuracion} validarAlSalir
-          />
-        </div>
-
-        {bloques.map((b, i) => (
-          <div key={b.ejercicioId} className="atl-ej">
-            <div className="atl-ej__h">
-              <b>{b.nombre}</b>
-              {b.grupo && <span>{b.grupo}</span>}
-              <IconButton icon="x" label={`Quitar ${b.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setBloques((bs) => bs.filter((_, j) => j !== i))} />
-            </div>
-            <div className="atl-serie atl-serie--cab">
-              <span>#</span>
-              <span>Reps</span>
-              <span>Peso kg</span>
-              <span>RPE</span>
-              <span />
-            </div>
-            {b.series.map((s, j) => (
-              <div key={j} className="atl-serie">
-                <span className="atl-serie__n">{j + 1}</span>
-                <Input aria-label={`Repeticiones, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="numeric" value={s.reps} onChange={(e) => cambiarSerie(i, j, 'reps', e.target.value)} error={errReps(s.reps)} validarAlSalir />
-                <Input aria-label={`Peso, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" value={s.peso} onChange={(e) => cambiarSerie(i, j, 'peso', e.target.value)} error={errPeso(s.peso)} validarAlSalir />
-                <Input aria-label={`RPE, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" placeholder="—" value={s.rpe} onChange={(e) => cambiarSerie(i, j, 'rpe', e.target.value)} error={errRpe(s.rpe)} validarAlSalir />
-                <IconButton icon="x" label={`Quitar serie ${j + 1} de ${b.nombre}`} variant="ghost" size="sm" type="button" onClick={() => quitarSerie(i, j)} />
-              </div>
-            ))}
-            <div>
-              <Button size="sm" variant="ghost" icon="plus" type="button" onClick={() => anadirSerie(i)}>
-                Serie
-              </Button>
-            </div>
-          </div>
-        ))}
-
-        {nuevo ? (
-          <div>
-            <div className="atl-nuevo">
-              <Input label="Ejercicio nuevo" autoFocus value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} />
-              <Input label="Grupo muscular" value={nuevo.grupo} onChange={(e) => setNuevo({ ...nuevo, grupo: e.target.value })} />
-              <span style={{ display: 'flex', gap: 6 }}>
-                <Button type="button" loading={crearEjercicio.isPending} onClick={crearNuevo}>
-                  Crear
-                </Button>
-                <Button type="button" variant="ghost" onClick={() => { setNuevo(null); setErrorNuevo(null); }}>
-                  Cancelar
-                </Button>
-              </span>
-            </div>
-            {errorNuevo && <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--danger)' }}>{errorNuevo}</p>}
-          </div>
-        ) : (
-          <div style={{ display: 'flex', gap: 10, alignItems: 'end' }}>
-            <div style={{ flex: 1 }}>
-              <Select
-                id="atl-anadir"
-                label="Añadir ejercicio"
-                value=""
-                onChange={(e) => {
-                  const e2 = disponibles.find((x) => x.id === Number(e.target.value));
-                  if (e2) anadirEjercicio(e2);
-                }}
-                options={[{ value: '', label: disponibles.length ? 'Elige un ejercicio…' : 'No hay más ejercicios' }, ...disponibles.map((e) => ({ value: String(e.id), label: e.nombre }))]}
+        <div className="pl-form__cols pl-form__cols--lateral">
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Sesión</h3>
+            <div className="pl-form__grid">
+              <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errFecha} validarAlSalir />
+              <Input
+                label="Duración"
+                inputMode="numeric"
+                trailing={<span className="muted" style={{ fontSize: 12 }}>min</span>}
+                value={duracion}
+                onChange={(e) => setDuracion(e.target.value)}
+                error={errDuracion} validarAlSalir
               />
             </div>
-            <Button type="button" variant="secondary" icon="plus" onClick={() => setNuevo({ nombre: '', grupo: '' })}>
-              Nuevo
-            </Button>
-          </div>
-        )}
-        {ver(errBloques ?? errTope) && <p style={{ margin: 0, fontSize: 12.5, color: 'var(--danger)' }}>{ver(errBloques ?? errTope)}</p>}
+            <Select
+              id="atl-rutina"
+              label="Rutina"
+              value={rutinaId !== null ? String(rutinaId) : ''}
+              onChange={(e) => void elegirRutina(e.target.value)}
+              options={[
+                { value: '', label: 'Sin rutina' },
+                ...(rutinas.data ?? [])
+                  // Una rutina inactiva sigue valiendo si ya era la de esta sesion.
+                  .filter((r) => r.activa || r.id === sesion?.rutinaId)
+                  .map((r) => ({ value: String(r.id), label: r.activa ? r.nombre : `${r.nombre} (inactiva)` })),
+              ]}
+            />
+            <div className="pl-field">
+              <label className="pl-field__label" htmlFor="atl-notas">
+                Notas
+              </label>
+              <textarea id="atl-notas" className="atl-textarea" rows={5} maxLength={2000} placeholder="Cómo ha ido, molestias, lo que quieras recordar" value={notas} onChange={(e) => setNotas(e.target.value)} />
+            </div>
+          </section>
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Ejercicios</h3>
+            {bloques.map((b, i) => (
+              <div key={b.ejercicioId} className="atl-ej">
+                <div className="atl-ej__h">
+                  <b>{b.nombre}</b>
+                  {b.grupo && <span>{b.grupo}</span>}
+                  <IconButton icon="x" label={`Quitar ${b.nombre}`} variant="ghost" size="sm" type="button" onClick={() => setBloques((bs) => bs.filter((_, j) => j !== i))} />
+                </div>
+                <div className="atl-serie atl-serie--cab">
+                  <span>#</span>
+                  <span>Reps</span>
+                  <span>Peso kg</span>
+                  <span>RPE</span>
+                  <span />
+                </div>
+                {b.series.map((s, j) => (
+                  <div key={j} className="atl-serie">
+                    <span className="atl-serie__n">{j + 1}</span>
+                    <Input aria-label={`Repeticiones, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="numeric" value={s.reps} onChange={(e) => cambiarSerie(i, j, 'reps', e.target.value)} error={errReps(s.reps)} validarAlSalir />
+                    <Input aria-label={`Peso, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" value={s.peso} onChange={(e) => cambiarSerie(i, j, 'peso', e.target.value)} error={errPeso(s.peso)} validarAlSalir />
+                    <Input aria-label={`RPE, serie ${j + 1} de ${b.nombre}`} size="sm" inputMode="decimal" placeholder="—" value={s.rpe} onChange={(e) => cambiarSerie(i, j, 'rpe', e.target.value)} error={errRpe(s.rpe)} validarAlSalir />
+                    <IconButton icon="x" label={`Quitar serie ${j + 1} de ${b.nombre}`} variant="ghost" size="sm" type="button" onClick={() => quitarSerie(i, j)} />
+                  </div>
+                ))}
+                <div>
+                  <Button size="sm" variant="ghost" icon="plus" type="button" onClick={() => anadirSerie(i)}>
+                    Serie
+                  </Button>
+                </div>
+              </div>
+            ))}
 
-        {bloques.length > 0 && (
-          <div className="atl-total">
-            <span>{totalSeries} {totalSeries === 1 ? 'serie' : 'series'}</span>
-            <b>{num(volumen)} kg de volumen</b>
-          </div>
-        )}
+            {nuevo ? (
+              <div>
+                <div className="atl-nuevo">
+                  <Input label="Ejercicio nuevo" autoFocus value={nuevo.nombre} onChange={(e) => setNuevo({ ...nuevo, nombre: e.target.value })} />
+                  <Input label="Grupo muscular" value={nuevo.grupo} onChange={(e) => setNuevo({ ...nuevo, grupo: e.target.value })} />
+                  <span style={{ display: 'flex', gap: 6 }}>
+                    <Button type="button" loading={crearEjercicio.isPending} onClick={crearNuevo}>
+                      Crear
+                    </Button>
+                    <Button type="button" variant="ghost" onClick={() => { setNuevo(null); setErrorNuevo(null); }}>
+                      Cancelar
+                    </Button>
+                  </span>
+                </div>
+                {errorNuevo && <p style={{ margin: '6px 0 0', fontSize: 12.5, color: 'var(--danger)' }}>{errorNuevo}</p>}
+              </div>
+            ) : (
+              <div style={{ display: 'flex', gap: 10, alignItems: 'end' }}>
+                <div style={{ flex: 1 }}>
+                  <Select
+                    id="atl-anadir"
+                    label="Añadir ejercicio"
+                    value=""
+                    onChange={(e) => {
+                      const e2 = disponibles.find((x) => x.id === Number(e.target.value));
+                      if (e2) anadirEjercicio(e2);
+                    }}
+                    options={[{ value: '', label: disponibles.length ? 'Elige un ejercicio…' : 'No hay más ejercicios' }, ...disponibles.map((e) => ({ value: String(e.id), label: e.nombre }))]}
+                  />
+                </div>
+                <Button type="button" variant="secondary" icon="plus" onClick={() => setNuevo({ nombre: '', grupo: '' })}>
+                  Nuevo
+                </Button>
+              </div>
+            )}
+            {ver(errBloques ?? errTope) && <p style={{ margin: 0, fontSize: 12.5, color: 'var(--danger)' }}>{ver(errBloques ?? errTope)}</p>}
 
-        <div className="pl-field">
-          <label className="pl-field__label" htmlFor="atl-notas">
-            Notas
-          </label>
-          <textarea id="atl-notas" className="atl-textarea" rows={2} maxLength={2000} placeholder="Cómo ha ido, molestias, lo que quieras recordar" value={notas} onChange={(e) => setNotas(e.target.value)} />
+            {bloques.length > 0 && (
+              <div className="atl-total">
+                <span>{totalSeries} {totalSeries === 1 ? 'serie' : 'series'}</span>
+                <b>{num(volumen)} kg de volumen</b>
+              </div>
+            )}
+          </section>
         </div>
       </form>
     </Dialog>

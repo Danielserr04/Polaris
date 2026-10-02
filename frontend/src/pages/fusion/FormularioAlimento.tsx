@@ -63,6 +63,7 @@ export function FormularioAlimento({ alimento, onClose }: Props) {
       open
       onClose={onClose}
       confirmarDescarte
+      width={640}
       title={editando ? 'Editar alimento' : 'Nuevo alimento'}
       footer={
         confirmando ? (
@@ -92,24 +93,29 @@ export function FormularioAlimento({ alimento, onClose }: Props) {
         )
       }
     >
-      <form id="fus-form-alimento" className="fus-form" onSubmit={guardar} noValidate>
+      <form id="fus-form-alimento" className="pl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <div className="fus-form__row">
-          <Input label="Nombre" autoFocus maxLength={150} value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
-          <Input label="Marca" placeholder="Opcional" maxLength={100} value={marca} onChange={(e) => setMarca(e.target.value)} />
-        </div>
-        <span className="pl-eyebrow">Valores por 100 g</span>
-        <div className="fus-form__row4">
-          <Input label="Kcal" inputMode="decimal" value={kcal} onChange={(e) => setKcal(e.target.value)} error={err(k, 900)} validarAlSalir />
-          <Input label="Prot. (g)" inputMode="decimal" value={prot} onChange={(e) => setProt(e.target.value)} error={err(p, 100)} validarAlSalir />
-          <Input label="Carb. (g)" inputMode="decimal" value={carb} onChange={(e) => setCarb(e.target.value)} error={err(c, 100)} validarAlSalir />
-          <Input label="Grasas (g)" inputMode="decimal" value={gras} onChange={(e) => setGras(e.target.value)} error={err(g, 100)} validarAlSalir />
-        </div>
-        {editando && (
-          <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
-            Si cambias los valores, se recalculan las kcal y macros de las comidas que ya usan este alimento.
-          </p>
-        )}
+        <section className="pl-form__sec">
+          <h3 className="pl-form__titulo">Alimento</h3>
+          <div className="fus-form__row">
+            <Input label="Nombre" autoFocus maxLength={150} value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
+            <Input label="Marca" placeholder="Opcional" maxLength={100} value={marca} onChange={(e) => setMarca(e.target.value)} />
+          </div>
+        </section>
+        <section className="pl-form__sec">
+          <h3 className="pl-form__titulo">Valores por 100 g</h3>
+          <div className="fus-form__row4">
+            <Input label="Kcal" inputMode="decimal" value={kcal} onChange={(e) => setKcal(e.target.value)} error={err(k, 900)} validarAlSalir />
+            <Input label="Prot. (g)" inputMode="decimal" value={prot} onChange={(e) => setProt(e.target.value)} error={err(p, 100)} validarAlSalir />
+            <Input label="Carb. (g)" inputMode="decimal" value={carb} onChange={(e) => setCarb(e.target.value)} error={err(c, 100)} validarAlSalir />
+            <Input label="Grasas (g)" inputMode="decimal" value={gras} onChange={(e) => setGras(e.target.value)} error={err(g, 100)} validarAlSalir />
+          </div>
+          {editando && (
+            <p className="muted" style={{ margin: 0, fontSize: 12.5 }}>
+              Si cambias los valores, se recalculan las kcal y macros de las comidas que ya usan este alimento.
+            </p>
+          )}
+        </section>
       </form>
     </Dialog>
   );

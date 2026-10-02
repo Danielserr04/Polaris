@@ -69,14 +69,14 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
       open
       onClose={onClose}
       title={meta.nombre}
-      width={520}
+      width={820}
       footer={
         <Button variant="ghost" type="button" onClick={onClose}>
           Cerrar
         </Button>
       }
     >
-      <div className="kui-form">
+      <div className="pl-form">
         <ProgressBar
           label={`${eur(meta.importeActual)} de ${eur(meta.importeObjetivo)}`}
           value={Math.min(meta.importeActual, meta.importeObjetivo)}
@@ -91,70 +91,73 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
           </p>
         )}
 
-        <form className="kui-form" onSubmit={enviar} noValidate>
-          {error && <Alert tone="danger">{error}</Alert>}
-          <SegmentedControl
-            value={sentido}
-            onChange={(v) => setSentido(v as Sentido)}
-            options={[
-              { value: 'aportar', label: 'Aportar', icon: 'plus' },
-              { value: 'retirar', label: 'Retirar', icon: 'minus' },
-            ]}
-          />
-          <div className="kui-form__row">
-            <Input
-              label="Importe (€)"
-              inputMode="decimal"
-              autoFocus
-              placeholder="100"
-              value={importe}
-              onChange={(e) => setImporte(e.target.value)}
-              error={errorImporte} validarAlSalir
+        <div className="pl-form__cols">
+          <form className="pl-form__sec" onSubmit={enviar} noValidate>
+            <h3 className="pl-form__titulo">{sentido === 'retirar' ? 'Retirar dinero' : 'Nueva aportación'}</h3>
+            {error && <Alert tone="danger">{error}</Alert>}
+            <SegmentedControl
+              value={sentido}
+              onChange={(v) => setSentido(v as Sentido)}
+              options={[
+                { value: 'aportar', label: 'Aportar', icon: 'plus' },
+                { value: 'retirar', label: 'Retirar', icon: 'minus' },
+              ]}
             />
-            <Input
-              label="Fecha"
-              type="date"
-              max={hoy}
-              value={fecha}
-              onChange={(e) => setFecha(e.target.value)}
-              error={errorFecha} validarAlSalir
-            />
-          </div>
-          <Input label="Nota" maxLength={255} placeholder="Opcional" value={nota} onChange={(e) => setNota(e.target.value)} />
-          <Button type="submit" loading={aportar.isPending} variant={sentido === 'retirar' ? 'danger' : 'primary'}>
-            {sentido === 'retirar' ? 'Retirar' : 'Aportar'}
-          </Button>
-        </form>
+            <div className="pl-form__grid">
+              <Input
+                label="Importe (€)"
+                inputMode="decimal"
+                autoFocus
+                placeholder="100"
+                value={importe}
+                onChange={(e) => setImporte(e.target.value)}
+                error={errorImporte} validarAlSalir
+              />
+              <Input
+                label="Fecha"
+                type="date"
+                max={hoy}
+                value={fecha}
+                onChange={(e) => setFecha(e.target.value)}
+                error={errorFecha} validarAlSalir
+              />
+            </div>
+            <Input label="Nota" maxLength={255} placeholder="Opcional" value={nota} onChange={(e) => setNota(e.target.value)} />
+            <Button type="submit" loading={aportar.isPending} variant={sentido === 'retirar' ? 'danger' : 'primary'}>
+              {sentido === 'retirar' ? 'Retirar' : 'Aportar'}
+            </Button>
+          </form>
 
-        <div>
-          <span className="kui-field__label">Historial</span>
-          {historial.isError ? (
-            <Alert tone="danger">{mensajeErrorMeta(historial.error)}</Alert>
-          ) : historial.isPending ? (
-            <p className="muted">Cargando…</p>
-          ) : historial.data.length === 0 ? (
-            <p className="kui-pistas">Aún no hay aportaciones.</p>
-          ) : (
-            <ul className="kui-aportaciones">
-              {historial.data.map((a) => (
-                <li key={a.id} className="kui-aportacion">
-                  <span className="muted kui-aportacion__fecha">{relativa(a.fecha)}</span>
-                  <span className="kui-aportacion__nota">{a.nota ?? (a.importe < 0 ? 'Retirada' : 'Aportación')}</span>
-                  <span className={'money kui-aportacion__importe' + (a.importe < 0 ? ' kui-aportacion__importe--neg' : '')}>
-                    {a.importe > 0 ? '+' : '−'}
-                    {eur(Math.abs(a.importe))}
-                  </span>
-                  <IconButton
-                    icon="x"
-                    size="sm"
-                    label="Borrar esta línea"
-                    disabled={borrar.isPending}
-                    onClick={() => borrarLinea(a.id)}
-                  />
-                </li>
-              ))}
-            </ul>
-          )}
+          <section className="pl-form__sec">
+            <h3 className="pl-form__titulo">Historial</h3>
+            {historial.isError ? (
+              <Alert tone="danger">{mensajeErrorMeta(historial.error)}</Alert>
+            ) : historial.isPending ? (
+              <p className="muted">Cargando…</p>
+            ) : historial.data.length === 0 ? (
+              <p className="kui-pistas">Aún no hay aportaciones.</p>
+            ) : (
+              <ul className="kui-aportaciones">
+                {historial.data.map((a) => (
+                  <li key={a.id} className="kui-aportacion">
+                    <span className="muted kui-aportacion__fecha">{relativa(a.fecha)}</span>
+                    <span className="kui-aportacion__nota">{a.nota ?? (a.importe < 0 ? 'Retirada' : 'Aportación')}</span>
+                    <span className={'money kui-aportacion__importe' + (a.importe < 0 ? ' kui-aportacion__importe--neg' : '')}>
+                      {a.importe > 0 ? '+' : '−'}
+                      {eur(Math.abs(a.importe))}
+                    </span>
+                    <IconButton
+                      icon="x"
+                      size="sm"
+                      label="Borrar esta línea"
+                      disabled={borrar.isPending}
+                      onClick={() => borrarLinea(a.id)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
       </div>
     </Dialog>
