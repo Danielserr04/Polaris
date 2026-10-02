@@ -120,7 +120,7 @@ Ver [[011-categoria-nombre-unico-por-tipo]].
 | concepto | varchar(255) | opcional |
 | metodo_pago | varchar(50) | opcional, texto libre |
 | recurrente | boolean | por defecto falso; verdadero si lo generó un `recurrente` |
-| cuenta_id | bigint | FK a `cuenta`, opcional (nulo = sin cuenta). V20 |
+| cuenta_id | bigint | FK a `cuenta`, opcional (nulo = sin cuenta). V22 |
 | borrado_en | datetime | nulo fuera de la papelera; se purga a los 30 días. V19 |
 
 Ver [[012-movimiento-categoria-mismo-tipo]] y [[038-movimiento-papelera-y-duplicar]].
@@ -155,7 +155,7 @@ Ver [[013-presupuesto-solo-gastos-uno-por-periodo]] y [[035-presupuesto-umbral-d
 | cuotas_total | int | nulo = sin fin |
 | cuotas_pagadas | int | |
 | activo | boolean | falso = pausado o plazos terminados |
-| cuenta_id | bigint | FK a `cuenta`, opcional. V20 |
+| cuenta_id | bigint | FK a `cuenta`, opcional. V22 |
 
 Ver [[034-recurrente-genera-movimientos]].
 
@@ -173,7 +173,7 @@ Ver [[034-recurrente-genera-movimientos]].
 
 Lo ahorrado es la suma de las aportaciones; nunca baja de 0. Ver [[036-meta-ahorro-con-aportaciones]].
 
-**`cuenta`** y **`transferencia`** (V20)
+**`cuenta`** y **`transferencia`** (V22)
 
 | Campo | Tipo | Nota |
 |---|---|---|
@@ -328,7 +328,7 @@ Sin columna `es_propio`: se deriva de `usuario_id`. Ver [[023-ejercicio-catalogo
 
 ## Índices
 
-Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volumen ([[028-revision-de-indices-b8]]). Todo `ref`/`range`/`const` salvo lo indicado como "vigilar" en esa nota. Los nombres son los de las migraciones (`V1` a `V21`); la clave primaria no se lista. Los marcados como FK existen porque MySQL exige un índice por cada clave ajena y de paso sirven a la comprobación de uso antes de borrar.
+Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volumen ([[028-revision-de-indices-b8]]). Todo `ref`/`range`/`const` salvo lo indicado como "vigilar" en esa nota. Los nombres son los de las migraciones (`V1` a `V22`, sin `V20`); la clave primaria no se lista. Los marcados como FK existen porque MySQL exige un índice por cada clave ajena y de paso sirven a la comprobación de uso antes de borrar.
 
 | Tabla | Índice | Migración | Para qué |
 |---|---|---|---|
@@ -348,8 +348,8 @@ Los índices reales, tras la revisión de B8 con `EXPLAIN` sobre datos de volume
 | `meta_ahorro` | `uk_meta_ahorro_usuario_nombre` `(usuario_id, nombre)` único | V18 | nombre único y listado por usuario |
 | `aportacion_meta` | `idx_aportacion_meta_meta_fecha` `(meta_id, fecha)` | V18 | FK; suma e historial de una meta |
 | `movimiento` | `idx_movimiento_borrado` `(borrado_en)` | V19 | purgar la papelera |
-| `cuenta` | `uk_cuenta_usuario_nombre` `(usuario_id, nombre)` único | V20 | nombre único y listado por usuario |
-| `transferencia` | `idx_transferencia_usuario_fecha` `(usuario_id, fecha)` | V20 | listado por rango |
+| `cuenta` | `uk_cuenta_usuario_nombre` `(usuario_id, nombre)` único | V22 | nombre único y listado por usuario |
+| `transferencia` | `idx_transferencia_usuario_fecha` `(usuario_id, fecha)` | V22 | listado por rango |
 | `notificacion` | `uk_notificacion_usuario_clave` `(usuario_id, clave)` único | V21 | no repetir avisos |
 | `notificacion` | `idx_notificacion_usuario_creada` `(usuario_id, creada_en)` | V21 | listado más reciente primero |
 | `alimento` | `uk_alimento_fuente_externa` `(fuente_externa, id_externo)` único | V8 | evitar duplicados al importar |

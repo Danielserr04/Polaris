@@ -53,7 +53,7 @@ cambiar el enum de Java no basta, `fuente_externa` es un `ENUM` de MySQL.
 
 Sin migración de datos: `lumen-app` nunca llegó a terminarse. Lo que sí conviene es revisar el proyecto viejo antes de empezar y quedarse con lo aprendido del dominio.
 
-**Ampliado el 2026-10-02 con lo que tenía `lumen-app`:** recurrentes con job diario (`V16`, [[034-recurrente-genera-movimientos]]), umbral de alerta por presupuesto y presupuestos anuales (`V17`, [[035-presupuesto-umbral-de-alerta]]), metas de ahorro (`V18`, [[036-meta-ahorro-con-aportaciones]]), análisis ([[037-analisis-calculado-en-servicio]]), papelera y duplicar (`V19`, [[038-movimiento-papelera-y-duplicar]]), cuentas y transferencias (`V20`, [[039-cuentas-y-transferencias]]) y notificaciones (`V21`, [[040-notificaciones-de-kuiper]]).
+**Ampliado el 2026-10-02 con lo que tenía `lumen-app`:** recurrentes con job diario (`V16`, [[034-recurrente-genera-movimientos]]), umbral de alerta por presupuesto y presupuestos anuales (`V17`, [[035-presupuesto-umbral-de-alerta]]), metas de ahorro (`V18`, [[036-meta-ahorro-con-aportaciones]]), análisis ([[037-analisis-calculado-en-servicio]]), papelera y duplicar (`V19`, [[038-movimiento-papelera-y-duplicar]]), notificaciones (`V21`, [[040-notificaciones-de-kuiper]]) y cuentas y transferencias (`V22`, [[039-cuentas-y-transferencias]]). No hay `V20`: cuentas se fusionó después que notificaciones y se renumeró para no romper bases que ya tenían `V21`. Las siguientes migraciones empiezan en `V23`.
 
 ### B6 — Fusión
 `Alimento`, `Comida`, `ComidaLinea`, `ObjetivoNutricional`. API de alimentos. Cálculo de macros del día contra objetivo.
