@@ -188,6 +188,7 @@ function useInvalidarFusion() {
 export function useCrearComida() {
   const invalidar = useInvalidarFusion();
   return useMutation({
+    meta: { aviso: 'Comida añadida' },
     mutationFn: (cuerpo: ComidaRequest) => api<Comida>(`${BASE}/comida`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });
@@ -196,6 +197,7 @@ export function useCrearComida() {
 export function useActualizarComida(id: number) {
   const invalidar = useInvalidarFusion();
   return useMutation({
+    meta: { aviso: 'Comida guardada' },
     mutationFn: (cuerpo: ComidaRequest) => api<Comida>(`${BASE}/comida/${id}`, { metodo: 'PUT', cuerpo }),
     onSuccess: invalidar,
   });
@@ -210,6 +212,7 @@ export function useBorrarComida(alBorrar?: () => void) {
   const qc = useQueryClient();
   const invalidar = useInvalidarFusion();
   return useMutation({
+    meta: { aviso: 'Comida borrada' },
     mutationFn: (id: number) => api<void>(`${BASE}/comida/${id}`, { metodo: 'DELETE' }),
     onSuccess: (_, id) => {
       alBorrar?.();
@@ -222,6 +225,7 @@ export function useBorrarComida(alBorrar?: () => void) {
 export function useCrearAlimento() {
   const qc = useQueryClient();
   return useMutation({
+    meta: { aviso: 'Alimento añadido' },
     mutationFn: (cuerpo: AlimentoRequest) => api<Alimento>(`${BASE}/alimento`, { metodo: 'POST', cuerpo }),
     onSuccess: () => qc.invalidateQueries({ queryKey: claves.alimentos }),
   });
@@ -230,6 +234,7 @@ export function useCrearAlimento() {
 export function useActualizarAlimento(id: number) {
   const invalidar = useInvalidarFusion();
   return useMutation({
+    meta: { aviso: 'Alimento guardado' },
     mutationFn: (cuerpo: AlimentoRequest) => api<Alimento>(`${BASE}/alimento/${id}`, { metodo: 'PUT', cuerpo }),
     // Cambia el catalogo y tambien las kcal de las comidas que lo usan.
     onSuccess: invalidar,
@@ -240,6 +245,7 @@ export function useActualizarAlimento(id: number) {
 export function useBorrarAlimento(alBorrar?: () => void) {
   const invalidar = useInvalidarFusion();
   return useMutation({
+    meta: { aviso: 'Alimento borrado' },
     mutationFn: (id: number) => api<void>(`${BASE}/alimento/${id}`, { metodo: 'DELETE' }),
     onSuccess: () => {
       alBorrar?.();
@@ -262,6 +268,7 @@ export function useBuscarCatalogo(q: string | null) {
 export function useImportarAlimento() {
   const qc = useQueryClient();
   return useMutation({
+    meta: { aviso: 'Alimento importado' },
     mutationFn: (idExterno: string) => api<Alimento>(`${BASE}/catalogo/importar`, { metodo: 'POST', cuerpo: { idExterno } }),
     onSuccess: () =>
       Promise.all([
@@ -275,6 +282,7 @@ export function useImportarAlimento() {
 export function useCrearObjetivo() {
   const invalidar = useInvalidarFusion();
   return useMutation({
+    meta: { aviso: 'Objetivo guardado' },
     mutationFn: (cuerpo: ObjetivoRequest) => api(`${BASE}/objetivo`, { metodo: 'POST', cuerpo }),
     onSuccess: invalidar,
   });

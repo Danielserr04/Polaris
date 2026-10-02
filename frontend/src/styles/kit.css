@@ -33,7 +33,7 @@ body{min-height:100vh}
 .app__veil{position:fixed;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(18,17,14,.35) 0%,rgba(18,17,14,.7) 45%,rgba(18,17,14,.88) 100%)}
 .app__glow{position:fixed;inset:0 0 auto 0;height:520px;pointer-events:none;background:radial-gradient(60% 100% at 50% 0%,color-mix(in oklab,var(--accent) 9%,transparent),transparent 70%);transition:background .6s}
 .app__nav{position:fixed;top:16px;left:0;right:0;display:flex;justify-content:center;z-index:var(--z-sticky);pointer-events:none}.app__nav>*{pointer-events:auto}
-.app__main{position:relative;max-width:var(--content-max);margin:0 auto;padding:112px 40px 80px}
+.app__main{animation:pl-fade var(--dur-base) var(--ease-out) both;position:relative;max-width:var(--content-max);margin:0 auto;padding:112px 40px 80px}
 .ph{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:28px}
 .ph__t{display:flex;flex-direction:column;gap:14px;min-width:0}
 .ph__h{margin:0;font-family:var(--font-display);font-stretch:118%;font-weight:800;font-size:48px;line-height:1;letter-spacing:-.025em}
