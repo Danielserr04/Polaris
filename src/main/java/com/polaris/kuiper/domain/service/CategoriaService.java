@@ -8,6 +8,7 @@ import com.polaris.kuiper.application.in.UpdateCategoriaInterface;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.application.out.PresupuestoRepositoryPort;
+import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaFilter;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
@@ -21,7 +22,7 @@ import java.util.List;
 /**
  * Nombre unico por usuario y tipo. Ver docs/decisiones/011-categoria-nombre-unico-por-tipo.md.
  *
- * <p>Una categoria con movimientos o presupuestos no se borra ni cambia de
+ * <p>Una categoria con movimientos, presupuestos o recurrentes no se borra ni cambia de
  * tipo (400, como TituloService con sus entradas): dejaria filas huerfanas o
  * de tipo distinto al de su categoria. Ver
  * docs/decisiones/012-movimiento-categoria-mismo-tipo.md y
@@ -39,6 +40,7 @@ public class CategoriaService implements
     private final CategoriaRepositoryPort repository;
     private final MovimientoRepositoryPort movimientoRepository;
     private final PresupuestoRepositoryPort presupuestoRepository;
+    private final RecurrenteRepositoryPort recurrenteRepository;
 
     @Override
     public Categoria create(Long usuarioId, Categoria categoria) {
@@ -65,7 +67,7 @@ public class CategoriaService implements
 
         if (existente.getTipo() != categoria.getTipo() && estaEnUso(id)) {
             throw new ValidationException(
-                    "No se puede cambiar el tipo de una categoria que tiene movimientos o presupuestos");
+                    "No se puede cambiar el tipo de una categoria que tiene movimientos, presupuestos o recurrentes");
         }
 
         categoria.setId(existente.getId());
@@ -78,7 +80,7 @@ public class CategoriaService implements
         getPropia(usuarioId, id);
 
         if (estaEnUso(id)) {
-            throw new ValidationException("No se puede borrar una categoria que tiene movimientos o presupuestos");
+            throw new ValidationException("No se puede borrar una categoria que tiene movimientos, presupuestos o recurrentes");
         }
 
         repository.deleteById(id);
@@ -86,7 +88,8 @@ public class CategoriaService implements
 
     private boolean estaEnUso(Long categoriaId) {
         return movimientoRepository.existsByCategoriaId(categoriaId)
-                || presupuestoRepository.existsByCategoriaId(categoriaId);
+                || presupuestoRepository.existsByCategoriaId(categoriaId)
+                || recurrenteRepository.existsByCategoriaId(categoriaId);
     }
 
     /**

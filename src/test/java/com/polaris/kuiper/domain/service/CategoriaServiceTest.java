@@ -3,6 +3,7 @@ package com.polaris.kuiper.domain.service;
 import com.polaris.kuiper.application.out.CategoriaRepositoryPort;
 import com.polaris.kuiper.application.out.MovimientoRepositoryPort;
 import com.polaris.kuiper.application.out.PresupuestoRepositoryPort;
+import com.polaris.kuiper.application.out.RecurrenteRepositoryPort;
 import com.polaris.kuiper.domain.model.Categoria;
 import com.polaris.kuiper.domain.model.CategoriaFilter;
 import com.polaris.kuiper.domain.model.CategoriaNotFoundException;
@@ -44,6 +45,9 @@ class CategoriaServiceTest {
 
     @Mock
     private PresupuestoRepositoryPort presupuestoRepository;
+
+    @Mock
+    private RecurrenteRepositoryPort recurrenteRepository;
 
     @InjectMocks
     private CategoriaService service;
