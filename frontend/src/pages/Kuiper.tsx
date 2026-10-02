@@ -5,12 +5,13 @@ import { etiquetaMes, periodo as periodoDe, ultimosMeses } from '../lib/fechas';
 import type { MovimientoList } from '../api/kuiper';
 import { CategoriasTab } from './kuiper/CategoriasTab';
 import { FormularioMovimiento } from './kuiper/FormularioMovimiento';
+import { MetasTab } from './kuiper/MetasTab';
 import { MovimientosTab } from './kuiper/MovimientosTab';
 import { RecurrentesTab } from './kuiper/RecurrentesTab';
 import { ResumenTab } from './kuiper/ResumenTab';
 import './kuiper/kuiper.css';
 
-type Pestana = 'resumen' | 'mov' | 'cat' | 'rec';
+type Pestana = 'resumen' | 'mov' | 'cat' | 'rec' | 'metas';
 
 // Un movimiento abierto: nuevo (sin id) o editando uno existente.
 type Abierto = { id?: number } | null;
@@ -56,6 +57,7 @@ export function Kuiper() {
           { value: 'mov', label: 'Movimientos' },
           { value: 'cat', label: 'Categorías' },
           { value: 'rec', label: 'Recurrentes' },
+          { value: 'metas', label: 'Metas' },
         ]}
         style={{ marginBottom: 24 }}
       />
@@ -65,6 +67,8 @@ export function Kuiper() {
         <MovimientosTab periodo={periodo} onEditar={editar} />
       ) : pestana === 'rec' ? (
         <RecurrentesTab />
+      ) : pestana === 'metas' ? (
+        <MetasTab />
       ) : (
         <CategoriasTab />
       )}
