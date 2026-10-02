@@ -15,17 +15,14 @@ export function FormularioPeso({ onClose }: { onClose: () => void }) {
   const [fecha, setFecha] = useState(hoy);
   const [peso, setPeso] = useState('');
   const [grasa, setGrasa] = useState('');
-  const [intentado, setIntentado] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
   const errFecha = !fecha ? 'Elige una fecha.' : fecha > hoy ? 'No puede ser una fecha futura.' : null;
   const errPeso = !PESO.test(peso.trim()) || dec(peso) <= 0 ? 'Entre 0,01 y 999,99 kg.' : null;
   const errGrasa = grasa.trim() === '' || (GRASA.test(grasa.trim()) && dec(grasa) <= 100) ? null : 'De 0 a 100, con un decimal.';
-  const ver = (e: string | null) => (intentado ? e : null);
 
   const guardar = (ev: FormEvent) => {
     ev.preventDefault();
-    setIntentado(true);
     setErrorEnvio(null);
     if (errFecha || errPeso || errGrasa) return;
     apuntar.mutate(
@@ -38,6 +35,7 @@ export function FormularioPeso({ onClose }: { onClose: () => void }) {
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       width={420}
       title="Apuntar peso"
       footer={
@@ -53,10 +51,10 @@ export function FormularioPeso({ onClose }: { onClose: () => void }) {
     >
       <form id="atl-form-peso" className="atl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={ver(errFecha)} hint="Un peso por día: si ya hay uno, se reemplaza." />
+        <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errFecha} validarAlSalir hint="Un peso por día: si ya hay uno, se reemplaza." />
         <div className="atl-form__row2">
-          <Input label="Peso" autoFocus inputMode="decimal" trailing={<span className="muted" style={{ fontSize: 12 }}>kg</span>} value={peso} onChange={(e) => setPeso(e.target.value)} error={ver(errPeso)} />
-          <Input label="Grasa" hint="Opcional" inputMode="decimal" trailing={<span className="muted" style={{ fontSize: 12 }}>%</span>} value={grasa} onChange={(e) => setGrasa(e.target.value)} error={ver(errGrasa)} />
+          <Input label="Peso" autoFocus inputMode="decimal" trailing={<span className="muted" style={{ fontSize: 12 }}>kg</span>} value={peso} onChange={(e) => setPeso(e.target.value)} error={errPeso} validarAlSalir />
+          <Input label="Grasa" hint="Opcional" inputMode="decimal" trailing={<span className="muted" style={{ fontSize: 12 }}>%</span>} value={grasa} onChange={(e) => setGrasa(e.target.value)} error={errGrasa} validarAlSalir />
         </div>
       </form>
     </Dialog>

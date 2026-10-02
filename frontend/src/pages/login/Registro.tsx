@@ -24,7 +24,6 @@ export function Registro({ onVolver }: Props) {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [intentado, setIntentado] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const crear = useMutation({
@@ -36,11 +35,9 @@ export function Registro({ onVolver }: Props) {
   const errUsuario = u.length < 3 || u.length > 50 ? 'De 3 a 50 caracteres.' : null;
   const errEmail = /^\S+@\S+\.\S+$/.test(email.trim()) ? null : 'Escribe un email válido.';
   const errPassword = password.length < 8 || password.length > 100 ? 'De 8 a 100 caracteres.' : null;
-  const ver = (e: string | null) => (intentado ? e : null);
 
   const enviar = (ev: FormEvent) => {
     ev.preventDefault();
-    setIntentado(true);
     setError(null);
     if (errUsuario || errEmail || errPassword) return;
     crear.mutate();
@@ -69,9 +66,9 @@ export function Registro({ onVolver }: Props) {
       </div>
       <form className="lp__form" onSubmit={enviar} noValidate>
         {error && <Alert tone="danger">{error}</Alert>}
-        <Input label="Usuario" icon="user-round" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoFocus error={ver(errUsuario)} />
-        <Input label="Email" icon="mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" error={ver(errEmail)} />
-        <Input label="Contraseña" icon="key-round" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" error={ver(errPassword)} hint="Mínimo 8 caracteres." />
+        <Input label="Usuario" icon="user-round" value={username} onChange={(e) => setUsername(e.target.value)} autoComplete="username" autoFocus error={errUsuario} validarAlSalir />
+        <Input label="Email" icon="mail" type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" error={errEmail} validarAlSalir />
+        <Input label="Contraseña" icon="key-round" type="password" placeholder="••••••••" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" error={errPassword} validarAlSalir hint="Mínimo 8 caracteres." />
         <Button type="submit" size="lg" block iconRight="arrow-right" loading={crear.isPending}>
           Crear cuenta
         </Button>

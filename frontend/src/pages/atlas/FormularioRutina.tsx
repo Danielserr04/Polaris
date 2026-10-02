@@ -124,6 +124,7 @@ function Cuerpo({ rutina, onClose }: { rutina: RutinaCompleta | undefined; onClo
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       width={600}
       title={editando ? 'Editar rutina' : 'Nueva rutina'}
       footer={
@@ -156,7 +157,7 @@ function Cuerpo({ rutina, onClose }: { rutina: RutinaCompleta | undefined; onClo
     >
       <form id="atl-form-rutina" className="atl-form" onSubmit={guardar} noValidate>
         {errorEnvio && <Alert tone="danger">{errorEnvio}</Alert>}
-        <Input label="Nombre" autoFocus value={nombre} onChange={(e) => setNombre(e.target.value)} error={ver(errNombre)} />
+        <Input label="Nombre" autoFocus value={nombre} onChange={(e) => setNombre(e.target.value)} error={errNombre} validarAlSalir />
         <div className="pl-field">
           <label className="pl-field__label" htmlFor="atl-rut-desc">
             Descripción
@@ -179,8 +180,8 @@ function Cuerpo({ rutina, onClose }: { rutina: RutinaCompleta | undefined; onClo
                   <b>{l.nombre}</b>
                   {l.grupo && <span>{l.grupo}</span>}
                 </div>
-                <Input aria-label={`Series de ${l.nombre}`} size="sm" inputMode="numeric" value={l.series} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, series: e.target.value } : x)))} error={ver(errSeries(l.series))} />
-                <Input aria-label={`Repeticiones de ${l.nombre}`} size="sm" placeholder="6-8" value={l.reps} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, reps: e.target.value } : x)))} error={ver(errReps(l.reps))} />
+                <Input aria-label={`Series de ${l.nombre}`} size="sm" inputMode="numeric" value={l.series} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, series: e.target.value } : x)))} error={errSeries(l.series)} validarAlSalir />
+                <Input aria-label={`Repeticiones de ${l.nombre}`} size="sm" placeholder="6-8" value={l.reps} onChange={(e) => setLineas((ls) => ls.map((x, j) => (j === i ? { ...x, reps: e.target.value } : x)))} error={errReps(l.reps)} validarAlSalir />
                 <span className="atl-linea__m">
                   <IconButton icon="chevron-up" label={`Subir ${l.nombre}`} variant="ghost" size="sm" type="button" disabled={i === 0} onClick={() => mover(i, -1)} />
                   <IconButton icon="chevron-down" label={`Bajar ${l.nombre}`} variant="ghost" size="sm" type="button" disabled={i === lineas.length - 1} onClick={() => mover(i, 1)} />

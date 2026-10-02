@@ -155,6 +155,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title={editando ? 'Editar recurrente' : 'Nuevo recurrente'}
       footer={
         confirmandoBorrado ? (
@@ -201,7 +202,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
           autoFocus
           value={concepto}
           onChange={(e) => setConcepto(e.target.value)}
-          error={ver(errorConcepto)}
+          error={errorConcepto} validarAlSalir
         />
         <div className="kui-form__row">
           <Input
@@ -210,7 +211,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
             placeholder="0,00"
             value={importe}
             onChange={(e) => setImporte(e.target.value)}
-            error={ver(errorImporte)}
+            error={errorImporte} validarAlSalir
           />
           <Input label="Método de pago" placeholder="Opcional" maxLength={50} value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} />
         </div>
@@ -221,7 +222,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
               placeholder={tipo === 'GASTO' ? 'Suscripciones, Casa…' : 'Nómina, Ventas…'}
               value={nuevaCategoria}
               onChange={(e) => setNuevaCategoria(e.target.value)}
-              error={ver(errorCategoria)}
+              error={errorCategoria} validarAlSalir
             />
             {delTipo.length > 0 && (
               <Button variant="ghost" type="button" onClick={() => setCategoriaId('')}>
@@ -235,7 +236,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
             value={categoriaEfectiva}
             onChange={(e) => setCategoriaId(e.target.value)}
             options={opciones}
-            hint={ver(errorCategoria) ?? undefined}
+            error={ver(errorCategoria)}
           />
         )}
         <div>
@@ -256,7 +257,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
             type="date"
             value={fechaInicio}
             onChange={(e) => setFechaInicio(e.target.value)}
-            error={ver(errorFecha)}
+            error={errorFecha} validarAlSalir
             hint={pistaFecha}
           />
           <Input
@@ -265,7 +266,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
             placeholder="Sin fin"
             value={cuotas}
             onChange={(e) => setCuotas(e.target.value)}
-            error={ver(errorCuotas)}
+            error={errorCuotas} validarAlSalir
             hint={pistaCuotas}
           />
         </div>

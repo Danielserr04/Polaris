@@ -65,6 +65,7 @@ export function FormularioEntrada({ entrada, tipo, onClose }: Props) {
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title="Editar entrada"
       width={520}
       footer={

@@ -166,6 +166,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title={editando ? 'Editar movimiento' : 'Nuevo movimiento'}
       footer={
         confirmandoBorrado ? (
@@ -218,9 +219,9 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
             autoFocus
             value={importe}
             onChange={(e) => setImporte(e.target.value)}
-            error={ver(errorImporte)}
+            error={errorImporte} validarAlSalir
           />
-          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={ver(errorFecha)} />
+          <Input label="Fecha" type="date" max={hoy} value={fecha} onChange={(e) => setFecha(e.target.value)} error={errorFecha} validarAlSalir />
         </div>
         {creandoCategoria ? (
           <div className="kui-form__nuevacat">
@@ -229,7 +230,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
               placeholder={tipo === 'GASTO' ? 'Casa, Comida, Ocio…' : 'Nómina, Ventas…'}
               value={nuevaCategoria}
               onChange={(e) => setNuevaCategoria(e.target.value)}
-              error={ver(errorCategoria)}
+              error={errorCategoria} validarAlSalir
             />
             {delTipo.length > 0 && (
               <Button variant="ghost" type="button" onClick={() => setCategoriaId('')}>
@@ -243,7 +244,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
             value={categoriaEfectiva}
             onChange={(e) => setCategoriaId(e.target.value)}
             options={opciones}
-            hint={ver(errorCategoria) ?? undefined}
+            error={ver(errorCategoria)}
           />
         )}
         {opcionesCuenta.length > 1 && (

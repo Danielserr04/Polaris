@@ -32,7 +32,6 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
   const [importe, setImporte] = useState('');
   const [fecha, setFecha] = useState(hoy);
   const [nota, setNota] = useState('');
-  const [intentado, setIntentado] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const importeNum = IMPORTE.test(importe.trim()) ? Number(importe.trim().replace(',', '.')) : NaN;
@@ -42,11 +41,9 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
       ? `Solo hay ${eur(meta.importeActual)} ahorrados.`
       : null;
   const errorFecha = fecha === '' ? 'Elige una fecha.' : fecha > hoy ? 'La fecha no puede ser futura.' : null;
-  const ver = (e: string | null) => (intentado ? e : null);
 
   const enviar = async (ev: FormEvent) => {
     ev.preventDefault();
-    setIntentado(true);
     setError(null);
     if (errorImporte || errorFecha) return;
     try {
@@ -57,7 +54,6 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
       });
       setImporte('');
       setNota('');
-      setIntentado(false);
     } catch (e) {
       setError(mensajeErrorMeta(e));
     }
@@ -113,7 +109,7 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
               placeholder="100"
               value={importe}
               onChange={(e) => setImporte(e.target.value)}
-              error={ver(errorImporte)}
+              error={errorImporte} validarAlSalir
             />
             <Input
               label="Fecha"
@@ -121,7 +117,7 @@ export function DialogoAportaciones({ meta, onClose }: Props) {
               max={hoy}
               value={fecha}
               onChange={(e) => setFecha(e.target.value)}
-              error={ver(errorFecha)}
+              error={errorFecha} validarAlSalir
             />
           </div>
           <Input label="Nota" maxLength={255} placeholder="Opcional" value={nota} onChange={(e) => setNota(e.target.value)} />
