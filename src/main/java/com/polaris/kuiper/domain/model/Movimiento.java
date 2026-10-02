@@ -8,6 +8,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Modelo puro. Sin anotaciones de persistencia: el mapeo vive en MovimientoEntity.
@@ -18,6 +19,10 @@ import java.time.LocalDate;
  * la ficha completa, enriquecida solo en lecturas (MovimientoJpaAdapter la
  * rellena al mapear desde la Entity); al crear o actualizar llega nula, porque
  * el cliente solo manda el id.
+ *
+ * <p>{@code borradoEn} nulo = movimiento normal; con valor, esta en la
+ * papelera desde ese momento. Ver
+ * docs/decisiones/038-movimiento-papelera-y-duplicar.md.
  */
 @Getter
 @Setter
@@ -36,4 +41,9 @@ public class Movimiento {
     private String concepto;
     private String metodoPago;
     private boolean recurrente;
+    private LocalDateTime borradoEn;
+
+    public boolean enPapelera() {
+        return borradoEn != null;
+    }
 }

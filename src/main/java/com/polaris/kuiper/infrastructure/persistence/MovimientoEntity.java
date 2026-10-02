@@ -20,6 +20,7 @@ import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Mapeo JPA. Las anotaciones de persistencia viven aqui y solo aqui.
@@ -69,4 +70,8 @@ public class MovimientoEntity {
 
     @Column(nullable = false)
     private boolean recurrente;
+
+    /** Nulo fuera de la papelera. */
+    @Column(name = "borrado_en")
+    private LocalDateTime borradoEn;
 }

@@ -27,6 +27,10 @@ import java.util.List;
  * de tipo distinto al de su categoria. Ver
  * docs/decisiones/012-movimiento-categoria-mismo-tipo.md y
  * docs/decisiones/013-presupuesto-solo-gastos-uno-por-periodo.md.
+ *
+ * <p>Los movimientos de la papelera no cuentan como uso: al borrar la
+ * categoria se borran de verdad antes que ella. Ver
+ * docs/decisiones/038-movimiento-papelera-y-duplicar.md.
  */
 @Service
 @RequiredArgsConstructor
@@ -83,6 +87,7 @@ public class CategoriaService implements
             throw new ValidationException("No se puede borrar una categoria que tiene movimientos, presupuestos o recurrentes");
         }
 
+        movimientoRepository.deleteEnPapeleraByCategoriaId(id);
         repository.deleteById(id);
     }
 
