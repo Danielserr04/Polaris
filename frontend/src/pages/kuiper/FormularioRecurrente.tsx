@@ -1,5 +1,6 @@
 import { useMemo, useState, type FormEvent } from 'react';
 import { useCategorias, useCrearCategoria, type TipoMovimiento } from '../../api/kuiper';
+import { useCuentas } from '../../api/kuiperCuentas';
 import {
   mensajeErrorRecurrente,
   useActualizarRecurrente,
@@ -63,6 +64,17 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
   const [fechaInicio, setFechaInicio] = useState(recurrente?.fechaInicio ?? hoy);
   const [cuotas, setCuotas] = useState(recurrente?.cuotasTotal != null ? String(recurrente.cuotasTotal) : '');
   const [activo, setActivo] = useState(recurrente?.activo ?? true);
+  const [cuentaId, setCuentaId] = useState(recurrente?.cuentaId != null ? String(recurrente.cuentaId) : '');
+  const cuentas = useCuentas();
+  const opcionesCuenta = useMemo(
+    () => [
+      { value: '', label: 'Sin cuenta' },
+      ...(cuentas.data ?? [])
+        .filter((c) => !c.archivada || c.id === recurrente?.cuentaId)
+        .map((c) => ({ value: String(c.id), label: c.nombre })),
+    ],
+    [cuentas.data, recurrente?.cuentaId],
+  );
   const [intentado, setIntentado] = useState(false);
   const [confirmandoBorrado, setConfirmandoBorrado] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
@@ -134,6 +146,7 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
         fechaInicio,
         cuotasTotal: cuotasNum,
         activo,
+        cuentaId: cuentaId ? Number(cuentaId) : null,
       };
       if (editando) await actualizar.mutateAsync(cuerpo);
       else await crear.mutateAsync(cuerpo);
@@ -214,6 +227,9 @@ function Cuerpo({ recurrente, onClose }: CuerpoProps) {
           />
           <Input label="Método de pago" placeholder="Opcional" maxLength={50} value={metodoPago} onChange={(e) => setMetodoPago(e.target.value)} />
         </div>
+        {opcionesCuenta.length > 1 && (
+          <Select label="Cuenta" value={cuentaId} onChange={(e) => setCuentaId(e.target.value)} options={opcionesCuenta} />
+        )}
         {creandoCategoria ? (
           <div className="kui-form__nuevacat">
             <Input
