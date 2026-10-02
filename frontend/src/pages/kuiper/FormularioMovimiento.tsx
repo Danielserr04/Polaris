@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState, type FormEvent } from 'react';
 import {
   mensajeError,
@@ -11,7 +12,8 @@ import {
   type MovimientoRequest,
   type TipoMovimiento,
 } from '../../api/kuiper';
-import { avisar, useDuplicarMovimiento } from '../../api/kuiperPapelera';
+import { avisarPapelera, useDuplicarMovimiento } from '../../api/kuiperPapelera';
+import { avisar } from '../../lib/avisos';
 import { useCuentas } from '../../api/kuiperCuentas';
 import { useRestaurarFoco } from '../../components/useRestaurarFoco';
 import { Alert, Button, Dialog, Input, SegmentedControl, Select, Switch } from '../../design-system';
@@ -62,9 +64,10 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
   const crearCategoria = useCrearCategoria();
   const crear = useCrearMovimiento();
   const actualizar = useActualizarMovimiento(movimiento?.id ?? 0);
-  // Borrar manda a la papelera: el aviso con "Deshacer" lo pinta AvisoKuiper, que sigue montado.
+  // Borrar manda a la papelera: el aviso global ofrece "Deshacer" aunque este dialogo ya se haya cerrado.
+  const qc = useQueryClient();
   const borrar = useBorrarMovimiento(() => {
-    if (movimiento) avisar({ texto: 'Movimiento en la papelera.', restaurar: [movimiento.id] });
+    if (movimiento) avisarPapelera(qc, [movimiento.id]);
     onClose();
   });
   const duplicar = useDuplicarMovimiento();
@@ -153,7 +156,7 @@ function Cuerpo({ movimiento, periodo, onClose }: CuerpoProps) {
     setErrorEnvio(null);
     try {
       await duplicar.mutateAsync({ id: movimiento.id });
-      avisar({ texto: 'Movimiento duplicado con fecha de hoy.', tono: 'success' });
+      avisar('Movimiento duplicado con fecha de hoy.');
       onClose();
     } catch (e) {
       setErrorEnvio(mensajeError(e));

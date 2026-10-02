@@ -61,6 +61,8 @@ class RecurrenteServiceTest {
 
     @Mock
     private CrearNotificacionInterface crearNotificacion;
+
+    @Mock
     private CuentaRepositoryPort cuentaRepository;
 
     @InjectMocks

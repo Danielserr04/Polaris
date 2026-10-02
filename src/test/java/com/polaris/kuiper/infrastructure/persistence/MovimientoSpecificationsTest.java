@@ -48,6 +48,6 @@ class MovimientoSpecificationsTest {
         MovimientoFilter filtro = MovimientoFilter.builder().cuentaId(3L).build();
 
         assertThat(describir(MovimientoSpecifications.from(1L, filtro))).isEqualTo(
-                "and(equal(usuarioId, 1), equal(cuenta.id, 3))");
+                "and(and(equal(usuarioId, 1), isNull(borradoEn)), equal(cuenta.id, 3))");
     }
 }
