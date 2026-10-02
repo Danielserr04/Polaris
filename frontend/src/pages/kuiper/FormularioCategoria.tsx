@@ -48,7 +48,6 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
   const [limiteAnual, setLimiteAnual] = useState(comoTexto(presupuestoAnual));
   // Un solo umbral para los dos periodos: el formulario los guarda siempre iguales.
   const [alerta, setAlerta] = useState(presupuesto?.porcentajeAlerta ?? presupuestoAnual?.porcentajeAlerta ?? ALERTA_POR_DEFECTO);
-  const [intentado, setIntentado] = useState(false);
   const [confirmando, setConfirmando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
@@ -62,11 +61,9 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
   const errorAnual = conPresupuesto && !anualVacio && !(anualNum > 0) ? 'Escribe un importe mayor que 0, con hasta 2 decimales.' : null;
   const tienePresupuesto = presupuesto !== undefined || presupuestoAnual !== undefined;
   const ocupado = crear.isPending || actualizar.isPending || guardarPresupuesto.isPending || borrar.isPending;
-  const ver = (e: string | null) => (intentado ? e : null);
 
   const guardar = async (ev: FormEvent) => {
     ev.preventDefault();
-    setIntentado(true);
     setErrorEnvio(null);
     if (errorNombre || errorLimite || errorAnual) return;
     try {
@@ -109,6 +106,7 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
     <Dialog
       open
       onClose={onClose}
+      confirmarDescarte
       title={editando ? 'Editar categoría' : 'Nueva categoría'}
       footer={
         confirmando ? (
@@ -162,7 +160,7 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
           placeholder={tipo === 'GASTO' ? 'Casa, Comida, Ocio…' : 'Nómina, Ventas…'}
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
-          error={ver(errorNombre)}
+          error={errorNombre} validarAlSalir
         />
         <div>
           <span className="kui-field__label">Color</span>
@@ -222,7 +220,7 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
                 placeholder="Sin presupuesto"
                 value={limite}
                 onChange={(e) => setLimite(e.target.value)}
-                error={ver(errorLimite)}
+                error={errorLimite} validarAlSalir
                 hint="Déjalo vacío para no ponerle límite."
               />
               <Input
@@ -231,7 +229,7 @@ export function FormularioCategoria({ categoria, presupuesto, presupuestoAnual, 
                 placeholder="Sin presupuesto"
                 value={limiteAnual}
                 onChange={(e) => setLimiteAnual(e.target.value)}
-                error={ver(errorAnual)}
+                error={errorAnual} validarAlSalir
                 hint="Para gastos de todo el año: viajes, seguros…"
               />
             </div>
