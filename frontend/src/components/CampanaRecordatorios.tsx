@@ -6,7 +6,7 @@ import {
   type RecordatorioPendiente,
   type TipoRecordatorio,
 } from '../api/recordatorios';
-import { Badge, Button, Dialog, Icon, IconButton } from '../design-system';
+import { Button, Dialog, Icon, IconButton } from '../design-system';
 import './campana.css';
 
 // Campana de la cabecera con lo que queda por hacer hoy. Lo mismo que llega al movil, pero
@@ -19,7 +19,8 @@ const ICONO: Record<TipoRecordatorio, { icono: string; tono: string }> = {
   PRESUPUESTO: { icono: 'circle-alert', tono: 'var(--warning)' },
 };
 
-export function CampanaRecordatorios({ className }: { className?: string }) {
+/** El boton toma la clase de los iconos vecinos de la cabecera (pl-nav__act, m-logros). */
+export function CampanaRecordatorios({ className, size }: { className: string; size: number }) {
   const [abierto, setAbierto] = useState(false);
   const navigate = useNavigate();
   const pendientes = useRecordatoriosPendientes();
@@ -34,22 +35,20 @@ export function CampanaRecordatorios({ className }: { className?: string }) {
 
   return (
     <>
-      <span className={'campana' + (className ? ' ' + className : '')}>
-        <IconButton
-          icon="bell"
-          variant="ghost"
-          label={total > 0 ? `Recordatorios (${total} pendientes)` : 'Recordatorios'}
-          pressed={abierto}
-          onClick={() => setAbierto(true)}
-        />
+      <button
+        type="button"
+        className={className + ' campana'}
+        aria-label={total > 0 ? `Recordatorios (${total} pendientes)` : 'Recordatorios'}
+        title="Recordatorios"
+        onClick={() => setAbierto(true)}
+      >
+        <Icon name="bell" size={size} />
         {total > 0 && (
           <span className="campana__n" aria-hidden>
-            <Badge tone="danger" variant="solid">
-              {total}
-            </Badge>
+            {total}
           </span>
         )}
-      </span>
+      </button>
       <Dialog
         open={abierto}
         onClose={() => setAbierto(false)}

@@ -1,11 +1,6 @@
 /* Campana de recordatorios de la cabecera (CampanaRecordatorios.tsx). */
-.campana{position:relative;display:inline-flex}
-.campana__n{position:absolute;top:-4px;right:-6px;pointer-events:none}
-.campana__n .pl-badge{height:18px;padding:0 5px;font-size:10px;letter-spacing:0}
-
-/* Escritorio: una pieza pequeña al lado de la isla de navegacion, con su mismo cristal. */
-.campana--nav{margin-left:8px;width:52px;height:52px;align-items:center;justify-content:center;box-sizing:border-box;background:var(--surface-glass);-webkit-backdrop-filter:blur(16px) saturate(1.2);backdrop-filter:blur(16px) saturate(1.2);border:1px solid var(--border-2);border-radius:10px;box-shadow:0 18px 40px -18px rgba(0,0,0,.7),4px 4px 0 0 rgba(0,0,0,.35)}
-.campana--nav .campana__n{top:2px;right:2px}
+.campana{position:relative}
+.campana__n{position:absolute;top:-3px;right:-5px;min-width:16px;height:16px;padding:0 4px;box-sizing:border-box;border-radius:8px;background:var(--danger);color:#fff;font:700 10px/16px var(--font-mono);text-align:center;pointer-events:none}
 
 .campana__lista{display:flex;flex-direction:column;margin:-4px -8px}
 .campana__item{display:grid;grid-template-columns:28px 1fr auto;gap:10px;align-items:center;padding:10px 8px}
@@ -17,4 +12,3 @@
 .campana__ico{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;color:var(--tone,var(--text-2));background:color-mix(in oklab,var(--tone,var(--text-2)) 14%,transparent)}
 .campana__vacio{display:flex;gap:12px;align-items:center;color:var(--text-2);font-size:14px}
 .campana__vacio .pl-icon{color:var(--success);flex:none}
-.app__macc{display:inline-flex;align-items:center;gap:4px}
