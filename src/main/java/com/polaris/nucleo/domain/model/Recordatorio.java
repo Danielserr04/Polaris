@@ -16,7 +16,7 @@ import java.util.Set;
  * RecordatorioEntity.
  *
  * <p>La configuracion (si esta encendido, a que hora y que dias de la
- * semana) y dos marcas de dia: cuando se mando al movil y cuando se descarto. Hay uno por usuario y tipo. Ver docs/decisiones/044-recordatorios.md.
+ * semana) y dos marcas de dia: cuando se mando al movil y cuando se descarto. Hay uno por usuario y tipo. Ver docs/decisiones/045-recordatorios.md.
  */
 @Getter
 @Setter

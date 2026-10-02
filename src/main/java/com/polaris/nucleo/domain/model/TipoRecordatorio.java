@@ -9,7 +9,7 @@ import java.util.Set;
  * Que recuerda cada recordatorio y con que valores nace. Si ya has cumplido
  * lo del dia (comidas, gastos, sesion, presupuestos) lo dice el modulo dueno
  * del dato a traves de ComprobarRecordatorioPort. Ver
- * docs/decisiones/044-recordatorios.md.
+ * docs/decisiones/045-recordatorios.md.
  */
 public enum TipoRecordatorio {
 

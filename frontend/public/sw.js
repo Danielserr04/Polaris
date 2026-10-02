@@ -1,6 +1,6 @@
 // Service worker de Polaris: recibe los avisos del servidor (Web Push) aunque la app este
 // cerrada y abre la pantalla que toca al pulsarlos. No guarda nada en cache: Polaris
-// necesita el servidor para todo. Ver docs/decisiones/044-recordatorios.md.
+// necesita el servidor para todo. Ver docs/decisiones/045-recordatorios.md.
 
 self.addEventListener('install', () => self.skipWaiting());
 self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));

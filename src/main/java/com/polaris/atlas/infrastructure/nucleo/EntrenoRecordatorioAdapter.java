@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * Recordatorio de entreno: pendiente mientras no haya ninguna sesion ese
  * dia. Atlas responde a Nucleo con sus propios casos de uso. Ver
- * docs/decisiones/044-recordatorios.md.
+ * docs/decisiones/045-recordatorios.md.
  */
 @Component
 @RequiredArgsConstructor

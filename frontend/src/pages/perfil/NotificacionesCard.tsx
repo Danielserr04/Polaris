@@ -11,7 +11,7 @@ import { activarPush, desactivarPush, esIosSinInstalar, estadoPush, type EstadoP
 import './notificaciones.css';
 
 // Todo lo de las notificaciones en un sitio: si este dispositivo recibe avisos y que
-// recordatorios hay, a que hora y que dias. Ver docs/decisiones/044-recordatorios.md.
+// recordatorios hay, a que hora y que dias. Ver docs/decisiones/045-recordatorios.md.
 
 interface Aviso {
   tono: 'success' | 'danger';

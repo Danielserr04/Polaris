@@ -1,4 +1,4 @@
-# 044 — Recordatorios y avisos al móvil (Web Push)
+# 045 — Recordatorios y avisos al móvil (Web Push)
 
 Estado: aceptada · 2026-10-02
 
@@ -46,3 +46,5 @@ Daniel quiere que Polaris le recuerde apuntar comidas, gastos y demás, y que **
 - Un recordatorio guardado tarde (cambias la hora a una ya pasada) puede llegar en el minuto siguiente si sigue pendiente.
 - Si el servidor está caído a la hora del aviso, llega al volver, el mismo día.
 - La entrega real solo se prueba con un dispositivo de verdad: los tests comprueban que el cifrado se descifra y la firma se verifica.
+
+> Antes era la 044, que chocaba con [[044-logros-globales-con-fecha-calculada]]. Los comentarios de `V35` y `V36` siguen citando `044-recordatorios.md` porque una migración aplicada no se edita.

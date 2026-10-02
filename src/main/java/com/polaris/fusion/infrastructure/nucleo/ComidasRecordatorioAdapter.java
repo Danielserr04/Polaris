@@ -14,7 +14,7 @@ import java.util.Optional;
 /**
  * Recordatorio de comidas: pendiente mientras no haya ninguna comida
  * apuntada ese dia. Fusion responde a Nucleo con sus propios casos de uso.
- * Ver docs/decisiones/044-recordatorios.md.
+ * Ver docs/decisiones/045-recordatorios.md.
  */
 @Component
 @RequiredArgsConstructor

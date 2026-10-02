@@ -72,6 +72,7 @@ Vault de documentación del proyecto. Vive dentro del repo, en `docs/`.
 - [[043-calculo-del-objetivo-desde-el-perfil]]
 - [[043-logros-calculados-y-metas]]
 - [[044-logros-globales-con-fecha-calculada]]
+- [[045-recordatorios]]
 
 ## Cómo se mantiene esto
 

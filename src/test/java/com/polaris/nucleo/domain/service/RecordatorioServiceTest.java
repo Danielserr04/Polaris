@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 /**
  * Lo que importa: uno por tipo aunque no este guardado, los valores por
  * defecto, cuando "toca" un recordatorio y que al movil llegue como mucho uno
- * por tipo y dia. Ver docs/decisiones/044-recordatorios.md.
+ * por tipo y dia. Ver docs/decisiones/045-recordatorios.md.
  */
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)

@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
 /**
  * Dispositivos que reciben los recordatorios. Siempre los del usuario del
- * JWT. Ver docs/decisiones/044-recordatorios.md.
+ * JWT. Ver docs/decisiones/045-recordatorios.md.
  */
 @Service
 @RequiredArgsConstructor

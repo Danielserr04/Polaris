@@ -10,7 +10,7 @@ import { Badge, Button, Dialog, Icon, IconButton } from '../design-system';
 import './campana.css';
 
 // Campana de la cabecera con lo que queda por hacer hoy. Lo mismo que llega al movil, pero
-// dentro de la app. Ver docs/decisiones/044-recordatorios.md.
+// dentro de la app. Ver docs/decisiones/045-recordatorios.md.
 
 const ICONO: Record<TipoRecordatorio, { icono: string; tono: string }> = {
   COMIDAS: { icono: 'utensils', tono: 'var(--mod-fusion, var(--accent))' },

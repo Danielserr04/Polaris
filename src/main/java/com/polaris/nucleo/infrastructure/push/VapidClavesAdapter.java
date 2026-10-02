@@ -13,7 +13,7 @@ import java.util.List;
  * de entorno se usan esas; si no, se leen de la tabla push_vapid y, la
  * primera vez, se generan y se guardan ahi. Tienen que ser siempre las
  * mismas: si cambian, los dispositivos suscritos dejan de recibir avisos
- * hasta que se vuelvan a suscribir. Ver docs/decisiones/044-recordatorios.md.
+ * hasta que se vuelvan a suscribir. Ver docs/decisiones/045-recordatorios.md.
  */
 @Slf4j
 @Component
